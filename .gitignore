@@ -94,3 +94,7 @@ Makefile*
 *.hs~
 *.vpp~*
 *.vpp.bak*
+
+# C#
+*.xml
+*.sln

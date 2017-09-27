@@ -5,7 +5,7 @@ namespace Localization
     {
         public static void Main(string[] args)
         {
-            Map.Localization(2);
+            Map.Localization();
         }
     }
 }

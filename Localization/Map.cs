@@ -45,11 +45,11 @@ public class Map
 	private const int Down = 1, Left = 2, Up = 3, Right = 4;
 
     
-	private static int height = 3,
-		wight = 3, //размеры карты (_map)
+	private static int height = 8, wight = 8, //размеры карты (_map)
 		_lengthOfListStart = 0;
 
-	private static List<List<int>> start = new List<List<int>>(); // x,y,quantity of ways in way
+	//Переделать!!! Сделать 3 координату - направление робота
+	private static List<List<int>> hypothesis = new List<List<int>>(); // x,y,quantity of ways in way
 
 	private static List<List<int>> way = new List<List<int>>();
 
@@ -59,24 +59,53 @@ public class Map
 
 	/******************************************************************************************/
 
-	public static void Localization(int quantity)
+	public static void Localization()
 	{
+		int quantity = 3;
 		StartInit();
 		//MapInit();
 		//PrintMap();
 		//quantity = 3;
 		Console.WriteLine("localization");
 		StartInit();
-		SensorsInit(1, 1, 0, 0); //Потом пригодится, когда доработаю Hypothesis1
+		SensorsInit(1, 0, 0, 0); //Потом пригодится, когда доработаю Hypothesis1
 		Hypothesis1(quantity);
+		Console.WriteLine("Hypotsesis 1");
+		PrintMap();
 		//go in random direction
 		SensorsInit(0, 1, 0, 0);
+		Console.WriteLine("Hypotsesis 2");
 		Hypothesis2();
 		PrintMap();
-		PrintWays();
+		//PrintWays();
+		Solution();
+		SensorsInit(0, 1, 0, 1);
+		Console.WriteLine("Hypotsesis 3");
+		Hypothesis2();
+		PrintMap();
+		//PrintWays();
+		Solution();
+		SensorsInit(0, 0, 1, 0);
+		Console.WriteLine("Hypotsesis 4");
+		Hypothesis2();
+		PrintMap();
+		//PrintWays();
 		Solution();
 	}
-
+/*
+	private static void DirectionOfRotation(int direction)
+	{
+		switch (direction)
+		{
+			case 1:
+			case 2:
+			case 3:
+				break;
+			case 4:
+					
+		}
+	}
+	*/
 	private static void MapInit()
 	{
 		/*
@@ -95,18 +124,27 @@ public class Map
 
 	public static void PrintMap()
 	{
-		int i, j, k = start[0].Count, n = 0;
+		int i, j, k = hypothesis[0].Count, n = 0;
+		
+		for(var l=0;l<hypothesis[2].Count;++l)
+		{
+			Console.Write(hypothesis[0][l] + " " + hypothesis[1][l] + " " + hypothesis[2][l]+"; ");
+		}
+		Console.WriteLine();
 		for (i = 0; i < height; ++i)
 		{
 			for (j = 0; j < wight; ++j)
 			{
 
-				if (n < k && i == start[0][n] && j == start[1][n])
+				if (n < k && i == hypothesis[0][n] && j == hypothesis[1][n])
 				{
-					Console.Write(_map[i, j, 0]);
+					Console.Write(hypothesis[2][n]);
 					++n;
+					while (n < k && hypothesis[0][n] == hypothesis[0][n - 1] &&
+					       hypothesis[1][n] == hypothesis[1][n - 1])
+						++n;
 				}
-				else Console.Write("0");
+				else Console.Write(".");
 			}
 			Console.WriteLine();
 		}
@@ -125,7 +163,7 @@ public class Map
 			}
 			Console.WriteLine();
 		}
-		foreach (var k in start[2])
+		foreach (var k in hypothesis[2])
 		{
 			Console.Write(k + " ");
 		}
@@ -135,7 +173,7 @@ public class Map
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			start.Add(new List<int>());
+			hypothesis.Add(new List<int>());
 		}
 	}
 
@@ -157,9 +195,9 @@ public class Map
 		}
 		for (var i = 0; i < _lengthOfListStart; ++i)
 		{
-			x = start[0][i];
-			y = start[1][i];
-			for (var j = 0; j < start[2][i]; ++j)
+			x = hypothesis[0][i];
+			y = hypothesis[1][i];
+			for (var j = 0; j < hypothesis[2][i]; ++j)
 			{
 				for (k = 0; k < way[numberOfWay].Count; ++k)
 				{
@@ -194,28 +232,6 @@ public class Map
 		endOfWay[2][1] = 1;
 		endOfWay[2][2] = 3;
 		Console.WriteLine("EndOfWayInit2 \n" +endOfWay[2][0]+" "+endOfWay[2][1]+" "+endOfWay[2][2]);
-	}
-
-	// 0 <= quantity <= 4
-	//Сюда ещё можно добавить расположение стен (| | или _|)
-	private static void Hypothesis1(int quantity)
-	{
-		int i, j;
-		for (i = 0; i < height; ++i)
-		{
-			for (j = 0; j < wight; ++j)
-			{
-				if (_map[i, j, 0] == quantity)
-				{
-					start[0].Add(i);
-					start[1].Add(j);
-					start[2].Add(0);
-
-					_lengthOfListStart++;
-				}
-			}
-		}
-		//передвигаемся прямо (если занято, то направо/налево/назад)
 	}
 
 	//сравнивает показания датчиков с полем на карте (сравнивает стены)
@@ -255,90 +271,239 @@ public class Map
 			return true;
 		}
 	}
+	
+	// 0 <= quantity <= 4
+	//Сюда ещё можно добавить расположение стен (| | или _|)
+	private static void Hypothesis1(int quantity)
+	{
+		int i, j;
+		for (i = 0; i < height; ++i)
+		{
+			for (j = 0; j < wight; ++j)
+			{
+				if (_map[i, j, 0] == quantity)
+				{
+					hypothesis[0].Add(i);
+					hypothesis[1].Add(j);
+					hypothesis[2].Add(3);
 
-	//Проследить за корректностью размера массива(должен быть 4)
+					_lengthOfListStart++;
+				}
+			}
+		}
+		//передвигаемся прямо (если занято, то направо/налево/назад)
+	}
+
+
 	private static void Hypothesis2()
 	{
 		int i, quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
 		for (i = 0; i < _lengthOfListStart; ++i)
 		{
 			var fl = true;
+			int x=hypothesis[0][i], y=hypothesis[1][i];
 			//to test code below
 			//down
-			Console.Write(start[0][i] + " " + start[1][i] + " " + _lengthOfListStart + ";   ");
-			if (start[0][i] + 1 < height && _map[start[0][i] + 1, start[1][i], 0] == quantity)
+			Console.Write(x + " " + y + " " + _lengthOfListStart + ";   ");
+			if (x + 1 < height && _map[x + 1, y, 0] == quantity)
 			{
-				if (_map[start[0][i], start[1][i], Down] == 0 &&
-				    CheckWalls(start[0][i] + 1, start[1][i], Down))
+				if (_map[x, y, Down] == 0 &&
+				    CheckWalls(x + 1, y, Down))
 				{
-					way.Add(new List<int>());
-					way[_quantityOfWays].Add(1);
 					++_quantityOfWays;
-					var x = ++start[2][i];
+					//var x = ++start[2][i];
+					hypothesis[0][i]++;
+					hypothesis[2][i] = Down;//ToDownDir(hypothesis[2][i]);
 					fl = false;
 				}
 			}
 
 			//left
-			if (start[1][i] > 0 && _map[start[0][i], start[1][i] - 1, 0] == quantity)
+			if (y > 0 && _map[x, y - 1, 0] == quantity)
 			{
-				if (_map[start[0][i], start[1][i], Left] == 0 &&
-				    CheckWalls(start[0][i], start[1][i] - 1, Left))
+				if (_map[x, y, Left] == 0 &&
+				    CheckWalls(x, y - 1, Left))
 				{
-					way.Add(new List<int>());
-					way[_quantityOfWays].Add(2);
 					++_quantityOfWays;
-					var x = ++start[2][i];
+					//var x = ++start[2][i];
+					hypothesis[1][i]--;
+					hypothesis[2][i] = Left;//ToLeftDir(hypothesis[2][i]);
 					fl = false;
 				}
 			}
 
 			//up
-			if (start[0][i] > 0 && _map[start[0][i] - 1, start[1][i], 0] == quantity)
+			if (x > 0 && _map[x - 1, y, 0] == quantity)
 			{
-				if (_map[start[0][i], start[1][i], Up] == 0 &&
-				    CheckWalls(start[0][i] - 1, start[1][i], Up))
+				if (_map[x, y, Up] == 0 &&
+				    CheckWalls(x - 1, y, Up))
 				{
-					way.Add(new List<int>());
-					way[_quantityOfWays].Add(3);
 					++_quantityOfWays;
-					var x = ++start[2][i];
+					//var x = ++start[2][i];
+					hypothesis[0][i]--;
+					hypothesis[2][i] = Up;
 					fl = false;
 				}
 			}
 
 			//right
-			if (start[1][i] + 1 < wight && _map[start[0][i], start[1][i] + 1, 0] == quantity)
+			if (y + 1 < wight && _map[x, y + 1, 0] == quantity)
 			{
-				if (_map[start[0][i], start[1][i], Right] == 0 &&
-				    CheckWalls(start[0][i], start[1][i] + 1, Right))
+				if (_map[x, y, Right] == 0 &&
+				    CheckWalls(x, y + 1, Right))
 				{
-					way.Add(new List<int>());
-					way[_quantityOfWays].Add(4);
 					++_quantityOfWays;
-					var x = ++start[2][i];
+					//var x = ++start[2][i];
+					hypothesis[1][i]++;
+					hypothesis[2][i] = Right;//ToRightDir(hypothesis[2][i]);
 					fl = false;
 				}
 			}
 			if (fl)
 			{
-				start[0].RemoveAt(i);
-				start[1].RemoveAt(i);
-				start[2].RemoveAt(i);
+				hypothesis[0].RemoveAt(i);
+				hypothesis[1].RemoveAt(i);
+				hypothesis[2].RemoveAt(i);
 				i--;
 				_lengthOfListStart--;
 			}
 		}
-		Console.WriteLine();
+		Console.WriteLine("eeee "+hypothesis[0].Count + " " + hypothesis[1].Count
+		                  + " " + hypothesis[2].Count);
 	}
-
-	/*
-	private static int NumberOfStepsForLocalization(int direction)
+/*
+	private static void Hypothesis3(int direction)
 	{
-		int i;
-		int[,] start_copy = new int[start.Count,start[0].Count];
-		int[,] endOfWay_copy = new int[endOfWay.Count, endOfWay[0].Count];
-		
+		int i, quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
+		switch (direction)
+		{
+			case Down:
+			{
+				//int i, quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
+				var fl = true;
+				int x = hypothesis[0][i], y = hypothesis[1][i];
+				for (i = 0; i < _lengthOfListStart; ++i)
+				{
+					if (x + 1 < height && _map[x + 1, y, 0] == quantity)
+					{
+						if (_map[x, y, Down] == 0 &&
+						    CheckWalls(x + 1, y, Down))
+						{
+							++_quantityOfWays;
+							//var x = ++start[2][i];
+							hypothesis[0][i]++;
+							hypothesis[2][i] = CheckDir(hypothesis[2][i],Down); //ToDownDir(hypothesis[2][i]);
+							fl = false;
+						}
+					}
+					
+					
+					
+					
+					//to test code below
+					//down
+					Console.Write(x + " " + y + " " + _lengthOfListStart + ";   ");
+					if (x + 1 < height && _map[x + 1, y, 0] == quantity)
+					{
+						if (_map[x, y, Down] == 0 &&
+						    CheckWalls(x + 1, y, Down))
+						{
+							way.Add(new List<int>());
+							way[_quantityOfWays].Add(1);
+							++_quantityOfWays;
+							//var x = ++start[2][i];
+							hypothesis[0][i]++;
+							hypothesis[2][i] = CheckDir(hypothesis[2][i],Down); //ToDownDir(hypothesis[2][i]);
+							fl = false;
+						}
+					}
+				}
+			}
+					break;
+			case Left:
+			{
+				//int i, quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
+
+				for (i = 0; i < _lengthOfListStart; ++i)
+				{
+					var fl = true;
+					int x = hypothesis[0][i], y = hypothesis[1][i];
+					//to test code below
+					//down
+					if (x + 1 < height && _map[x + 1, y, 0] == quantity)
+					{
+						if (_map[x, y, Left] == 0 &&
+						    CheckWalls(x + 1, y, Left))
+						{
+							way.Add(new List<int>());
+							way[_quantityOfWays].Add(1);
+							++_quantityOfWays;
+							//var x = ++start[2][i];
+							hypothesis[0][i]++;
+							hypothesis[2][i] = CheckDir(hypothesis[2][i],Down); //ToDownDir(hypothesis[2][i]);
+							fl = false;
+						}
+					}
+				}
+			}
+					break;
+			case Up:
+			{
+				//int i, quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
+
+				for (i = 0; i < _lengthOfListStart; ++i)
+				{
+					var fl = true;
+					int x = hypothesis[0][i], y = hypothesis[1][i];
+					//to test code below
+					//down
+					Console.Write(x + " " + y + " " + _lengthOfListStart + ";   ");
+					if (x + 1 < height && _map[x + 1, y, 0] == quantity)
+					{
+						if (_map[x, y, Down] == 0 &&
+						    CheckWalls(x + 1, y, Down))
+						{
+							way.Add(new List<int>());
+							way[_quantityOfWays].Add(1);
+							++_quantityOfWays;
+							//var x = ++start[2][i];
+							hypothesis[0][i]++;
+							hypothesis[2][i] = CheckDir(hypothesis[2][i],Down); //ToDownDir(hypothesis[2][i]);
+							fl = false;
+						}
+					}
+				}
+			}
+					break;
+			case Right:
+			{
+				//int i, quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
+
+				for (i = 0; i < _lengthOfListStart; ++i)
+				{
+					var fl = true;
+					int x = hypothesis[0][i], y = hypothesis[1][i];
+					//to test code below
+					//down
+					Console.Write(x + " " + y + " " + _lengthOfListStart + ";   ");
+					if (x + 1 < height && _map[x + 1, y, 0] == quantity)
+					{
+						if (_map[x, y, Down] == 0 &&
+						    CheckWalls(x + 1, y, Down))
+						{
+							way.Add(new List<int>());
+							way[_quantityOfWays].Add(1);
+							++_quantityOfWays;
+							//var x = ++start[2][i];
+							hypothesis[0][i]++;
+							hypothesis[2][i] = CheckDir(hypothesis[2][i],Down); //ToDownDir(hypothesis[2][i]);
+							fl = false;
+						}
+					}
+				}
+			}
+					break;
+		}
 	}
 	*/
 	private static int ToRightDir(int direction)
@@ -346,7 +511,7 @@ public class Map
 		if (direction < 4) return direction + 1;
 		return 1;
 	}
-
+	
 	//Возвращает направление, если поворачиваем в соотв. сторону
 	private static int ToLeftDir(int direction)
 	{
@@ -354,7 +519,7 @@ public class Map
 		return 4;
 	}
 	
-	private static int ToRoundDir(int direction)
+	private static int ToDownDir(int direction)
 	{
 		if (direction > 2) return direction - 2;
 		return direction + 2;
@@ -364,18 +529,14 @@ public class Map
 	{
 		if (direction == ToRightDir(currentDirection)) return Right;
 		if (direction == ToLeftDir(currentDirection)) return Left;
-		if (direction == ToRoundDir(currentDirection)) return Down;
+		if (direction == ToDownDir(currentDirection)) return Down;
 		return Up;
 	}
 	
 	private static int ChooseBestDirection()
 	{
-		int i; //, n = endOfWay[0].Count;
-		/*
-		int[,] start_copy = new int[start.Count,start[0].Count];
-		int[,] endOfWay_copy = new int[endOfWay.Count, endOfWay[0].Count];
-		*/
-
+		int i;
+	
 		List<List<int>> differentIndications = new List<List<int>>();
 		for (i = 0; i < 5; ++i)
 		{
@@ -386,36 +547,37 @@ public class Map
 		//List<List<int>> differentIndications = new List<List<int>>();
 		
 		
-		for (i = 0; i < endOfWay[0].Count; ++i)
+		for (i = 0; i < hypothesis[0].Count; ++i)
 		{
-			int x = endOfWay[0][i], y = endOfWay[1][i];
-			if (_map[endOfWay[0][i], endOfWay[1][i], 1] == 0)
+			int x = hypothesis[0][i], y = hypothesis[1][i];
+			if (_map[x, y, 1] == 0)
 			{
-				CheckIndications(endOfWay[0][i] + 1, endOfWay[1][i], endOfWay[2][i]/*1*/,
+				CheckIndications(x + 1, y, hypothesis[2][i]/*1*/,
 					ref differentIndications,1);
 			}
 
-			if (_map[endOfWay[0][i], endOfWay[1][i], 2] == 0)
+			if (_map[x, y, 2] == 0)
 			{
-				CheckIndications(endOfWay[0][i], endOfWay[1][i] - 1, endOfWay[2][i]/*2*/,
+				CheckIndications(x, y - 1, hypothesis[2][i]/*2*/,
 					ref differentIndications,2);
 			}
 
-			if (_map[endOfWay[0][i], endOfWay[1][i], 3] == 0)
+			if (_map[x, y, 3] == 0)
 			{
-				CheckIndications(endOfWay[0][i] - 1, endOfWay[1][i], endOfWay[2][i]/*3*/,
+				CheckIndications(x - 1, y, hypothesis[2][i]/*3*/,
 					ref differentIndications,3);
 			}
 
-			if (_map[endOfWay[0][i], endOfWay[1][i], 4] == 0)
+			if (_map[x, y, 4] == 0)
 			{
-				CheckIndications(endOfWay[0][i], endOfWay[1][i] + 1, endOfWay[2][i]/*4*/,
+				CheckIndications(x, y + 1, hypothesis[2][i]/*4*/,
 					ref differentIndications,4);
 			}
 		}
 		//Работает не правильно! Исправить
 		Console.WriteLine("final dir:" + differentIndications[0].Count + differentIndications[1].Count
 		                  +differentIndications[2].Count+differentIndications[3].Count);
+		
 		int max = differentIndications[0].Count, k = 1;
 		if (differentIndications[1].Count > max)
 		{
@@ -432,7 +594,7 @@ public class Map
 			max = differentIndications[3].Count;
 			k = 4;
 		}
-		Console.WriteLine("oookkokkok "+k);
+		Console.WriteLine("Solution: "+k);
 		return k;
 	}
 	/*У робота:
@@ -442,11 +604,11 @@ public class Map
 		л-1
 	*/
 	private static void CheckIndications  (	int x, int y, int direction,
-											ref List<List<int>> differentInd,int goToDirection )
+											ref List<List<int>> differentInd,int newDirection )
 	{
 		int value, //k=direction-1;
-			k = CheckDir(direction, goToDirection)-1;
-		switch (goToDirection)
+			k = CheckDir(direction, newDirection)-1;
+		switch (newDirection)
 		{
 			case Down:
 				value = 1000 * _map[x, y, 1] + 100 * _map[x, y, 2] +
@@ -472,38 +634,13 @@ public class Map
 				Console.WriteLine("OOOOOPPPSSSSS");
 				break;
 		}
+		/*
 		Console.WriteLine("kek");
 		Console.Write(differentInd[0].Count);
 		Console.Write(differentInd[1].Count);
 		Console.Write(differentInd[2].Count);
 		Console.Write(differentInd[3].Count);
 		Console.WriteLine();
-		
-		/*
-		if (direction == Down)
-		{
-			value = 1000 * _map[x, y, 3] + 100 * _map[x, y, 4] +
-			        10 * _map[x, y, 1] + _map[x, y, 2];
-			if (!differentInd[0].Contains(value)) differentInd[0].Add(value);
-		}
-		else if (direction == Left)
-		{
-			value = 1000 * _map[x, y, 4] + 100 * _map[x, y, 1] +
-			        10 * _map[x, y, 2] + _map[x, y, 3];
-			if (!differentInd[1].Contains(value)) differentInd[1].Add(value);
-		}
-		else if (direction == Up)
-		{
-			value = 1000 * _map[x, y, 1] + 100 * _map[x, y, 2] +
-			        10 * _map[x, y, 3] + _map[x, y, 4];
-			if (!differentInd[2].Contains(value)) differentInd[2].Add(value);
-		}
-		else
-		{
-			value = 1000 * _map[x, y, 2] + 100 * _map[x, y, 3] +
-			        10 * _map[x, y, 4] + _map[x, y, 1];
-			if (!differentInd[3].Contains(value)) differentInd[3].Add(value);
-		}
 		*/
 	}
 
@@ -529,7 +666,7 @@ public class Map
 			}
 		}
 		
-		EndOfWayInit();
+		//EndOfWayInit();
 		int dir = ChooseBestDirection();
 		
 		return dir;

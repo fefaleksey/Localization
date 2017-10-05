@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Security.Cryptography.X509Certificates;
 /*
 	Добавить вариант: Если картины одинаковые при движении во все стороны, расчитать следующий
@@ -50,21 +52,11 @@ public class Map
 		}
 	};
 
-	/*
-		= new int[3, 3, 5]
-	{
-		{{2, 0, 1, 1, 0}, {1, 0, 0, 1, 0}, {2, 0, 0, 1, 1}},
-		{{1, 0, 1, 0, 0}, {1, 1, 0, 0, 0}, {1, 0, 0, 0, 1}},
-		{{2, 1, 1, 0, 0}, {3, 1, 0, 1, 1}, {3, 1, 1, 0, 1}}
-	};
-	*/
 	private static int[] _sensors = new int[4];
 
 	private const int Down = 1, Left = 2, Up = 3, Right = 4;
 
-
-	private static int height = 8,
-		wight = 8, //размеры карты (_map)
+	private static int height = 8, wight = 8, //размеры карты (_map)
 		_quantityOfHypothises = 0;
 
 	private static List<List<int>> hypothesis = new List<List<int>>(); // x,y,direction
@@ -84,12 +76,8 @@ public class Map
 	{
 		int quantity = 3;
 		StartInit();
-		//MapInit();
-		//PrintMap();
-		//quantity = 3;
 		Console.WriteLine("localization");
-		//StartInit();
-		SensorsInit(1, 0, 0, 0); //Потом пригодится, когда доработаю Hypothesis1
+		SensorsInit(1, 0, 0, 0);
 		Hypothesis1(quantity);
 		Console.WriteLine("Hypotsesis 1");
 		PrintMap();
@@ -98,81 +86,29 @@ public class Map
 		Console.WriteLine("step 1");
 		Hypothesis2();
 		PrintMap();
-		//PrintWays();
-		Solution();
 		SensorsInit(0, 1, 0, 1);
 		Console.WriteLine("step 2");
 		Hypothesis3(Right);
 		PrintMap();
-		//PrintWays();
-		Solution();
-		/*
-		SensorsInit(0, 0, 1, 0);
-		Console.WriteLine("step 3");
-		Hypothesis3(Up);
+		Prognosis(6);
+		ListFiltration(ref best_ways);
 		PrintMap();
-		//PrintWays();
-		Solution();
-		/***********/ /*
- 		SensorsInit(0, 0, 0, 1);
- 		Console.WriteLine("step 4");
- 		Hypothesis3(Right);
- 		PrintMap();
- 		//PrintWays();
- 		Solution();
- 		/**************/ /*
- 		SensorsInit(0, 1, 0, 0);
- 		Console.WriteLine("step 5");
- 		Hypothesis3(Up);
- 		PrintMap();
- 		//PrintWays();
- 		Solution();
- 		/**********/ /*
- 		SensorsInit(0, 0, 1, 1);
- 		Console.WriteLine("step 6");
- 		Hypothesis3(Up);
- 		PrintMap();
- 		//PrintWays();
- 		Solution();
- 		Console.WriteLine("***************************************");
- 		//ways.Clear();
- 		//WaysInit(6);
- 		//GenerateWays(6);
- 		//PrintWays();
- 		*/
-		Prognosis(4);
-		//PrintWays();
-		PrintMap();
+		for (var l = 0; l < best_ways.Count; l++)
+		{
+			Console.WriteLine("ways " + l);
+			for (int i = 0; i < best_ways[l].Count; i++)
+			{
+				//Console.WriteLine("ways " + l);
+				Console.Write(best_ways[l][i] + ",");
+				//Console.WriteLine();
+			}
+			Console.WriteLine();
+		}
 	}
 
-	/*
-		private static void DirectionOfRotation(int direction)
-		{
-			switch (direction)
-			{
-				case 1:
-				case 2:
-				case 3:
-					break;
-				case 4:
-						
-			}
-		}
-		*/
 	private static void MapInit()
 	{
-		/*
-		int m, n;
-		Console.WriteLine("The number of rows: ");
-		n=Convert.ToInt32(Console.ReadLine());
-		//Console.WriteLine("The number of columns: ");
-		//n=Convert.ToInt32(Console.Read());
-		for (var i = 0; i < n; ++i)
-		{
-			var s = Convert.ToString(Console.ReadLine());
-			Console.WriteLine(s);
-		}
-		*/
+		
 	}
 
 	public static void PrintMap()
@@ -249,57 +185,7 @@ public class Map
 		_sensors[2] = up;
 		_sensors[3] = right;
 	}
-
-
-	public static void EndOfWayInit()
-	{
-		int x, y, k = 0, numberOfWay = 0;
-		for (var i = 0; i < 3; ++i)
-		{
-			endOfWay.Add(new List<int>());
-		}
-		for (var i = 0; i < _quantityOfHypothises; ++i)
-		{
-			x = hypothesis[0][i];
-			y = hypothesis[1][i];
-			for (var j = 0; j < hypothesis[2][i]; ++j)
-			{
-				for (k = 0; k < ways[numberOfWay].Count; ++k)
-				{
-					switch (ways[numberOfWay][k])
-					{
-						case 1:
-							++x;
-							break;
-						case 2:
-							--y;
-							break;
-						case 3:
-							--x;
-							break;
-						case 4:
-							++y;
-							break;
-					}
-				}
-				--k;
-				Console.Write("EndOfWayInit \nCount:" + ways[numberOfWay].Count);
-				endOfWay[0].Add(x);
-				endOfWay[1].Add(y);
-				endOfWay[2].Add(ways[numberOfWay][k]);
-				Console.WriteLine("coord:" + x + " " + y);
-				Console.WriteLine("  end direction:" + endOfWay[2][k]);
-				++numberOfWay;
-			}
-		}
-
-		endOfWay[2][0] = 4;
-		endOfWay[2][1] = 1;
-		endOfWay[2][2] = 3;
-		Console.WriteLine("EndOfWayInit2 \n" + endOfWay[2][0] + " "
-		                  + endOfWay[2][1] + " " + endOfWay[2][2]);
-	}
-
+	
 	//сравнивает показания датчиков с полем на карте (сравнивает стены)
 	//(робот двигался (x0,y0)->(x1,y1)
 	private static bool CheckWalls(int x, int y, int direction)
@@ -526,17 +412,6 @@ public class Map
 					}
 					break;
 				}
-				/*
-				default:
-				{
-					hypothesis[0].RemoveAt(i);
-					hypothesis[1].RemoveAt(i);
-					hypothesis[2].RemoveAt(i);
-					i--;
-					_lengthOfListStart--;
-					break;
-				}
-				*/
 			}
 			if (fl)
 			{
@@ -575,13 +450,6 @@ public class Map
 		if (directionOfTravel == Right) return ToRightDir(currentDirection);
 		if (directionOfTravel == Left) return ToLeftDir(currentDirection);
 		return ToDownDir(currentDirection);
-
-		/*
-		if (directionOfTravel == ToRightDir(currentDirection)) return Right;
-		if (directionOfTravel == ToLeftDir(currentDirection)) return Left;
-		if (directionOfTravel == ToDownDir(currentDirection)) return Down;
-		return currentDirection;
-		*/
 	}
 
 	private static int ChooseBestDirection()
@@ -684,14 +552,6 @@ public class Map
 				Console.WriteLine("OOOOOPPPSSSSS");
 				break;
 		}
-		/*
-		Console.WriteLine("kek");
-		Console.Write(differentInd[0].Count);
-		Console.Write(differentInd[1].Count);
-		Console.Write(differentInd[2].Count);
-		Console.Write(differentInd[3].Count);
-		Console.WriteLine();
-		*/
 	}
 
 	private static int Solution()
@@ -746,7 +606,6 @@ public class Map
 			copy_hypothesis.Add(new List<int>());
 		}
 
-
 		Copy_Lists(ref copy_hypothesis, hypothesis);
 
 		int n = _quantityOfHypothises;
@@ -773,8 +632,8 @@ public class Map
 				Copy_Lists(ref hypothesis, copy_hypothesis);
 			}
 		}
-
-
+		
+		
 		for (var l = 0; l < best_ways.Count; l++)
 		{
 			Console.WriteLine("ways " + l);
@@ -947,16 +806,68 @@ public class Map
 		                  _sensors[2] + " " + _sensors[3]);
 	}
 
-	//to do
-	private static void BestWaysFiltration()
+	private static void ListFiltration(ref List<List<int>> list)
 	{
-		for (int i = 0; i < best_ways.Count; i++)
+		for (int i = 0; i < list.Count; i++)
 		{
-			for (int j = 0; j < best_ways[i].Count; j++)
+			for (int j = i + 1; j < list.Count; j++)
 			{
-
+				var fl = true;
+				for (int k = 0; k < list[i].Count && k < list[j].Count; k++)
+				{
+					if (list[i][k] != list[j][k]) fl = false;
+				}
+				if (fl)
+				{
+					if (list[i].Count == list[j].Count)
+					{
+						list.RemoveAt(j);
+						--j;
+					}
+					else
+					if (list[i].Count < list[j].Count)
+					{
+						list.RemoveAt(j);
+						--j;
+					}
+					else
+					{
+						list.RemoveAt(i);
+						i = j;
+					}
+				}
 			}
 		}
 	}
-
+/*
+	public static void GeneretionJS(List<int> way)
+	{
+		for (int i = 0; i < way.Count; i++)
+		{
+			switch (way[i])
+			{
+				case Down:
+				{
+					
+					break;
+				}
+				case Left:
+				{
+					
+					break;
+				}
+				case Up:
+				{
+					
+					break;
+				}
+				case Right:
+				{
+					
+					break;
+				}
+			}
+		}
+	}
+*/
 }

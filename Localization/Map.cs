@@ -86,9 +86,9 @@ public class Map
 		Console.WriteLine("step 1");
 		Hypothesis2();
 		PrintMap();
-		SensorsInit(0, 1, 0, 1);
-		Console.WriteLine("step 2");
-		Hypothesis3(Right);
+		//SensorsInit(0, 1, 0, 1);
+		//Console.WriteLine("step 2");
+		//Hypothesis3(Right);
 		PrintMap();
 		Prognosis(6);
 		ListFiltration(ref best_ways);
@@ -549,7 +549,7 @@ public class Map
 				if (!differentInd[k].Contains(value)) differentInd[k].Add(value); //3
 				break;
 			default:
-				Console.WriteLine("OOOOOPPPSSSSS");
+				Console.WriteLine("CheckIndications has fallen!!!");
 				break;
 		}
 	}
@@ -619,13 +619,8 @@ public class Map
 			for (int j = 0; j < ways.Count; j++)
 			{
 				int x = hypothesis[0][i], y = hypothesis[1][i];
-				//GenerateWays(hypothesis[0][i], hypothesis[1][i],6);
 				_quantityOfHypothises = hypothesis[0].Count;
-				ways.Clear();
-				WaysInit(lengthOfWay);
-				GenerateWays(lengthOfWay);
 				NumberOfSteps(x, y, j, i);
-
 				hypothesis[0].Clear();
 				hypothesis[1].Clear();
 				hypothesis[2].Clear();
@@ -633,7 +628,7 @@ public class Map
 			}
 		}
 		
-		
+		/*
 		for (var l = 0; l < best_ways.Count; l++)
 		{
 			Console.WriteLine("ways " + l);
@@ -645,6 +640,7 @@ public class Map
 			}
 			Console.WriteLine();
 		}
+		*/
 		return 0;
 	}
 
@@ -685,10 +681,15 @@ public class Map
 		}
 	}
 
+	//Хотя не факт
+	/* Убрать генерацию путей!!!!! 
+	 * Заменить на функцию, которая будет по индексу возвращать направление!!!
+	 * Не забыть учесть изменения в методе Prognosis */
 	private static int NumberOfSteps(int x, int y, int j, int i)
 	{
 		int x_coord = hypothesis[0][i], y_coord = hypothesis[1][i];
 		//Console.WriteLine("Number of steps");
+		//Заменить на цикл "пока не локализуюсь"
 		for (int k = 0; k < ways[j].Count; k++)
 		{
 			bool fl = true;
@@ -759,13 +760,13 @@ public class Map
 				for (var l = 0; l <= k; l++)
 				{
 					best_ways[n].Add(ways[j][l]);
-					Console.Write(best_ways[n][l] + ",");
+				//	Console.Write(best_ways[n][l] + ",");
 				}
-				Console.WriteLine(" quantity of steps: " + k);
+				//Console.WriteLine(" quantity of steps: " + k);
 				return k;
 			}
 		}
-		Console.WriteLine("HC: " + hypothesis[0].Count);
+		//Console.WriteLine("HC: " + hypothesis[0].Count);
 		return hypothesis[0].Count;
 	}
 
@@ -801,9 +802,11 @@ public class Map
 				Console.WriteLine("SensorsRead ERROR");
 				break;
 		}
+		/*
 		Console.WriteLine("coord:" + x + " " + y);
 		Console.WriteLine("sensors:" + _sensors[0] + " " + _sensors[1] + " " +
 		                  _sensors[2] + " " + _sensors[3]);
+		*/
 	}
 
 	private static void ListFiltration(ref List<List<int>> list)
@@ -839,35 +842,4 @@ public class Map
 			}
 		}
 	}
-/*
-	public static void GeneretionJS(List<int> way)
-	{
-		for (int i = 0; i < way.Count; i++)
-		{
-			switch (way[i])
-			{
-				case Down:
-				{
-					
-					break;
-				}
-				case Left:
-				{
-					
-					break;
-				}
-				case Up:
-				{
-					
-					break;
-				}
-				case Right:
-				{
-					
-					break;
-				}
-			}
-		}
-	}
-*/
 }

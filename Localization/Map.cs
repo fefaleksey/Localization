@@ -76,6 +76,7 @@ public class Map
 	{
 		int quantity = 3;
 		StartInit();
+		/*
 		Console.WriteLine("localization");
 		SensorsInit(1, 0, 0, 0);
 		Hypothesis1(quantity);
@@ -90,6 +91,7 @@ public class Map
 		//Console.WriteLine("step 2");
 		//Hypothesis3(Right);
 		PrintMap();
+		*/
 		Prognosis(6);
 		ListFiltration(ref best_ways);
 		PrintMap();
@@ -153,12 +155,6 @@ public class Map
 			}
 			Console.WriteLine();
 		}
-		/*
-		foreach (var k in hypothesis[2])
-		{
-			Console.Write(k + " ");
-		}
-		*/
 	}
 
 	private static void StartInit()
@@ -169,15 +165,26 @@ public class Map
 		}
 	}
 
-/*
-	private static void BestWaysInit()
+	private static void HypothesisInit()
 	{
-		for (int i = 0; i < 4; i++)
+		_quantityOfHypothises = 0;
+		var n = 0;
+		for (var i = 0; i < wight; i++)
 		{
-			
+			for (var j = 0; j < height; j++)
+			{
+				for (var k = 1; k < 5; k++)
+				{
+					hypothesis[0].Add(i);
+					hypothesis[1].Add(j);
+					hypothesis[2].Add(k);
+					++n;
+					++_quantityOfHypothises;
+				}
+			}
 		}
 	}
-*/
+
 	private static void SensorsInit(int down, int left, int up, int right)
 	{
 		_sensors[0] = down;
@@ -452,69 +459,6 @@ public class Map
 		return ToDownDir(currentDirection);
 	}
 
-	private static int ChooseBestDirection()
-	{
-		int i;
-
-		List<List<int>> differentIndications = new List<List<int>>();
-		for (i = 0; i < 5; ++i)
-		{
-			differentIndications.Add(new List<int>());
-
-		}
-
-		for (i = 0; i < hypothesis[0].Count; ++i)
-		{
-			int x = hypothesis[0][i], y = hypothesis[1][i];
-			if (_map[x, y, 1] == 0)
-			{
-				CheckIndications(x + 1, y, hypothesis[2][i] /*1*/,
-					ref differentIndications, 1);
-			}
-
-			if (_map[x, y, 2] == 0)
-			{
-				CheckIndications(x, y - 1, hypothesis[2][i] /*2*/,
-					ref differentIndications, 2);
-			}
-
-			if (_map[x, y, 3] == 0)
-			{
-				CheckIndications(x - 1, y, hypothesis[2][i] /*3*/,
-					ref differentIndications, 3);
-			}
-
-			if (_map[x, y, 4] == 0)
-			{
-				CheckIndications(x, y + 1, hypothesis[2][i] /*4*/,
-					ref differentIndications, 4);
-			}
-		}
-		//Работает не правильно! Исправить
-		Console.WriteLine("final dir:" + differentIndications[0].Count
-		                  + differentIndications[1].Count
-		                  + differentIndications[2].Count + differentIndications[3].Count);
-
-		int max = differentIndications[0].Count, k = 1;
-		if (differentIndications[1].Count > max)
-		{
-			max = differentIndications[1].Count;
-			k = 2;
-		}
-		if (differentIndications[2].Count > max)
-		{
-			max = differentIndications[2].Count;
-			k = 3;
-		}
-		if (differentIndications[3].Count > max)
-		{
-			max = differentIndications[3].Count;
-			k = 4;
-		}
-		Console.WriteLine("Solution: " + k);
-		return k;
-	}
-
 	/*У робота:
 		в-1000
 		п-100
@@ -554,34 +498,6 @@ public class Map
 		}
 	}
 
-	private static int Solution()
-	{
-		int k = 0, quantity = 1, i;
-
-		while (quantity == 1)
-		{
-			quantity = 0;
-			for (i = 0; i < 4; ++i)
-				if (_sensors[i] == 0)
-				{
-					++quantity;
-					k = i;
-				}
-			if (quantity == 1)
-			{
-				//проехать одну клетку в данном направлении
-				//добавить перемещение в путь
-				//cчитать показания с сенсоров
-				//фильтрануть карту
-			}
-		}
-
-		//EndOfWayInit();
-		int dir = ChooseBestDirection();
-
-		return dir;
-	}
-
 	private static void Copy_Lists(ref List<List<int>> to, List<List<int>> from)
 	{
 		int m = from.Count, n = from[0].Count;
@@ -600,7 +516,8 @@ public class Map
 		Console.WriteLine("Prognosis");
 		List<List<int>> copy_hypothesis = new List<List<int>>();
 
-
+		HypothesisInit();
+		
 		for (int i = 0; i < hypothesis.Count; i++)
 		{
 			copy_hypothesis.Add(new List<int>());
@@ -608,7 +525,7 @@ public class Map
 
 		Copy_Lists(ref copy_hypothesis, hypothesis);
 
-		int n = _quantityOfHypothises;
+		int n = hypothesis[0].Count;
 
 		ways.Clear();
 		WaysInit(lengthOfWay);
@@ -690,11 +607,12 @@ public class Map
 		int x_coord = hypothesis[0][i], y_coord = hypothesis[1][i];
 		//Console.WriteLine("Number of steps");
 		//Заменить на цикл "пока не локализуюсь"
+		var newDir = hypothesis[2][i];
 		for (int k = 0; k < ways[j].Count; k++)
 		{
 			bool fl = true;
-			int a = hypothesis[2][i], b = ways[j][k];
-			var newDir = ChooseDir(hypothesis[2][i], ways[j][k]);
+			//int a = hypothesis[2][i], b = ways[j][k];
+			newDir = ChooseDir(newDir, ways[j][k]);
 			switch (newDir)
 			{
 				case Down:

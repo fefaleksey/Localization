@@ -73,11 +73,12 @@ namespace Localization
 		//way: x, y, directions
 		public static List<List<int>> best_ways = new List<List<int>>();
 
-		private static List<List<int>> endOfWay = new List<List<int>>(); //x,y, maybe else direction
+		private static List<List<int>> endOfWay = new List<List<int>>();
+		//x,y, maybe else direction
 
 		private static int _quantityOfWays = 0;
 
-		/******************************************************************************************/
+		/**************************************************************************************/
 
 		public static void Localization()
 		{
@@ -100,25 +101,25 @@ namespace Localization
 		PrintMap();
 		*/
 //		Prognosis(10);
-		HandingOfAllCases.Handing();
-		ListFiltration(ref best_ways);
-		PrintMap();
-		for (var l = 0; l < best_ways.Count; l++)
-		{
-			Console.WriteLine("ways " + l);
-			for (int i = 0; i < best_ways[l].Count; i++)
+			HandingOfAllCases.Handing();
+			ListFiltration(ref best_ways);
+			PrintMap();
+			for (var l = 0; l < best_ways.Count; l++)
 			{
-				//Console.WriteLine("ways " + l);
-				Console.Write(best_ways[l][i] + ",");
-				//Console.WriteLine();
+				Console.WriteLine("ways " + l);
+				for (int i = 0; i < best_ways[l].Count; i++)
+				{
+					//Console.WriteLine("ways " + l);
+					Console.Write(best_ways[l][i] + ",");
+					//Console.WriteLine();
+				}
+				Console.WriteLine();
 			}
-			Console.WriteLine();
-		}
 		}
 
 		private static void MapInit()
 		{
-		
+
 		}
 
 		public static void PrintMap()
@@ -199,12 +200,16 @@ namespace Localization
 			_sensors[1] = left;
 			_sensors[2] = up;
 			_sensors[3] = right;
+			Robot.Sensors = _sensors;
+			_sensors = Robot.Sensors;
 		}
-	
+
 		//сравнивает показания датчиков с полем на карте (сравнивает стены)
 		//(робот двигался (x0,y0)->(x1,y1)
 		private static bool CheckWalls(int x, int y, int direction)
 		{
+			//Robot.Sensors = _sensors;
+			_sensors = Robot.Sensors;
 			if (direction == Down)
 			{
 				if (_map[x, y, 1] != _sensors[2]) return false;
@@ -241,7 +246,7 @@ namespace Localization
 
 		// 0 <= quantity <= 4
 		//Сюда ещё можно добавить расположение стен (| | или _|)
-		private static void Hypothesis1(int quantity)
+		public static void Hypothesis1(int quantity)
 		{
 			int i, j;
 			for (i = 0; i < height; ++i)
@@ -261,6 +266,24 @@ namespace Localization
 			//передвигаемся прямо (если занято, то направо/налево/назад)
 		}
 
+		public static void Hypothesis1New()
+		{
+			var quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
+			int i, x, y;
+			for (i = 0; i < hypothesis[0].Count; ++i)
+			{
+				x = hypothesis[0][i];
+				y = hypothesis[1][i];
+				if (_map[x, y, 0] != quantity)
+				{
+					hypothesis[0].RemoveAt(i);
+					hypothesis[1].RemoveAt(i);
+					hypothesis[2].RemoveAt(i);
+					i--;
+				}
+			}
+			//передвигаемся прямо (если занято, то направо/налево/назад)
+		}
 
 		private static void Hypothesis2()
 		{
@@ -346,7 +369,7 @@ namespace Localization
 
 			for (i = 0; i < hypothesis[0].Count; ++i)
 			{
-				var newDir = ChooseDir(hypothesis[2][i], direction);
+				var newDir = Motion.GetNewDir(hypothesis[2][i], direction);
 				var fl = true;
 				switch (newDir)
 				{
@@ -438,7 +461,7 @@ namespace Localization
 				}
 			}
 		}
-
+		
 		private static int ToRightDir(int direction)
 		{
 			if (direction < 4) return direction + 1;
@@ -454,8 +477,19 @@ namespace Localization
 
 		private static int ToDownDir(int direction)
 		{
+
+			if (Way.curent_way.Count == 1)
+			{
+				if (direction > 2) return direction - 2;
+				return direction + 2;
+			}
+			else return direction;
+			/*
 			if (direction > 2) return direction - 2;
 			return direction + 2;
+			*/
+			Console.WriteLine("Map.ToDownDir - bag");
+			return direction; //down == up
 		}
 
 		// текущее направление в абсолютных коорд/направление движения(куда едем?)
@@ -472,7 +506,7 @@ namespace Localization
 		п-100
 		н-10
 		л-1
-	*/
+		*/
 		private static void CheckIndications(int x, int y, int direction,
 			ref List<List<int>> differentInd, int newDirection)
 		{
@@ -525,7 +559,7 @@ namespace Localization
 			List<List<int>> copy_hypothesis = new List<List<int>>();
 
 			HypothesisInit();
-		
+
 			for (int i = 0; i < hypothesis.Count; i++)
 			{
 				copy_hypothesis.Add(new List<int>());
@@ -552,7 +586,7 @@ namespace Localization
 					Copy_Lists(ref hypothesis, copy_hypothesis);
 				}
 			}
-		
+
 			/*
 		for (var l = 0; l < best_ways.Count; l++)
 		{
@@ -607,7 +641,7 @@ namespace Localization
 			}
 			return 0;
 		}
-	
+
 		private static void GenerateWays(long length)
 		{
 			length = (Int64) Math.Pow(4, length);
@@ -639,8 +673,8 @@ namespace Localization
 
 		//Хотя не факт
 		/* Убрать генерацию путей!!!!! 
-	 * Заменить на функцию, которая будет по индексу возвращать направление!!!
-	 * Не забыть учесть изменения в методе Prognosis */
+	 	* Заменить на функцию, которая будет по индексу возвращать направление!!!
+	 	* Не забыть учесть изменения в методе Prognosis */
 		private static int NumberOfSteps(int x, int y, int j, int i)
 		{
 			int x_coord = hypothesis[0][i], y_coord = hypothesis[1][i], direction = hypothesis[2][i];
@@ -656,7 +690,7 @@ namespace Localization
 				{
 					case Down:
 					{
-						if (x + 1 < height && _map[x, y, Down] == 0)// && CheckWalls(x, y + 1, Down))
+						if (x + 1 < height && _map[x, y, Down] == 0) // && CheckWalls(x, y + 1, Down))
 						{
 							fl = false;
 							++x;
@@ -737,24 +771,32 @@ namespace Localization
 					_sensors[3] = _map[x, y, 2];
 					_sensors[0] = _map[x, y, 3];
 					_sensors[1] = _map[x, y, 4];
+					Robot.Sensors = _sensors;
+					_sensors = Robot.Sensors;
 					break;
 				case Left:
 					_sensors[2] = _map[x, y, 2];
 					_sensors[3] = _map[x, y, 3];
 					_sensors[0] = _map[x, y, 4];
 					_sensors[1] = _map[x, y, 1];
+					Robot.Sensors = _sensors;
+					_sensors = Robot.Sensors;
 					break;
 				case Up:
 					_sensors[0] = _map[x, y, 1];
 					_sensors[1] = _map[x, y, 2];
 					_sensors[2] = _map[x, y, 3];
 					_sensors[3] = _map[x, y, 4];
+					Robot.Sensors = _sensors;
+					_sensors = Robot.Sensors;
 					break;
 				case Right:
 					_sensors[0] = _map[x, y, 2];
 					_sensors[1] = _map[x, y, 3];
 					_sensors[2] = _map[x, y, 4];
 					_sensors[3] = _map[x, y, 1];
+					Robot.Sensors = _sensors;
+					_sensors = Robot.Sensors;
 					break;
 				default:
 					Console.WriteLine("SensorsRead ERROR");
@@ -785,8 +827,7 @@ namespace Localization
 							list.RemoveAt(j);
 							--j;
 						}
-						else
-						if (list[i].Count < list[j].Count)
+						else if (list[i].Count < list[j].Count)
 						{
 							list.RemoveAt(j);
 							--j;
@@ -801,8 +842,8 @@ namespace Localization
 			}
 		}
 
-	
-	
+
+
 		//number - номер шага(если считать начиная с 0)
 		private static void Strategy(int number)
 		{
@@ -811,7 +852,7 @@ namespace Localization
 			{
 				for (var j = i; j < best_ways.Count; j++)
 				{
-				
+
 				}
 			}
 		}

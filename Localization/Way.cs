@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Xml.Schema;
 
-/* To do 09.10 !!
- *Переделать NumberOfSteps, используя данный класс
- * Протестить метод NextDirection
- * Написать метод принятия решения */
 namespace Localization
 {
 	class Way
@@ -14,7 +10,7 @@ namespace Localization
 		public static List<int> curent_way = new List<int>();
 		private static int i=0, forbiddenDirection=3;
 
-		private static int length = 10;
+		private static int length = 64;
 
 		public static void CurentWayInit()
 		{
@@ -33,11 +29,8 @@ namespace Localization
 			
 			if (localiz)
 			{
-				//Добавить этот путь в Map.best_ways
-				//Или заставить сделать это метод HandingHypothesis
-				
-				curent_way.RemoveAt(i);
-				--i;
+				//curent_way.RemoveAt(i);
+				//--i;
 				if (curent_way[i] == 4)
 				{
 					curent_way.RemoveAt(i);
@@ -49,16 +42,18 @@ namespace Localization
 				{
 					curent_way[i]++;
 					
-					if (curent_way.Count == 1)
+					if (curent_way.Count == 1 && curent_way[0]==2)
 					{
 						//запрещенное направление мы поменяем только 1 раз!
 						forbiddenDirection = 1;
+						Robot.InitialDirection = 3;
 					}
 					
 					if (curent_way[i] == forbiddenDirection)
 					{
 						curent_way[i]++;
 					}
+					
 				}
 				return curent_way[i];
 			}
@@ -95,14 +90,17 @@ namespace Localization
 				else
 				{
 					++curent_way[i];
-					if (curent_way.Count==1)
+					
+					if (curent_way.Count==1 && curent_way[0]==2)
 					{
 						forbiddenDirection = 1;
+						Robot.InitialDirection = 3;
 					}
 					if (curent_way[i] == forbiddenDirection)
 					{
 						++curent_way[i];
 					}
+					
 					return curent_way[i];
 				}
 			}

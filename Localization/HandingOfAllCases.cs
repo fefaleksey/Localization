@@ -39,7 +39,7 @@ namespace Localization
 					++test;
 					Copy_way(Way.curent_way, ref way);
 					Map.SensorsRead(Map.hypothesis[0][i], Map.hypothesis[1][i],
-						Map.hypothesis[2][i]); //!!
+									Map.hypothesis[2][i]); //!!
 					HandingHypothesis(i, way);
 					fl = Way.NextDirection(wayExist, localiz);
 					Map.hypothesis[0].Clear();
@@ -58,14 +58,18 @@ namespace Localization
 		//number == number of hypothesis
 		private static void HandingHypothesis(int number, List<int> way)
 		{
-			int x = Map.hypothesis[0][number], y = Map.hypothesis[1][number],
-				direction = Map.hypothesis[2][number];
+			int x = Map.hypothesis[0][number],
+				y = Map.hypothesis[1][number],
+				direction = Map.hypothesis[2][number],
+				x_start = x,
+				y_start = y;
 			var newDir = Map.hypothesis[2][number];
+			//Map.Hypothesis1New();
 			for (int k = 0; k < way.Count; k++)
 			{
 				bool fl = true;
 				//int a = hypothesis[2][i], b = ways[j][k];
-				newDir = Map.ChooseDir(newDir, way[k]);
+				newDir = Motion.GetNewDir(newDir, way[k]);//Map.ChooseDir(newDir, way[k]);
 				switch (newDir)
 				{
 					case Map.Down:
@@ -74,18 +78,19 @@ namespace Localization
 							// && CheckWalls(x, y + 1, Down))
 						{
 							fl = false;
-							//++x;
-							Map.SensorsRead(x+1, y, Map.Down);
+							++x;
+							Map.SensorsRead(x, y, Map.Down);
 						}
 						break;
 					}
 					case Map.Left:
 					{
-						if (y > 0 && Map._map[x, y, Map.Left] == 0) // && CheckWalls(x, y - 1, Left))
+						if (y > 0 && Map._map[x, y, Map.Left] == 0)
+							//&& CheckWalls(x, y - 1, Map.Left))
 						{
 							fl = false;
-							//--y;
-							Map.SensorsRead(x, y-1, Map.Left);
+							--y;
+							Map.SensorsRead(x, y, Map.Left);
 						}
 						break;
 					}
@@ -94,8 +99,8 @@ namespace Localization
 						if (x > 0 && Map._map[x, y, Map.Up] == 0) //&& CheckWalls(x - 1, y , Up))
 						{
 							fl = false;
-							//--x;
-							Map.SensorsRead(x-1, y, Map.Up);
+							--x;
+							Map.SensorsRead(x, y, Map.Up);
 						}
 						break;
 					}
@@ -105,8 +110,8 @@ namespace Localization
 							// CheckWalls(x, y + 1, Right))
 						{
 							fl = false;
-							//++y;
-							Map.SensorsRead(x, y+1, Map.Right);
+							++y;
+							Map.SensorsRead(x, y, Map.Right);
 						}
 						break;
 					}
@@ -134,8 +139,8 @@ namespace Localization
 					localiz = true;
 					var n = Map.best_ways.Count;
 					Map.best_ways.Add(new List<int>());
-					Map.best_ways[n].Add(x);
-					Map.best_ways[n].Add(y);
+					Map.best_ways[n].Add(x_start);
+					Map.best_ways[n].Add(y_start);
 					Map.best_ways[n].Add(direction);
 					for (var l = 0; l <= k; l++)
 					{
@@ -155,207 +160,5 @@ namespace Localization
 			//Console.WriteLine("HC: " + hypothesis[0].Count);
 			//return Map.hypothesis[0].Count;
 		}
-
-		/*
-		private static int NumberOfSteps(int x, int y, int j, int i)
-		{
-			int x_coord = hypothesis[0][i], y_coord = hypothesis[1][i],
-			 direction = hypothesis[2][i];
-			//Console.WriteLine("Number of steps");
-			//Заменить на цикл "пока не локализуюсь"
-			var newDir = hypothesis[2][i];
-			for (int k = 0; k < ways[j].Count; k++)
-			{
-				bool fl = true;
-				//int a = hypothesis[2][i], b = ways[j][k];
-				newDir = ChooseDir(newDir, ways[j][k]);
-				switch (newDir)
-				{
-					case Down:
-					{
-						if (x + 1 < height && _map[x, y, Down] == 0) 
-						// && CheckWalls(x, y + 1, Down))
-						{
-							fl = false;
-							++x;
-							SensorsRead(x, y, Down);
-						}
-						break;
-					}
-					case Left:
-					{
-						if (y > 0 && _map[x, y, Left] == 0) // && CheckWalls(x, y - 1, Left))
-						{
-							fl = false;
-							--y;
-							SensorsRead(x, y, Left);
-						}
-						break;
-					}
-					case Up:
-					{
-						if (x > 0 && _map[x, y, Up] == 0) //&& CheckWalls(x - 1, y , Up))
-						{
-							fl = false;
-							--x;
-							SensorsRead(x, y, Up);
-						}
-						break;
-					}
-					case Right:
-					{
-						if (y + 1 < wight && _map[x, y, Right] == 0) // && 
-							// CheckWalls(x, y + 1, Right))
-						{
-							fl = false;
-							++y;
-							SensorsRead(x, y, Right);
-						}
-						break;
-					}
-				}
-				if (fl)
-				{
-					_sensors[0] = -1;
-					_sensors[1] = -1;
-					_sensors[2] = -1;
-					_sensors[3] = -1;
-					return -1;
-				}
-
-				//Console.WriteLine("FFFUUUUUCKKKKKKKKKK" + hypothesis[0].Count);
-				Hypothesis3(ways[j][k]);
-
-				if (hypothesis[0].Count == 1)
-				{
-					var n = best_ways.Count;
-					best_ways.Add(new List<int>());
-					best_ways[n].Add(x_coord);
-					best_ways[n].Add(y_coord);
-					best_ways[n].Add(direction);
-					for (var l = 0; l <= k; l++)
-					{
-						best_ways[n].Add(ways[j][l]);
-						//	Console.Write(best_ways[n][l] + ",");
-					}
-					//Console.WriteLine(" quantity of steps: " + k);
-					return k;
-				}
-			}
-			//Console.WriteLine("HC: " + hypothesis[0].Count);
-			return hypothesis[0].Count;
-		}
-		*/
-
-		/*
-		private static int Prognosis(int lengthOfWay)
-		{
-			Console.WriteLine("Prognosis");
-			List<List<int>> copy_hypothesis = new List<List<int>>();
-
-			HypothesisInit();
-
-			for (int i = 0; i < hypothesis.Count; i++)
-			{
-				copy_hypothesis.Add(new List<int>());
-			}
-
-			Copy_Lists(ref copy_hypothesis, hypothesis);
-
-			int n = hypothesis[0].Count;
-
-			ways.Clear();
-			WaysInit(lengthOfWay);
-			GenerateWays(lengthOfWay);
-
-			for (var i = 0; i < n; ++i)
-			{
-				for (int j = 0; j < ways.Count; j++)
-				{
-					int x = hypothesis[0][i], y = hypothesis[1][i];
-					_quantityOfHypothises = hypothesis[0].Count;
-					NumberOfSteps(x, y, j, i);
-					hypothesis[0].Clear();
-					hypothesis[1].Clear();
-					hypothesis[2].Clear();
-					Copy_Lists(ref hypothesis, copy_hypothesis);
-				}
-			}
-			return 0;
-		}
-
-		private static void WaysInit(Int64 length)
-		{
-			length = (Int64) Math.Pow(4, length);
-			for (var i = 0; i < length; ++i)
-			{
-				ways.Add(new List<int>());
-			}
-		}
-
-		private static int GetDirectionFromWay(Int64 length)
-		{
-			length = (Int64) Math.Pow(4, length);
-			Int64 k = length / 4, s = k;
-			int direction = 1;
-			//ways.Clear();
-
-			while (k >= 1)
-			{
-				for (var i = 0; i < length; i++)
-				{
-					if (i == s)
-						if (direction < 4)
-						{
-							direction++;
-							s += k;
-						}
-						else
-						{
-							direction = 1;
-							s += k;
-						}
-					ways[i].Add(direction);
-				}
-				k /= 4;
-				s = k;
-			}
-			return 0;
-		}
-
-		private static void GenerateWays(long length)
-		{
-			length = (Int64) Math.Pow(4, length);
-			Int64 k = length / 4, s = k;
-			int direction = 1;
-			//ways.Clear();
-
-			while (k >= 1)
-			{
-				for (var i = 0; i < length; i++)
-				{
-					if (i == s)
-						if (direction < 4)
-						{
-							direction++;
-							s += k;
-						}
-						else
-						{
-							direction = 1;
-							s += k;
-						}
-					ways[i].Add(direction);
-				}
-				k /= 4;
-				s = k;
-			}
-		}
-		*/
-
-		//Хотя не факт
-		/* Убрать генерацию путей!!!!! 
-		 * Заменить на функцию, которая будет по индексу возвращать направление!!!
-		 * Не забыть учесть изменения в методе Prognosis */
 	}
 }

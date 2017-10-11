@@ -29,10 +29,10 @@ namespace Localization
 			return 4;
 		}
 
-		private static int ToDownDir(int direction)
+		private static int ToDownDir(int direction, bool beginWay)
 		{
 
-			if (Way.curent_way.Count == 1)
+			if (beginWay)
 			{
 				if (direction > 2) return direction - 2;
 				return direction + 2;
@@ -47,7 +47,7 @@ namespace Localization
 		}
 
 		// текущее направление в абсолютных коорд/направление движения(куда едем?)
-		public static int GetNewDir(int currentDirection, int newDirection)
+		public static int GetNewDir(int currentDirection, int newDirection, bool beginWay)
 		{
 			switch (newDirection)
 			{
@@ -58,7 +58,7 @@ namespace Localization
 				case Left:
 					return ToLeftDir(currentDirection);
 				case Down:
-					return ToDownDir(currentDirection);
+					return ToDownDir(currentDirection, beginWay);
 			}
 			Console.WriteLine("Motion.GetNewDir - Bag");
 			return -1;

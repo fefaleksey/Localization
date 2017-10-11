@@ -10,12 +10,14 @@ namespace Localization
 		public static List<int> curent_way = new List<int>();
 		private static int i=0, forbiddenDirection=3;
 
-		private static int length = 64;
+		private static int length = 10;
+		public static bool beginWay = true;
 
 		public static void CurentWayInit()
 		{
 			curent_way.Clear();
 			curent_way.Add(1);
+			forbiddenDirection = 3;
 			i = 0;
 		}
 		//localiz==true <=> мы локализовались

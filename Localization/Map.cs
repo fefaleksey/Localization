@@ -85,22 +85,33 @@ namespace Localization
 			int quantity = 3;
 			StartInit();
 			/*
-		Console.WriteLine("localization");
-		SensorsInit(1, 0, 0, 0);
-		Hypothesis1(quantity);
-		Console.WriteLine("Hypotsesis 1");
-		PrintMap();
-		//go in random direction
-		SensorsInit(0, 1, 0, 0);
-		Console.WriteLine("step 1");
-		Hypothesis2();
-		PrintMap();
-		//SensorsInit(0, 1, 0, 1);
-		//Console.WriteLine("step 2");
-		//Hypothesis3(Right);
-		PrintMap();
-		*/
-//		Prognosis(10);
+			Console.WriteLine("localization");
+			SensorsInit(1, 0, 0, 0);
+			Hypothesis1(quantity);
+			Console.WriteLine("Hypotsesis 1");
+			PrintMap();
+			//go in random direction
+			SensorsInit(0, 1, 0, 0);
+			Console.WriteLine("step 1");
+			Hypothesis2();
+			PrintMap();
+			//SensorsInit(0, 1, 0, 1);
+			//Console.WriteLine("step 2");
+			//Hypothesis3(Right);
+			PrintMap();
+			*/
+			//Prognosis(10);
+			Way.CurentWayInit();
+			Way.curent_way.Add(3);
+			//Way.curent_way.Add(2);
+			int k;
+			/*
+			k = Motion.GetNewDir(Left, Left);
+			k = Motion.GetNewDir(Left, Right);
+			k = Motion.GetNewDir(Right, Left);
+			k = Motion.GetNewDir(Right, Right);
+			*/
+			
 			HandingOfAllCases.Handing();
 			ListFiltration(ref best_ways);
 			PrintMap();
@@ -200,8 +211,12 @@ namespace Localization
 			_sensors[1] = left;
 			_sensors[2] = up;
 			_sensors[3] = right;
+			Robot.SetSensors(_sensors);
+			Robot.GetSensors(ref _sensors);
+			/*
 			Robot.Sensors = _sensors;
 			_sensors = Robot.Sensors;
+			*/
 		}
 
 		//сравнивает показания датчиков с полем на карте (сравнивает стены)
@@ -209,7 +224,14 @@ namespace Localization
 		private static bool CheckWalls(int x, int y, int direction)
 		{
 			//Robot.Sensors = _sensors;
-			_sensors = Robot.Sensors;
+			if (Robot.InitialDirection == 1)
+			{
+				if (direction > 2) direction -= 2;
+				else direction += 2;
+			}
+			
+			
+			//_sensors = Robot.Sensors;
 			if (direction == Down)
 			{
 				if (_map[x, y, 1] != _sensors[2]) return false;
@@ -363,13 +385,13 @@ namespace Localization
 		}
 
 		//потестить ещё
-		public static void Hypothesis3(int direction)
+		public static void Hypothesis3(int direction, bool beginWay)
 		{
 			int i, quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
 
 			for (i = 0; i < hypothesis[0].Count; ++i)
 			{
-				var newDir = Motion.GetNewDir(hypothesis[2][i], direction);
+				var newDir = Motion.GetNewDir(hypothesis[2][i], direction, beginWay);
 				var fl = true;
 				switch (newDir)
 				{
@@ -675,6 +697,7 @@ namespace Localization
 		/* Убрать генерацию путей!!!!! 
 	 	* Заменить на функцию, которая будет по индексу возвращать направление!!!
 	 	* Не забыть учесть изменения в методе Prognosis */
+		
 		private static int NumberOfSteps(int x, int y, int j, int i)
 		{
 			int x_coord = hypothesis[0][i], y_coord = hypothesis[1][i], direction = hypothesis[2][i];
@@ -740,7 +763,8 @@ namespace Localization
 				}
 
 				//Console.WriteLine("FFFUUUUUCKKKKKKKKKK" + hypothesis[0].Count);
-				Hypothesis3(ways[j][k]);
+				//Разкомментить строку ниже!
+				//Hypothesis3(ways[j][k], beginWay);
 
 				if (hypothesis[0].Count == 1)
 				{
@@ -771,32 +795,48 @@ namespace Localization
 					_sensors[3] = _map[x, y, 2];
 					_sensors[0] = _map[x, y, 3];
 					_sensors[1] = _map[x, y, 4];
+					Robot.SetSensors(_sensors);
+					Robot.GetSensors(ref _sensors);
+					/*
 					Robot.Sensors = _sensors;
 					_sensors = Robot.Sensors;
+					*/
 					break;
 				case Left:
 					_sensors[2] = _map[x, y, 2];
 					_sensors[3] = _map[x, y, 3];
 					_sensors[0] = _map[x, y, 4];
 					_sensors[1] = _map[x, y, 1];
+					Robot.SetSensors(_sensors);
+					Robot.GetSensors(ref _sensors);
+					/*
 					Robot.Sensors = _sensors;
 					_sensors = Robot.Sensors;
+					*/
 					break;
 				case Up:
 					_sensors[0] = _map[x, y, 1];
 					_sensors[1] = _map[x, y, 2];
 					_sensors[2] = _map[x, y, 3];
 					_sensors[3] = _map[x, y, 4];
+					Robot.SetSensors(_sensors);
+					Robot.GetSensors(ref _sensors);
+					/*
 					Robot.Sensors = _sensors;
 					_sensors = Robot.Sensors;
+					*/
 					break;
 				case Right:
 					_sensors[0] = _map[x, y, 2];
 					_sensors[1] = _map[x, y, 3];
 					_sensors[2] = _map[x, y, 4];
 					_sensors[3] = _map[x, y, 1];
+					Robot.SetSensors(_sensors);
+					Robot.GetSensors(ref _sensors);
+					/*
 					Robot.Sensors = _sensors;
 					_sensors = Robot.Sensors;
+					*/
 					break;
 				default:
 					Console.WriteLine("SensorsRead ERROR");

@@ -31,6 +31,11 @@ namespace Localization
 			int test = 0;
 			Map.Copy_Lists(ref copy_hypothesis, Map.hypothesis);
 			var n = Map.hypothesis[0].Count;
+			/*
+			Map.hypothesis[0][0] = 5;
+			Map.hypothesis[1][0] = 5;
+			Map.hypothesis[2][0] = 1;
+			*/
 			for (var i = 0; i < n; ++i)
 			{
 				Way.CurentWayInit();
@@ -46,6 +51,12 @@ namespace Localization
 					Map.hypothesis[1].Clear();
 					Map.hypothesis[2].Clear();
 					Map.Copy_Lists(ref Map.hypothesis, copy_hypothesis);
+					//////////////////////////////
+					/*
+					Map.hypothesis[0][0] = 5;
+					Map.hypothesis[1][0] = 5;
+					Map.hypothesis[2][0] = 1;
+					*///////////////////////////////
 					wayExist = true;
 					localiz = false;
 				}
@@ -64,12 +75,18 @@ namespace Localization
 				x_start = x,
 				y_start = y;
 			var newDir = Map.hypothesis[2][number];
+			Way.beginWay = true;
 			//Map.Hypothesis1New();
+			Map.Hypothesis1New();
 			for (int k = 0; k < way.Count; k++)
 			{
 				bool fl = true;
+				if (k == 1)
+				{
+					Way.beginWay = false;
+				}
 				//int a = hypothesis[2][i], b = ways[j][k];
-				newDir = Motion.GetNewDir(newDir, way[k]);//Map.ChooseDir(newDir, way[k]);
+				newDir = Motion.GetNewDir(newDir, way[k], Way.beginWay);//Map.ChooseDir(newDir, way[k]);
 				switch (newDir)
 				{
 					case Map.Down:
@@ -127,7 +144,7 @@ namespace Localization
 				}
 
 				//Console.WriteLine("FFFUUUUUCKKKKKKKKKK" + hypothesis[0].Count);
-				Map.Hypothesis3(way[k]);
+				Map.Hypothesis3(way[k], Way.beginWay);
 
 				for (int i = 0; i < way.Count; i++)
 				{

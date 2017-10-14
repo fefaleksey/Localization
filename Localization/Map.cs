@@ -7,9 +7,9 @@ using System.Collections.Generic;
 */
 namespace Localization
 {
-	public class Map
+	class Map
 	{
-		public static int[,,] _map = new int[8, 8, 5]
+		public int[,,] _map = new int[8, 8, 5]
 		{
 			{
 				{2, 0, 1, 1, 0}, {2, 1, 0, 1, 0}, {1, 0, 0, 1, 0}, {2, 1, 0, 1, 0},
@@ -52,35 +52,35 @@ namespace Localization
 			}
 		};
 
-		public static int[] _sensors = new int[4];
+		public int[] Sensors = new int[4];
 
 		public const int Down = 1;
 		public const int Left = 2;
 		public const int Up = 3;
 		public const int Right = 4;
 
-		public static int height = 8;
+		public int Height = 8;
 
-		public static int wight = 8;
+		public int Wight = 8;
 
-		private static int //размеры карты (_map)
+		private int //размеры карты (_map)
 			_quantityOfHypothises = 0;
 
-		public static List<List<int>> hypothesis = new List<List<int>>(); // x,y,direction
+		public List<List<int>> Hypothesis = new List<List<int>>(); // x,y,direction
 
-		private static List<List<int>> ways = new List<List<int>>();
+		private List<List<int>> _ways = new List<List<int>>();
 
 		//way: x, y, directions
-		public static List<List<int>> best_ways = new List<List<int>>();
+		public List<List<int>> BestWays = new List<List<int>>();
 
-		private static List<List<int>> endOfWay = new List<List<int>>();
+		private List<List<int>> _endOfWay = new List<List<int>>();
 		//x,y, maybe else direction
 
-		private static int _quantityOfWays = 0;
+		private int _quantityOfWays = 0;
 
 		/**************************************************************************************/
 
-		public static void Localization()
+		public void Localization()
 		{
 			int quantity = 3;
 			StartInit();
@@ -101,59 +101,65 @@ namespace Localization
 			PrintMap();
 			*/
 			//Prognosis(10);
-			Way.CurentWayInit();
-			Way.curent_way.Add(3);
+			//Way.CurentWayInit();
+			//Way.curentWay.Add(3);
 			//Way.curent_way.Add(2);
-			int k;
+			//int k;
 			/*
 			k = Motion.GetNewDir(Left, Left);
 			k = Motion.GetNewDir(Left, Right);
 			k = Motion.GetNewDir(Right, Left);
 			k = Motion.GetNewDir(Right, Right);
 			*/
-			
-			HandingOfAllCases.Handing();
-			ListFiltration(ref best_ways);
+			var handingOfAllCases = new HandingOfAllCases();
+			var way = new Way();
+			//var Robot = new Robot();
+			handingOfAllCases.Handing(this, way);
+
+			ListFiltration(ref BestWays);
 			PrintMap();
-			for (var l = 0; l < best_ways.Count; l++)
+			var solution = new Solution();
+			solution.ChooseWay(ref BestWays, this);
+			
+			for (var l = 0; l < BestWays.Count; l++)
 			{
 				Console.WriteLine("ways " + l);
-				for (int i = 0; i < best_ways[l].Count; i++)
+				for (int i = 0; i < BestWays[l].Count; i++)
 				{
 					//Console.WriteLine("ways " + l);
-					Console.Write(best_ways[l][i] + ",");
+					Console.Write(BestWays[l][i] + ",");
 					//Console.WriteLine();
 				}
 				Console.WriteLine();
 			}
 		}
 
-		private static void MapInit()
+		private void MapInit()
 		{
 
 		}
 
-		public static void PrintMap()
+		public void PrintMap()
 		{
-			int i, j, k = hypothesis[0].Count, n = 0;
+			int i, j, k = Hypothesis[0].Count, n = 0;
 
-			for (var l = 0; l < hypothesis[2].Count; ++l)
+			for (var l = 0; l < Hypothesis[2].Count; ++l)
 			{
-				Console.Write(hypothesis[0][l] + " "
-				              + hypothesis[1][l] + " " + hypothesis[2][l] + "; ");
+				Console.Write(Hypothesis[0][l] + " "
+				              + Hypothesis[1][l] + " " + Hypothesis[2][l] + "; ");
 			}
 			Console.WriteLine();
-			for (i = 0; i < height; ++i)
+			for (i = 0; i < Height; ++i)
 			{
-				for (j = 0; j < wight; ++j)
+				for (j = 0; j < Wight; ++j)
 				{
 
-					if (n < k && i == hypothesis[0][n] && j == hypothesis[1][n])
+					if (n < k && i == Hypothesis[0][n] && j == Hypothesis[1][n])
 					{
-						Console.Write(hypothesis[2][n]);
+						Console.Write(Hypothesis[2][n]);
 						++n;
-						while (n < k && hypothesis[0][n] == hypothesis[0][n - 1] &&
-						       hypothesis[1][n] == hypothesis[1][n - 1])
+						while (n < k && Hypothesis[0][n] == Hypothesis[0][n - 1] &&
+						       Hypothesis[1][n] == Hypothesis[1][n - 1])
 							++n;
 					}
 					else Console.Write(".");
@@ -162,42 +168,42 @@ namespace Localization
 			}
 		}
 
-		public static void PrintWays()
+		public void PrintWays()
 		{
 			int i; //,l=quantityOfWays;
-			for (i = 0; i < ways.Count; ++i)
+			for (i = 0; i < _ways.Count; ++i)
 			{
 				Console.Write(i + ". ");
-				int n = ways[i].Count;
+				int n = _ways[i].Count;
 				for (int j = 0; j < n; ++j)
 				{
-					Console.Write(ways[i][j] + " ");
+					Console.Write(_ways[i][j] + " ");
 				}
 				Console.WriteLine();
 			}
 		}
 
-		private static void StartInit()
+		private void StartInit()
 		{
 			for (int i = 0; i < 3; i++)
 			{
-				hypothesis.Add(new List<int>());
+				Hypothesis.Add(new List<int>());
 			}
 		}
 
-		public static void HypothesisInit()
+		public void HypothesisInit()
 		{
 			_quantityOfHypothises = 0;
 			var n = 0;
-			for (var i = 0; i < wight; i++)
+			for (var i = 0; i < Wight; i++)
 			{
-				for (var j = 0; j < height; j++)
+				for (var j = 0; j < Height; j++)
 				{
 					for (var k = 1; k < 5; k++)
 					{
-						hypothesis[0].Add(i);
-						hypothesis[1].Add(j);
-						hypothesis[2].Add(k);
+						Hypothesis[0].Add(i);
+						Hypothesis[1].Add(j);
+						Hypothesis[2].Add(k);
 						++n;
 						++_quantityOfHypothises;
 					}
@@ -205,14 +211,14 @@ namespace Localization
 			}
 		}
 
-		private static void SensorsInit(int down, int left, int up, int right)
+		private void SensorsInit(int down, int left, int up, int right, Robot Robot)
 		{
-			_sensors[0] = down;
-			_sensors[1] = left;
-			_sensors[2] = up;
-			_sensors[3] = right;
-			Robot.SetSensors(_sensors);
-			Robot.GetSensors(ref _sensors);
+			Sensors[0] = down;
+			Sensors[1] = left;
+			Sensors[2] = up;
+			Sensors[3] = right;
+			Robot.SetSensors(Sensors);
+			Robot.GetSensors(ref Sensors);
 			/*
 			Robot.Sensors = _sensors;
 			_sensors = Robot.Sensors;
@@ -221,7 +227,7 @@ namespace Localization
 
 		//сравнивает показания датчиков с полем на карте (сравнивает стены)
 		//(робот двигался (x0,y0)->(x1,y1)
-		private static bool CheckWalls(int x, int y, int direction)
+		private bool CheckWalls(int x, int y, int direction, Robot Robot)
 		{
 			//Robot.Sensors = _sensors;
 			if (Robot.InitialDirection == 1)
@@ -229,57 +235,57 @@ namespace Localization
 				if (direction > 2) direction -= 2;
 				else direction += 2;
 			}
-			
-			
+
+
 			//_sensors = Robot.Sensors;
 			if (direction == Down)
 			{
-				if (_map[x, y, 1] != _sensors[2]) return false;
-				if (_map[x, y, 2] != _sensors[3]) return false;
-				if (_map[x, y, 3] != _sensors[0]) return false;
-				if (_map[x, y, 4] != _sensors[1]) return false;
+				if (_map[x, y, 1] != Sensors[2]) return false;
+				if (_map[x, y, 2] != Sensors[3]) return false;
+				if (_map[x, y, 3] != Sensors[0]) return false;
+				if (_map[x, y, 4] != Sensors[1]) return false;
 				return true;
 			}
 			else if (direction == Left)
 			{
-				if (_map[x, y, 1] != _sensors[1]) return false;
-				if (_map[x, y, 2] != _sensors[2]) return false;
-				if (_map[x, y, 3] != _sensors[3]) return false;
-				if (_map[x, y, 4] != _sensors[0]) return false;
+				if (_map[x, y, 1] != Sensors[1]) return false;
+				if (_map[x, y, 2] != Sensors[2]) return false;
+				if (_map[x, y, 3] != Sensors[3]) return false;
+				if (_map[x, y, 4] != Sensors[0]) return false;
 				return true;
 			}
 			else if (direction == Up)
 			{
-				if (_map[x, y, 1] != _sensors[0]) return false;
-				if (_map[x, y, 2] != _sensors[1]) return false;
-				if (_map[x, y, 3] != _sensors[2]) return false;
-				if (_map[x, y, 4] != _sensors[3]) return false;
+				if (_map[x, y, 1] != Sensors[0]) return false;
+				if (_map[x, y, 2] != Sensors[1]) return false;
+				if (_map[x, y, 3] != Sensors[2]) return false;
+				if (_map[x, y, 4] != Sensors[3]) return false;
 				return true;
 			}
 			else
 			{
-				if (_map[x, y, 1] != _sensors[3]) return false;
-				if (_map[x, y, 2] != _sensors[0]) return false;
-				if (_map[x, y, 3] != _sensors[1]) return false;
-				if (_map[x, y, 4] != _sensors[2]) return false;
+				if (_map[x, y, 1] != Sensors[3]) return false;
+				if (_map[x, y, 2] != Sensors[0]) return false;
+				if (_map[x, y, 3] != Sensors[1]) return false;
+				if (_map[x, y, 4] != Sensors[2]) return false;
 				return true;
 			}
 		}
 
 		// 0 <= quantity <= 4
 		//Сюда ещё можно добавить расположение стен (| | или _|)
-		public static void Hypothesis1(int quantity)
+		public void Hypothesis1(int quantity)
 		{
 			int i, j;
-			for (i = 0; i < height; ++i)
+			for (i = 0; i < Height; ++i)
 			{
-				for (j = 0; j < wight; ++j)
+				for (j = 0; j < Wight; ++j)
 				{
 					if (_map[i, j, 0] == quantity)
 					{
-						hypothesis[0].Add(i);
-						hypothesis[1].Add(j);
-						hypothesis[2].Add(3);
+						Hypothesis[0].Add(i);
+						Hypothesis[1].Add(j);
+						Hypothesis[2].Add(3);
 
 						_quantityOfHypothises++;
 					}
@@ -288,44 +294,45 @@ namespace Localization
 			//передвигаемся прямо (если занято, то направо/налево/назад)
 		}
 
-		public static void Hypothesis1New()
+		public void Hypothesis1New()
 		{
-			var quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
+			var quantity = Sensors[0] + Sensors[1] + Sensors[2] + Sensors[3];
 			int i, x, y;
-			for (i = 0; i < hypothesis[0].Count; ++i)
+			for (i = 0; i < Hypothesis[0].Count; ++i)
 			{
-				x = hypothesis[0][i];
-				y = hypothesis[1][i];
+				x = Hypothesis[0][i];
+				y = Hypothesis[1][i];
 				if (_map[x, y, 0] != quantity)
 				{
-					hypothesis[0].RemoveAt(i);
-					hypothesis[1].RemoveAt(i);
-					hypothesis[2].RemoveAt(i);
+					Hypothesis[0].RemoveAt(i);
+					Hypothesis[1].RemoveAt(i);
+					Hypothesis[2].RemoveAt(i);
 					i--;
 				}
 			}
 			//передвигаемся прямо (если занято, то направо/налево/назад)
 		}
 
-		private static void Hypothesis2()
+		/*
+		private void Hypothesis2()
 		{
-			int i, quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
-			for (i = 0; i < hypothesis[0].Count; ++i)
+			int i, quantity = Sensors[0] + Sensors[1] + Sensors[2] + Sensors[3];
+			for (i = 0; i < Hypothesis[0].Count; ++i)
 			{
 				var fl = true;
-				int x = hypothesis[0][i], y = hypothesis[1][i];
+				int x = Hypothesis[0][i], y = Hypothesis[1][i];
 				//to test code below
 				//down
-				Console.Write(x + " " + y + " " + hypothesis[0].Count + ";   ");
-				if (x + 1 < height && _map[x + 1, y, 0] == quantity)
+				Console.Write(x + " " + y + " " + Hypothesis[0].Count + ";   ");
+				if (x + 1 < Height && _map[x + 1, y, 0] == quantity)
 				{
 					if (_map[x, y, Down] == 0 &&
 					    CheckWalls(x + 1, y, Down))
 					{
 						++_quantityOfWays;
 						//var x = ++start[2][i];
-						hypothesis[0][i]++;
-						hypothesis[2][i] = Down; //ToDownDir(hypothesis[2][i]);
+						Hypothesis[0][i]++;
+						Hypothesis[2][i] = Down; //ToDownDir(hypothesis[2][i]);
 						fl = false;
 					}
 				}
@@ -338,8 +345,8 @@ namespace Localization
 					{
 						++_quantityOfWays;
 						//var x = ++start[2][i];
-						hypothesis[1][i]--;
-						hypothesis[2][i] = Left; //ToLeftDir(hypothesis[2][i]);
+						Hypothesis[1][i]--;
+						Hypothesis[2][i] = Left; //ToLeftDir(hypothesis[2][i]);
 						fl = false;
 					}
 				}
@@ -352,46 +359,46 @@ namespace Localization
 					{
 						++_quantityOfWays;
 						//var x = ++start[2][i];
-						hypothesis[0][i]--;
-						hypothesis[2][i] = Up;
+						Hypothesis[0][i]--;
+						Hypothesis[2][i] = Up;
 						fl = false;
 					}
 				}
 
 				//right
-				if (y + 1 < wight && _map[x, y + 1, 0] == quantity)
+				if (y + 1 < Wight && _map[x, y + 1, 0] == quantity)
 				{
 					if (_map[x, y, Right] == 0 &&
 					    CheckWalls(x, y + 1, Right))
 					{
 						++_quantityOfWays;
 						//var x = ++start[2][i];
-						hypothesis[1][i]++;
-						hypothesis[2][i] = Right; //ToRightDir(hypothesis[2][i]);
+						Hypothesis[1][i]++;
+						Hypothesis[2][i] = Right; //ToRightDir(hypothesis[2][i]);
 						fl = false;
 					}
 				}
 				if (fl)
 				{
-					hypothesis[0].RemoveAt(i);
-					hypothesis[1].RemoveAt(i);
-					hypothesis[2].RemoveAt(i);
+					Hypothesis[0].RemoveAt(i);
+					Hypothesis[1].RemoveAt(i);
+					Hypothesis[2].RemoveAt(i);
 					i--;
 					_quantityOfHypothises--;
 				}
 			}
-			Console.WriteLine("eeee " + hypothesis[0].Count + " " + hypothesis[1].Count
-			                  + " " + hypothesis[2].Count);
+			Console.WriteLine("eeee " + Hypothesis[0].Count + " " + Hypothesis[1].Count
+			                  + " " + Hypothesis[2].Count);
 		}
-
+		*/
 		//потестить ещё
-		public static void Hypothesis3(int direction, bool beginWay)
+		public void Hypothesis3(int direction, bool beginWay, Motion Motion, Robot Robot)
 		{
-			int i, quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
+			int i, quantity = Sensors[0] + Sensors[1] + Sensors[2] + Sensors[3];
 
-			for (i = 0; i < hypothesis[0].Count; ++i)
+			for (i = 0; i < Hypothesis[0].Count; ++i)
 			{
-				var newDir = Motion.GetNewDir(hypothesis[2][i], direction, beginWay);
+				var newDir = Motion.GetNewDir(Hypothesis[2][i], direction, beginWay);
 				var fl = true;
 				switch (newDir)
 				{
@@ -399,17 +406,17 @@ namespace Localization
 					{
 						//int i, quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
 						//var fl = true;
-						int x = hypothesis[0][i], y = hypothesis[1][i];
+						int x = Hypothesis[0][i], y = Hypothesis[1][i];
 
-						if (x + 1 < height && _map[x + 1, y, 0] == quantity)
+						if (x + 1 < Height && _map[x + 1, y, 0] == quantity)
 						{
 							if (_map[x, y, Down] == 0 &&
-							    CheckWalls(x + 1, y, Down))
+							    CheckWalls(x + 1, y, Down, Robot))
 							{
 								//++_quantityOfWays;
 								//var x = ++start[2][i];
-								hypothesis[0][i]++;
-								hypothesis[2][i] = Down; //ToDownDir(hypothesis[2][i]);
+								Hypothesis[0][i]++;
+								Hypothesis[2][i] = Down; //ToDownDir(hypothesis[2][i]);
 								fl = false;
 							}
 						}
@@ -419,16 +426,16 @@ namespace Localization
 					{
 						//int i, quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
 						//var fl = true;
-						int x = hypothesis[0][i], y = hypothesis[1][i];
+						int x = Hypothesis[0][i], y = Hypothesis[1][i];
 
 						if (y > 0 && _map[x, y - 1, 0] == quantity)
 						{
-							if (_map[x, y, Left] == 0 && CheckWalls(x, y - 1, Left))
+							if (_map[x, y, Left] == 0 && CheckWalls(x, y - 1, Left, Robot))
 							{
 								//++_quantityOfWays;
 								//var x = ++start[2][i];
-								hypothesis[1][i]--;
-								hypothesis[2][i] = Left; //ToDownDir(hypothesis[2][i]);
+								Hypothesis[1][i]--;
+								Hypothesis[2][i] = Left; //ToDownDir(hypothesis[2][i]);
 								fl = false;
 							}
 						}
@@ -438,16 +445,16 @@ namespace Localization
 					{
 						//int i, quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
 						//var fl = true;
-						int x = hypothesis[0][i], y = hypothesis[1][i];
+						int x = Hypothesis[0][i], y = Hypothesis[1][i];
 
 						if (x > 0 && _map[x - 1, y, 0] == quantity)
 						{
-							if (_map[x, y, Up] == 0 && CheckWalls(x - 1, y, Up))
+							if (_map[x, y, Up] == 0 && CheckWalls(x - 1, y, Up, Robot))
 							{
 								//++_quantityOfWays;
 								//var x = ++start[2][i];
-								hypothesis[0][i]--;
-								hypothesis[2][i] = Up; //ToDownDir(hypothesis[2][i]);
+								Hypothesis[0][i]--;
+								Hypothesis[2][i] = Up; //ToDownDir(hypothesis[2][i]);
 								fl = false;
 							}
 						}
@@ -457,16 +464,16 @@ namespace Localization
 					{
 						//int i, quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
 						//var fl = true;
-						int x = hypothesis[0][i], y = hypothesis[1][i];
+						int x = Hypothesis[0][i], y = Hypothesis[1][i];
 
-						if (y + 1 < wight && _map[x, y + 1, 0] == quantity)
+						if (y + 1 < Wight && _map[x, y + 1, 0] == quantity)
 						{
-							if (_map[x, y, Right] == 0 && CheckWalls(x, y + 1, Right))
+							if (_map[x, y, Right] == 0 && CheckWalls(x, y + 1, Right, Robot))
 							{
 								//++_quantityOfWays;
 								//var x = ++start[2][i];
-								hypothesis[1][i]++;
-								hypothesis[2][i] = Right; //ToDownDir(hypothesis[2][i]);
+								Hypothesis[1][i]++;
+								Hypothesis[2][i] = Right; //ToDownDir(hypothesis[2][i]);
 								fl = false;
 							}
 						}
@@ -475,32 +482,32 @@ namespace Localization
 				}
 				if (fl)
 				{
-					hypothesis[0].RemoveAt(i);
-					hypothesis[1].RemoveAt(i);
-					hypothesis[2].RemoveAt(i);
+					Hypothesis[0].RemoveAt(i);
+					Hypothesis[1].RemoveAt(i);
+					Hypothesis[2].RemoveAt(i);
 					i--;
 					_quantityOfHypothises--;
 				}
 			}
 		}
-		
-		private static int ToRightDir(int direction)
+
+		private int ToRightDir(int direction)
 		{
 			if (direction < 4) return direction + 1;
 			return 1;
 		}
 
 		//Возвращает направление, если поворачиваем в соотв. сторону
-		private static int ToLeftDir(int direction)
+		private int ToLeftDir(int direction)
 		{
 			if (direction > 1) return direction - 1;
 			return 4;
 		}
 
-		private static int ToDownDir(int direction)
+		private int ToDownDir(int direction, Way way)
 		{
 
-			if (Way.curent_way.Count == 1)
+			if (way.CurentWay.Count == 1)
 			{
 				if (direction > 2) return direction - 2;
 				return direction + 2;
@@ -515,12 +522,12 @@ namespace Localization
 		}
 
 		// текущее направление в абсолютных коорд/направление движения(куда едем?)
-		public static int ChooseDir(int currentDirection, int newDirection)
+		public int ChooseDir(int currentDirection, int newDirection, Way way)
 		{
 			if (newDirection == Up) return currentDirection;
 			if (newDirection == Right) return ToRightDir(currentDirection);
 			if (newDirection == Left) return ToLeftDir(currentDirection);
-			return ToDownDir(currentDirection);
+			return ToDownDir(currentDirection, way);
 		}
 
 		/*У робота:
@@ -529,11 +536,11 @@ namespace Localization
 		н-10
 		л-1
 		*/
-		private static void CheckIndications(int x, int y, int direction,
-			ref List<List<int>> differentInd, int newDirection)
+		private void CheckIndications(int x, int y, int direction,
+			ref List<List<int>> differentInd, int newDirection, Way way)
 		{
 			int value, //k=direction-1;
-				k = ChooseDir(direction, newDirection) - 1;
+				k = ChooseDir(direction, newDirection, way) - 1;
 			switch (newDirection)
 			{
 				case Down:
@@ -562,7 +569,7 @@ namespace Localization
 			}
 		}
 
-		public static void Copy_Lists(ref List<List<int>> to, List<List<int>> from)
+		public void Copy_Lists(ref List<List<int>> to, List<List<int>> from)
 		{
 			int m = from.Count, n = from[0].Count;
 
@@ -575,66 +582,16 @@ namespace Localization
 			//int[,,] copy_hypothesis = new int[n, n, n];
 		}
 
-		private static int Prognosis(int lengthOfWay)
-		{
-			Console.WriteLine("Prognosis");
-			List<List<int>> copy_hypothesis = new List<List<int>>();
-
-			HypothesisInit();
-
-			for (int i = 0; i < hypothesis.Count; i++)
-			{
-				copy_hypothesis.Add(new List<int>());
-			}
-
-			Copy_Lists(ref copy_hypothesis, hypothesis);
-
-			int n = hypothesis[0].Count;
-
-			ways.Clear();
-			WaysInit(lengthOfWay);
-			GenerateWays(lengthOfWay);
-
-			for (var i = 0; i < n; ++i)
-			{
-				for (int j = 0; j < ways.Count; j++)
-				{
-					int x = hypothesis[0][i], y = hypothesis[1][i];
-					_quantityOfHypothises = hypothesis[0].Count;
-					NumberOfSteps(x, y, j, i);
-					hypothesis[0].Clear();
-					hypothesis[1].Clear();
-					hypothesis[2].Clear();
-					Copy_Lists(ref hypothesis, copy_hypothesis);
-				}
-			}
-
-			/*
-		for (var l = 0; l < best_ways.Count; l++)
-		{
-			Console.WriteLine("ways " + l);
-			for (int i = 0; i < best_ways[l].Count; i++)
-			{
-				//Console.WriteLine("ways " + l);
-				Console.Write(best_ways[l][i] + ",");
-				//Console.WriteLine();
-			}
-			Console.WriteLine();
-		}
-		*/
-			return 0;
-		}
-
-		private static void WaysInit(Int64 length)
+		private void WaysInit(Int64 length)
 		{
 			length = (Int64) Math.Pow(4, length);
 			for (var i = 0; i < length; ++i)
 			{
-				ways.Add(new List<int>());
+				_ways.Add(new List<int>());
 			}
 		}
 
-		private static int GetDirectionFromWay(Int64 length)
+		private void GenerateWays(long length)
 		{
 			length = (Int64) Math.Pow(4, length);
 			Int64 k = length / 4, s = k;
@@ -656,183 +613,60 @@ namespace Localization
 							direction = 1;
 							s += k;
 						}
-					ways[i].Add(direction);
-				}
-				k /= 4;
-				s = k;
-			}
-			return 0;
-		}
-
-		private static void GenerateWays(long length)
-		{
-			length = (Int64) Math.Pow(4, length);
-			Int64 k = length / 4, s = k;
-			int direction = 1;
-			//ways.Clear();
-
-			while (k >= 1)
-			{
-				for (var i = 0; i < length; i++)
-				{
-					if (i == s)
-						if (direction < 4)
-						{
-							direction++;
-							s += k;
-						}
-						else
-						{
-							direction = 1;
-							s += k;
-						}
-					ways[i].Add(direction);
+					_ways[i].Add(direction);
 				}
 				k /= 4;
 				s = k;
 			}
 		}
 
-		//Хотя не факт
-		/* Убрать генерацию путей!!!!! 
-	 	* Заменить на функцию, которая будет по индексу возвращать направление!!!
-	 	* Не забыть учесть изменения в методе Prognosis */
-		
-		private static int NumberOfSteps(int x, int y, int j, int i)
-		{
-			int x_coord = hypothesis[0][i], y_coord = hypothesis[1][i], direction = hypothesis[2][i];
-			//Console.WriteLine("Number of steps");
-			//Заменить на цикл "пока не локализуюсь"
-			var newDir = hypothesis[2][i];
-			for (int k = 0; k < ways[j].Count; k++)
-			{
-				bool fl = true;
-				//int a = hypothesis[2][i], b = ways[j][k];
-				newDir = ChooseDir(newDir, ways[j][k]);
-				switch (newDir)
-				{
-					case Down:
-					{
-						if (x + 1 < height && _map[x, y, Down] == 0) // && CheckWalls(x, y + 1, Down))
-						{
-							fl = false;
-							++x;
-							SensorsRead(x, y, Down);
-						}
-						break;
-					}
-					case Left:
-					{
-						if (y > 0 && _map[x, y, Left] == 0) // && CheckWalls(x, y - 1, Left))
-						{
-							fl = false;
-							--y;
-							SensorsRead(x, y, Left);
-						}
-						break;
-					}
-					case Up:
-					{
-						if (x > 0 && _map[x, y, Up] == 0) //&& CheckWalls(x - 1, y , Up))
-						{
-							fl = false;
-							--x;
-							SensorsRead(x, y, Up);
-						}
-						break;
-					}
-					case Right:
-					{
-						if (y + 1 < wight && _map[x, y, Right] == 0) // && 
-							// CheckWalls(x, y + 1, Right))
-						{
-							fl = false;
-							++y;
-							SensorsRead(x, y, Right);
-						}
-						break;
-					}
-				}
-				if (fl)
-				{
-					_sensors[0] = -1;
-					_sensors[1] = -1;
-					_sensors[2] = -1;
-					_sensors[3] = -1;
-					return -1;
-				}
-
-				//Console.WriteLine("FFFUUUUUCKKKKKKKKKK" + hypothesis[0].Count);
-				//Разкомментить строку ниже!
-				//Hypothesis3(ways[j][k], beginWay);
-
-				if (hypothesis[0].Count == 1)
-				{
-					var n = best_ways.Count;
-					best_ways.Add(new List<int>());
-					best_ways[n].Add(x_coord);
-					best_ways[n].Add(y_coord);
-					best_ways[n].Add(direction);
-					for (var l = 0; l <= k; l++)
-					{
-						best_ways[n].Add(ways[j][l]);
-						//	Console.Write(best_ways[n][l] + ",");
-					}
-					//Console.WriteLine(" quantity of steps: " + k);
-					return k;
-				}
-			}
-			//Console.WriteLine("HC: " + hypothesis[0].Count);
-			return hypothesis[0].Count;
-		}
-
-		public static void SensorsRead(int x, int y, int direction)
+		public void SensorsRead(int x, int y, int direction, Robot Robot)
 		{
 			switch (direction)
 			{
 				case Down:
-					_sensors[2] = _map[x, y, 1];
-					_sensors[3] = _map[x, y, 2];
-					_sensors[0] = _map[x, y, 3];
-					_sensors[1] = _map[x, y, 4];
-					Robot.SetSensors(_sensors);
-					Robot.GetSensors(ref _sensors);
+					Sensors[2] = _map[x, y, 1];
+					Sensors[3] = _map[x, y, 2];
+					Sensors[0] = _map[x, y, 3];
+					Sensors[1] = _map[x, y, 4];
+					Robot.SetSensors(Sensors);
+					Robot.GetSensors(ref Sensors);
 					/*
 					Robot.Sensors = _sensors;
 					_sensors = Robot.Sensors;
 					*/
 					break;
 				case Left:
-					_sensors[2] = _map[x, y, 2];
-					_sensors[3] = _map[x, y, 3];
-					_sensors[0] = _map[x, y, 4];
-					_sensors[1] = _map[x, y, 1];
-					Robot.SetSensors(_sensors);
-					Robot.GetSensors(ref _sensors);
+					Sensors[2] = _map[x, y, 2];
+					Sensors[3] = _map[x, y, 3];
+					Sensors[0] = _map[x, y, 4];
+					Sensors[1] = _map[x, y, 1];
+					Robot.SetSensors(Sensors);
+					Robot.GetSensors(ref Sensors);
 					/*
 					Robot.Sensors = _sensors;
 					_sensors = Robot.Sensors;
 					*/
 					break;
 				case Up:
-					_sensors[0] = _map[x, y, 1];
-					_sensors[1] = _map[x, y, 2];
-					_sensors[2] = _map[x, y, 3];
-					_sensors[3] = _map[x, y, 4];
-					Robot.SetSensors(_sensors);
-					Robot.GetSensors(ref _sensors);
+					Sensors[0] = _map[x, y, 1];
+					Sensors[1] = _map[x, y, 2];
+					Sensors[2] = _map[x, y, 3];
+					Sensors[3] = _map[x, y, 4];
+					Robot.SetSensors(Sensors);
+					Robot.GetSensors(ref Sensors);
 					/*
 					Robot.Sensors = _sensors;
 					_sensors = Robot.Sensors;
 					*/
 					break;
 				case Right:
-					_sensors[0] = _map[x, y, 2];
-					_sensors[1] = _map[x, y, 3];
-					_sensors[2] = _map[x, y, 4];
-					_sensors[3] = _map[x, y, 1];
-					Robot.SetSensors(_sensors);
-					Robot.GetSensors(ref _sensors);
+					Sensors[0] = _map[x, y, 2];
+					Sensors[1] = _map[x, y, 3];
+					Sensors[2] = _map[x, y, 4];
+					Sensors[3] = _map[x, y, 1];
+					Robot.SetSensors(Sensors);
+					Robot.GetSensors(ref Sensors);
 					/*
 					Robot.Sensors = _sensors;
 					_sensors = Robot.Sensors;
@@ -849,7 +683,7 @@ namespace Localization
 		*/
 		}
 
-		private static void ListFiltration(ref List<List<int>> list)
+		private void ListFiltration(ref List<List<int>> list)
 		{
 			for (int i = 0; i < list.Count; i++)
 			{
@@ -882,15 +716,13 @@ namespace Localization
 			}
 		}
 
-
-
 		//number - номер шага(если считать начиная с 0)
-		private static void Strategy(int number)
+		private void Strategy(int number)
 		{
 			bool down = false, left = false, up = false, right = false;
-			for (var i = 0; i < best_ways.Count; i++)
+			for (var i = 0; i < BestWays.Count; i++)
 			{
-				for (var j = i; j < best_ways.Count; j++)
+				for (var j = i; j < BestWays.Count; j++)
 				{
 
 				}

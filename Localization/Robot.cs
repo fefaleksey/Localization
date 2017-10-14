@@ -2,66 +2,67 @@
 {
 	class Robot
 	{
-		private static int[] sensors = new int[4];
+		private int[] _sensors = new int[4];
 		public const int Down = 0, Left = 1, Up = 2, Right = 3;
 		
-		public static int InitialDirection { get; set; } = 1;
-		/*
+		public int InitialDirection { get; set; } = 1;
+		
 		public Robot()
 		{
-			sensors = new int[4];
-		}
-		*/
-
-		public static void GetSensors(ref int[] value)
-		{
-			value[Down] = sensors[Down];
-			value[Left] = sensors[Left];
-			value[Up] = sensors[Up];
-			value[Right] = sensors[Right];
+			_sensors = new int[4];
+			InitialDirection = 1;
 		}
 		
-		public static unsafe void SetSensors(int[] value)
+
+		public void GetSensors(ref int[] value)
+		{
+			value[Down] = _sensors[Down];
+			value[Left] = _sensors[Left];
+			value[Up] = _sensors[Up];
+			value[Right] = _sensors[Right];
+		}
+		
+		public unsafe void SetSensors(int[] value)
 		{
 			long d;
-			fixed (int* p1 = value, p2 = sensors)
+			fixed (int* p1 = value, p2 = _sensors)
 			{
 				d = p1 - p2;
 			}
 			if (InitialDirection == 1)
 			{
-				sensors[Down] = value[Up];
-				sensors[Left] = value[Right];
-				sensors[Up] = value[Down];
-				sensors[Right] = value[Left];
+				_sensors[Down] = value[Up];
+				_sensors[Left] = value[Right];
+				_sensors[Up] = value[Down];
+				_sensors[Right] = value[Left];
 			}
 			else
 			{
-				sensors[Down] = value[Down];
-				sensors[Left] = value[Left];
-				sensors[Up] = value[Up];
-				sensors[Right] = value[Right];
+				_sensors[Down] = value[Down];
+				_sensors[Left] = value[Left];
+				_sensors[Up] = value[Up];
+				_sensors[Right] = value[Right];
 			}
 		}
 		
-		public static int[] Sensors
+		public int[] Sensors
 		{
-			get => sensors;
+			get => _sensors;
 			set
 			{
 				if (InitialDirection == 1)
 				{
-					sensors[Down] = value[Up];
-					sensors[Left] = value[Right];
-					sensors[Up] = value[Down];
-					sensors[Right] = value[Left];
+					_sensors[Down] = value[Up];
+					_sensors[Left] = value[Right];
+					_sensors[Up] = value[Down];
+					_sensors[Right] = value[Left];
 				}
 				else
 				{
-					sensors[Down] = value[Down];
-					sensors[Left] = value[Left];
-					sensors[Up] = value[Up];
-					sensors[Right] = value[Right];
+					_sensors[Down] = value[Down];
+					_sensors[Left] = value[Left];
+					_sensors[Up] = value[Up];
+					_sensors[Right] = value[Right];
 				}
 				/*
 				if (Way.beginWay)

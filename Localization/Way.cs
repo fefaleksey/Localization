@@ -1,29 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Xml.Schema;
 
 namespace Localization
 {
 	class Way
 	{
-		public static List<int> curent_way = new List<int>();
-		private static int i=0, forbiddenDirection=3;
+		public List<int> CurentWay = new List<int>();
+		private int _i=0, _forbiddenDirection=3;
 
-		private static int length = 10;
-		public static bool beginWay = true;
+		private readonly int _length = 64;
+		public bool BeginWay = true;
 
-		public static void CurentWayInit()
+		public void CurentWayInit()
 		{
-			curent_way.Clear();
-			curent_way.Add(1);
-			forbiddenDirection = 3;
-			i = 0;
+			CurentWay.Clear();
+			CurentWay.Add(1);
+			_forbiddenDirection = 3;
+			_i = 0;
 		}
 		//localiz==true <=> мы локализовались
-		public static int NextDirection(bool wayExist, bool localiz)
+		public int NextDirection(bool wayExist, bool localiz, Robot Robot)
 		{
-			if (curent_way.Count == 0)
+			if (CurentWay.Count == 0)
 			{
 				Console.WriteLine("Complete");
 				return 0;
@@ -33,77 +31,77 @@ namespace Localization
 			{
 				//curent_way.RemoveAt(i);
 				//--i;
-				if (curent_way[i] == 4)
+				if (CurentWay[_i] == 4)
 				{
-					curent_way.RemoveAt(i);
-					--i;
-					return NextDirection(false, false); // return?????
+					CurentWay.RemoveAt(_i);
+					--_i;
+					return NextDirection(false, false, Robot); // return?????
 					//return 5;//???????
 				}
 				else
 				{
-					curent_way[i]++;
+					CurentWay[_i]++;
 					
-					if (curent_way.Count == 1 && curent_way[0]==2)
+					if (CurentWay.Count == 1 && CurentWay[0]==2)
 					{
 						//запрещенное направление мы поменяем только 1 раз!
-						forbiddenDirection = 1;
+						_forbiddenDirection = 1;
 						Robot.InitialDirection = 3;
 					}
 					
-					if (curent_way[i] == forbiddenDirection)
+					if (CurentWay[_i] == _forbiddenDirection)
 					{
-						curent_way[i]++;
+						CurentWay[_i]++;
 					}
 					
 				}
-				return curent_way[i];
+				return CurentWay[_i];
 			}
 			
 			if (wayExist)
 			{
-				if (curent_way.Count==length)
+				if (CurentWay.Count==_length)
 				{
-					return NextDirection(false, false);
+					return NextDirection(false, false, Robot);
 					//return curent_way[i];
 				}
-				if (forbiddenDirection == 1)
+				if (_forbiddenDirection == 1)
 				{
-					curent_way.Add(2);
-					++i;
+					CurentWay.Add(2);
+					++_i;
 					return 2;
 				}
 				else
 				{
-					curent_way.Add(1);
-					++i;
+					CurentWay.Add(1);
+					++_i;
 					return 1;
 				}
 			}
 			else
 			{
-				if (curent_way[i] == 4)
+				if (CurentWay[_i] == 4)
 				{
-					curent_way.RemoveAt(i);
-					--i;
-					return NextDirection(false, false);//return ???
+					CurentWay.RemoveAt(_i);
+					--_i;
+					return NextDirection(false, false, Robot);//return ???
 					//return 1;//curent_way[i];
 				}
 				else
 				{
-					++curent_way[i];
+					++CurentWay[_i];
 					
-					if (curent_way.Count==1 && curent_way[0]==2)
+					if (CurentWay.Count==1 && CurentWay[0]==2)
 					{
-						forbiddenDirection = 1;
+						_forbiddenDirection = 1;
 						Robot.InitialDirection = 3;
 					}
-					if (curent_way[i] == forbiddenDirection)
+					if (CurentWay[_i] == _forbiddenDirection)
 					{
-						++curent_way[i];
+						++CurentWay[_i];
 					}
 					
-					return curent_way[i];
+					return CurentWay[_i];
 				}
 			}
 			Console.WriteLine("Way.cs NextDirection - bag");

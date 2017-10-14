@@ -5,9 +5,9 @@ namespace Localization
 {
 	class HandingOfAllCases
 	{
-		private static bool wayExist = true, localiz = false;
+		private bool _wayExist = true, _localiz = false;
 		
-		private static void Copy_way(List<int> from,ref List<int> to)
+		private void Copy_way(List<int> from,ref List<int> to)
 		{
 			to.Clear();
 			for (var i = 0; i < from.Count; ++i)
@@ -16,49 +16,51 @@ namespace Localization
 			}
 		}
 		
-		public static void Handing()
+		public void Handing(Map Map, Way Way)
 		{
 			Console.WriteLine("Handing");
-			var copy_hypothesis = new List<List<int>>();
+			var copyHypothesis = new List<List<int>>();
 			Map.HypothesisInit();
 			var way = new List<int>();
 				
-			for (var i = 0; i < Map.hypothesis.Count; i++)
+			for (var i = 0; i < Map.Hypothesis.Count; i++)
 			{
-				copy_hypothesis.Add(new List<int>());
+				copyHypothesis.Add(new List<int>());
 			}
 			var fl = 1;
 			int test = 0;
-			Map.Copy_Lists(ref copy_hypothesis, Map.hypothesis);
-			var n = Map.hypothesis[0].Count;
+			Map.Copy_Lists(ref copyHypothesis, Map.Hypothesis);
+			var n = Map.Hypothesis[0].Count;
 			/*
 			Map.hypothesis[0][0] = 5;
 			Map.hypothesis[1][0] = 5;
 			Map.hypothesis[2][0] = 1;
 			*/
+			var Motion = new Motion();
+			var Robot = new Robot();
 			for (var i = 0; i < n; ++i)
 			{
 				Way.CurentWayInit();
 				while (fl != 0)
 				{
 					++test;
-					Copy_way(Way.curent_way, ref way);
-					Map.SensorsRead(Map.hypothesis[0][i], Map.hypothesis[1][i],
-									Map.hypothesis[2][i]); //!!
-					HandingHypothesis(i, way);
-					fl = Way.NextDirection(wayExist, localiz);
-					Map.hypothesis[0].Clear();
-					Map.hypothesis[1].Clear();
-					Map.hypothesis[2].Clear();
-					Map.Copy_Lists(ref Map.hypothesis, copy_hypothesis);
+					Copy_way(Way.CurentWay, ref way);
+					Map.SensorsRead(Map.Hypothesis[0][i], Map.Hypothesis[1][i],
+									Map.Hypothesis[2][i],Robot); //!!
+					HandingHypothesis(i, way, Map, Motion, Way, Robot);
+					fl = Way.NextDirection(_wayExist, _localiz, Robot);
+					Map.Hypothesis[0].Clear();
+					Map.Hypothesis[1].Clear();
+					Map.Hypothesis[2].Clear();
+					Map.Copy_Lists(ref Map.Hypothesis, copyHypothesis);
 					//////////////////////////////
 					/*
 					Map.hypothesis[0][0] = 5;
 					Map.hypothesis[1][0] = 5;
 					Map.hypothesis[2][0] = 1;
 					*///////////////////////////////
-					wayExist = true;
-					localiz = false;
+					_wayExist = true;
+					_localiz = false;
 				}
 				Console.Write(i);
 				fl = 1;
@@ -67,15 +69,16 @@ namespace Localization
 
 		//Добавить в начало вызов Hypothesis1
 		//number == number of hypothesis
-		private static void HandingHypothesis(int number, List<int> way)
+		private void HandingHypothesis(int number, List<int> way,
+										Map Map, Motion Motion, Way Way, Robot Robot)
 		{
-			int x = Map.hypothesis[0][number],
-				y = Map.hypothesis[1][number],
-				direction = Map.hypothesis[2][number],
-				x_start = x,
-				y_start = y;
-			var newDir = Map.hypothesis[2][number];
-			Way.beginWay = true;
+			int x = Map.Hypothesis[0][number],
+				y = Map.Hypothesis[1][number],
+				direction = Map.Hypothesis[2][number],
+				xStart = x,
+				yStart = y;
+			var newDir = Map.Hypothesis[2][number];
+			Way.BeginWay = true;
 			//Map.Hypothesis1New();
 			Map.Hypothesis1New();
 			for (int k = 0; k < way.Count; k++)
@@ -83,20 +86,20 @@ namespace Localization
 				bool fl = true;
 				if (k == 1)
 				{
-					Way.beginWay = false;
+					Way.BeginWay = false;
 				}
 				//int a = hypothesis[2][i], b = ways[j][k];
-				newDir = Motion.GetNewDir(newDir, way[k], Way.beginWay);//Map.ChooseDir(newDir, way[k]);
+				newDir = Motion.GetNewDir(newDir, way[k], Way.BeginWay);//Map.ChooseDir(newDir, way[k]);
 				switch (newDir)
 				{
 					case Map.Down:
 					{
-						if (x + 1 < Map.height && Map._map[x, y, Map.Down] == 0) 
+						if (x + 1 < Map.Height && Map._map[x, y, Map.Down] == 0) 
 							// && CheckWalls(x, y + 1, Down))
 						{
 							fl = false;
 							++x;
-							Map.SensorsRead(x, y, Map.Down);
+							Map.SensorsRead(x, y, Map.Down,Robot);
 						}
 						break;
 					}
@@ -107,7 +110,7 @@ namespace Localization
 						{
 							fl = false;
 							--y;
-							Map.SensorsRead(x, y, Map.Left);
+							Map.SensorsRead(x, y, Map.Left,Robot);
 						}
 						break;
 					}
@@ -117,60 +120,60 @@ namespace Localization
 						{
 							fl = false;
 							--x;
-							Map.SensorsRead(x, y, Map.Up);
+							Map.SensorsRead(x, y, Map.Up,Robot);
 						}
 						break;
 					}
 					case Map.Right:
 					{
-						if (y + 1 < Map.wight && Map._map[x, y, Map.Right] == 0) // && 
+						if (y + 1 < Map.Wight && Map._map[x, y, Map.Right] == 0) // && 
 							// CheckWalls(x, y + 1, Right))
 						{
 							fl = false;
 							++y;
-							Map.SensorsRead(x, y, Map.Right);
+							Map.SensorsRead(x, y, Map.Right,Robot);
 						}
 						break;
 					}
 				}
 				if (fl)
 				{
-					Map._sensors[0] = -1;
-					Map._sensors[1] = -1;
-					Map._sensors[2] = -1;
-					Map._sensors[3] = -1;
-					wayExist = false;
+					Map.Sensors[0] = -1;
+					Map.Sensors[1] = -1;
+					Map.Sensors[2] = -1;
+					Map.Sensors[3] = -1;
+					_wayExist = false;
 					return ; //-1
 				}
 
 				//Console.WriteLine("FFFUUUUUCKKKKKKKKKK" + hypothesis[0].Count);
-				Map.Hypothesis3(way[k], Way.beginWay);
+				Map.Hypothesis3(way[k], Way.BeginWay,Motion, Robot);
 
 				for (int i = 0; i < way.Count; i++)
 				{
 					Console.Write(way[i]);
 				}
 				Console.WriteLine();
-				if (Map.hypothesis[0].Count == 1)
+				if (Map.Hypothesis[0].Count == 1)
 				{
-					localiz = true;
-					var n = Map.best_ways.Count;
-					Map.best_ways.Add(new List<int>());
-					Map.best_ways[n].Add(x_start);
-					Map.best_ways[n].Add(y_start);
-					Map.best_ways[n].Add(direction);
+					_localiz = true;
+					var n = Map.BestWays.Count;
+					Map.BestWays.Add(new List<int>());
+					Map.BestWays[n].Add(xStart);
+					Map.BestWays[n].Add(yStart);
+					Map.BestWays[n].Add(direction);
 					for (var l = 0; l <= k; l++)
 					{
-						Map.best_ways[n].Add(way[l]);
+						Map.BestWays[n].Add(way[l]);
 						//	Console.Write(best_ways[n][l] + ",");
 					}
 					//Console.WriteLine(" quantity of steps: " + k);
 					return; // k;
 				}
 
-				if (Map.hypothesis[0].Count == 0)
+				if (Map.Hypothesis[0].Count == 0)
 				{
-					wayExist = false;
+					_wayExist = false;
 					return;
 				}
 			}

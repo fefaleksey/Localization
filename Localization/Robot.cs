@@ -2,49 +2,49 @@
 {
 	class Robot
 	{
-		private int[] _sensors = new int[4];
+		public int[] Sensors = new int[4];
 		public const int Down = 0, Left = 1, Up = 2, Right = 3;
 		
 		public int InitialDirection { get; set; } = 1;
 		
 		public Robot()
 		{
-			_sensors = new int[4];
+			Sensors = new int[4];
 			InitialDirection = 1;
 		}
 		
-
+		
 		public void GetSensors(ref int[] value)
 		{
-			value[Down] = _sensors[Down];
-			value[Left] = _sensors[Left];
-			value[Up] = _sensors[Up];
-			value[Right] = _sensors[Right];
+			value[Down] = Sensors[Down];
+			value[Left] = Sensors[Left];
+			value[Up] = Sensors[Up];
+			value[Right] = Sensors[Right];
 		}
 		
 		public unsafe void SetSensors(int[] value)
 		{
 			long d;
-			fixed (int* p1 = value, p2 = _sensors)
+			fixed (int* p1 = value, p2 = Sensors)
 			{
 				d = p1 - p2;
 			}
 			if (InitialDirection == 1)
 			{
-				_sensors[Down] = value[Up];
-				_sensors[Left] = value[Right];
-				_sensors[Up] = value[Down];
-				_sensors[Right] = value[Left];
+				Sensors[Down] = value[Up];
+				Sensors[Left] = value[Right];
+				Sensors[Up] = value[Down];
+				Sensors[Right] = value[Left];
 			}
 			else
 			{
-				_sensors[Down] = value[Down];
-				_sensors[Left] = value[Left];
-				_sensors[Up] = value[Up];
-				_sensors[Right] = value[Right];
+				Sensors[Down] = value[Down];
+				Sensors[Left] = value[Left];
+				Sensors[Up] = value[Up];
+				Sensors[Right] = value[Right];
 			}
 		}
-		
+		/*
 		public int[] Sensors
 		{
 			get => _sensors;
@@ -88,7 +88,7 @@
 					sensors[Right] = value[Left];
 				}
 				*/
-			}
-		}
+	//		}
+	//	}
 	}
 }

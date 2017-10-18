@@ -1,13 +1,222 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Localization
 {
 	class Solution
 	{
-		public static void ChooseWay()
+		private int quantityDifferentWays = 16;
+		private int way = 15;
+		
+		//TODO хватаю лишние пути(из-за наличия лишних гипотез). Добавить метод фильтра гипотез.
+		//во, что я понял. Мне не важно, откуда я приехал. Важны только показания датчиков
+		//на настоящий момент. Необходимо сверить их с картой и выкинуть лишние гипотезы
+		//Доделать это 18.10 !!!
+		public void GetWays(ref Map map, ref List<List<int>> ways, ref FinalWays finalWays)
 		{
+			var currentWay = new int[4] {0, 0, 0, 0};
+			var timeOfWay = new TimeOfWay();
+			timeOfWay.GetTime(ref ways, true);
+			//var finalWays = new FinalWays();
+			//finalWays = new FinalWays(); TODO: ???
+			var selectedPaths = new List<List<int>>();
 			
+			//0 - Down, 1- Left, 2 - Up, 3 - Right
+			//var sumTimeForDirecrion = new int[4];
+			var indexDirections = -1;
+			var step = -1;//TODO: 0->-1 возможно надо вернуть обратно
+			while (ways.Count > 0)
+			{
+				step++;
+				indexDirections++;
+				finalWays.directions.Add(new List<int>());
+				timeOfWay.GetTime(ref ways);
+				for (var i = 0; i < quantityDifferentWays; i++)
+				{
+					NextWay(ref currentWay,ref map);
+					HypothesisFilter(ref map, step);
+					var direcrion = ChooseDirection(ways, map);
+
+					finalWays.directions[indexDirections].Add(direcrion);
+					
+					/*
+					Console.WriteLine("Way " + i);
+					for (var j = 0; j < 4; j++)
+					{
+						Console.Write(currentWay[j]);
+					}
+					Console.WriteLine();
+					*/
+				}
+				WayFilter(ref ways);
+				//timeOfWay.GetTime(ref ways);
+			}
+			
+			for (var i = 0; i < finalWays.directions.Count; i++)
+			{
+				Console.WriteLine("step " + i);
+				for (var j = 0; j < finalWays.directions[i].Count; j++)
+				{
+					Console.Write(finalWays.directions[i][j] + " ");
+				}
+				Console.WriteLine();
+			}
+		}
+		
+		private void HypothesisFilter(ref Map map, int step)
+		{
+			map.HypothesisInit();
+			map.Hypothesis1New();
+			for (var i = 0; i < map.Hypothesis[0].Count; i++)
+			{
+				int x = map.Hypothesis[0][i],
+					y = map.Hypothesis[1][i],
+					direction = map.Hypothesis[2][i];
+				if (!CheckWalls(x, y, direction, step, map))
+				{
+					map.Hypothesis[0].RemoveAt(i);
+					map.Hypothesis[1].RemoveAt(i);
+					map.Hypothesis[2].RemoveAt(i);
+					i--;
+					//TODO: удалить путь. Возможно убрать инверсию, хз. Надо посмотреть.
+				}
+			}
+		}
+		
+		//TODO: Добавить ещё один фильтр гипотез (который будет учитывать расположение стен)
+		private int ChooseDirection(List<List<int>> ways, Map map)
+		{
+			var sumTimeForDirecrion = new double[4];
+			var quantity = new double[4];
+			for (var i = 0; i < map.Hypothesis[0].Count; i++)
+			{
+				int x = map.Hypothesis[0][i], y = map.Hypothesis[1][i],
+					direction = map.Hypothesis[2][i];
+				for (var j = 0; j < ways.Count; j++)
+				{
+					if (x == ways[j][0] && y == ways[j][1] && direction == ways[j][2])
+					{
+						//TODO изменить направление (нужно текущее, а не начальное)
+						var index = ways[j][4];
+						sumTimeForDirecrion[index - 1] += ways[j][3];
+						quantity[index - 1]++;
+					}
+				}
+			}
+			for (var i = 0; i < 4; i++)
+			{
+				if (quantity[i] != 0)
+				{
+					sumTimeForDirecrion[i] /= quantity[i];
+				}
+				else
+				{
+					sumTimeForDirecrion[i] = 1000000000;
+				}
+			}
+			return ChooseMin(sumTimeForDirecrion);
+		}
+
+		
+		private int ChooseMin(double[] sumTimeForDirecrion)
+		{
+			var min = sumTimeForDirecrion[0];
+			var indexMin = 0;
+			for (var i = 1; i < 4; i++)
+			{
+				if (min > sumTimeForDirecrion[i])
+				{
+					min = sumTimeForDirecrion[i];
+					indexMin = i;
+				}
+			}
+			
+			if (sumTimeForDirecrion[indexMin] < 1000000)
+			{
+				return indexMin + 1;
+			}
+			return 0;
+		}
+
+		private void WayFilter(ref List<List<int>> ways)
+		{
+			for (var i = 0; i < ways.Count; i++)
+			{
+				ways[i].RemoveAt(4);
+				if (ways[i].Count == 4)
+				{
+					ways.RemoveAt(i);
+					i--;
+				}
+			}
+		}
+		
+		private void NextWay(ref int[] currentWay,ref Map map)
+		{
+			way++;
+			if (way == 16) way = 0;
+			var cway = way;
+			for (var i = 0; i < 4; i++)
+			{
+				currentWay[i] = cway % 2;
+				map.Sensors[i] = cway % 2;
+				cway >>= 1;
+			}
+		}
+		
+		private void CopyWay(List<int> from,ref List<int> to)
+		{
+			to.Clear();
+			for (var i = 0; i < from.Count; ++i)
+			{
+				to.Add(from[i]);
+			}
+		}
+
+		private bool CheckWalls(int x, int y, int direction, int step, Map map)
+		{
+			//Robot.Sensors = _sensors;
+			//TODO: проверить. Возможно условие ниже нужно раскомментировать
+			/*
+			if (step == 1)
+			{
+				if (direction > 2) direction -= 2;
+				else direction += 2;
+			}
+			*/
+			//_sensors = Robot.Sensors;
+			if (direction == 1)
+			{
+				if (map._map[x, y, 1] != map.Sensors[2]) return false;
+				if (map._map[x, y, 2] != map.Sensors[3]) return false;
+				if (map._map[x, y, 3] != map.Sensors[0]) return false;
+				if (map._map[x, y, 4] != map.Sensors[1]) return false;
+				return true;
+			}
+			else if (direction == 2)
+			{
+				if (map._map[x, y, 1] != map.Sensors[1]) return false;
+				if (map._map[x, y, 2] != map.Sensors[2]) return false;
+				if (map._map[x, y, 3] != map.Sensors[3]) return false;
+				if (map._map[x, y, 4] != map.Sensors[0]) return false;
+				return true;
+			}
+			else if (direction == 3)
+			{
+				if (map._map[x, y, 1] != map.Sensors[0]) return false;
+				if (map._map[x, y, 2] != map.Sensors[1]) return false;
+				if (map._map[x, y, 3] != map.Sensors[2]) return false;
+				if (map._map[x, y, 4] != map.Sensors[3]) return false;
+				return true;
+			}
+			else
+			{
+				if (map._map[x, y, 1] != map.Sensors[3]) return false;
+				if (map._map[x, y, 2] != map.Sensors[0]) return false;
+				if (map._map[x, y, 3] != map.Sensors[1]) return false;
+				if (map._map[x, y, 4] != map.Sensors[2]) return false;
+				return true;
+			}
 		}
 	}
 }
-

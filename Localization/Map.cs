@@ -115,11 +115,12 @@ namespace Localization
 			var way = new Way();
 			//var Robot = new Robot();
 			handingOfAllCases.Handing(this, way);
-
+			
 			ListFiltration(ref BestWays);
 			PrintMap();
 			var solution = new Solution();
-			solution.ChooseWay(ref BestWays, this);
+			var map = this;
+			var finalWays = new FinalWays();
 			
 			for (var l = 0; l < BestWays.Count; l++)
 			{
@@ -132,6 +133,14 @@ namespace Localization
 				}
 				Console.WriteLine();
 			}
+			
+			
+			solution.GetWays(ref map, ref BestWays, ref finalWays);
+			var test = new Tests();
+			var robot = new Robot();
+			
+			test.TimeOfFinalWays(finalWays, ref map, robot);
+			
 		}
 
 		private void MapInit()
@@ -193,6 +202,8 @@ namespace Localization
 
 		public void HypothesisInit()
 		{
+			Hypothesis.Clear();
+			StartInit();
 			_quantityOfHypothises = 0;
 			var n = 0;
 			for (var i = 0; i < Wight; i++)
@@ -572,7 +583,12 @@ namespace Localization
 		public void Copy_Lists(ref List<List<int>> to, List<List<int>> from)
 		{
 			int m = from.Count, n = from[0].Count;
-
+			to.Clear();
+			for (var i = 0; i < m; i++)
+			{
+				to.Add(new List<int>());
+			}
+			
 			for (var i = 0; i < n; ++i)
 			{
 				to[0].Add(from[0][i]);

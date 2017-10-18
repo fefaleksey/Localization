@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FinalWays.cs" />
     <Compile Include="HandingOfAllCases.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Motion.cs" />
@@ -49,6 +50,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Robot.cs" />
     <Compile Include="Solution.cs" />
+    <Compile Include="Tests.cs" />
     <Compile Include="TimeOfWay.cs" />
     <Compile Include="Way.cs" />
   </ItemGroup>

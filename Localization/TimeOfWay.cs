@@ -6,7 +6,7 @@ namespace Localization
     {
         public const int Down = 1, Left = 2, Up = 3, Right = 4;
         
-        public void GetTime(ref List<List<int>> ways)
+        public void GetTime(ref List<List<int>> ways, bool first)
         {
             for (var i = 0; i < ways.Count; i++)
             {
@@ -23,6 +23,26 @@ namespace Localization
                     }
                 }
                 ways[i].Insert(3, time);
+            }
+        }
+        
+        public void GetTime(ref List<List<int>> ways)
+        {
+            for (var i = 0; i < ways.Count; i++)
+            {
+                var time=0;
+                for (var j = 4; j < ways[i].Count; j++)
+                {
+                    if (ways[i][j] == Down || ways[i][j] == Up)
+                    {
+                        time++;
+                    }
+                    else
+                    {
+                        time += 2;
+                    }
+                }
+                ways[i][3] = time;
             }
         }
     }

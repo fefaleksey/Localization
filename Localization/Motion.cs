@@ -1,6 +1,8 @@
 ﻿using System;
 namespace Localization
 {
+	// TODO: Проекции футамуры, принцип belodi
+	
 	class Motion
 	{
 		public const int Down = 1;

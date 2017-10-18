@@ -7,7 +7,7 @@ namespace Localization
 	{
 		private bool _wayExist = true, _localiz = false;
 		
-		private void Copy_way(List<int> from,ref List<int> to)
+		private void CopyWay(List<int> from,ref List<int> to)
 		{
 			to.Clear();
 			for (var i = 0; i < from.Count; ++i)
@@ -44,7 +44,7 @@ namespace Localization
 				while (fl != 0)
 				{
 					++test;
-					Copy_way(Way.CurentWay, ref way);
+					CopyWay(Way.CurentWay, ref way);
 					Map.SensorsRead(Map.Hypothesis[0][i], Map.Hypothesis[1][i],
 									Map.Hypothesis[2][i],Robot); //!!
 					HandingHypothesis(i, way, Map, Motion, Way, Robot);
@@ -53,6 +53,7 @@ namespace Localization
 					Map.Hypothesis[1].Clear();
 					Map.Hypothesis[2].Clear();
 					Map.Copy_Lists(ref Map.Hypothesis, copyHypothesis);
+					
 					//////////////////////////////
 					/*
 					Map.hypothesis[0][0] = 5;
@@ -148,7 +149,7 @@ namespace Localization
 
 				//Console.WriteLine("FFFUUUUUCKKKKKKKKKK" + hypothesis[0].Count);
 				Map.Hypothesis3(way[k], Way.BeginWay,Motion, Robot);
-
+				
 				for (int i = 0; i < way.Count; i++)
 				{
 					Console.Write(way[i]);

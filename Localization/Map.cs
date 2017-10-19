@@ -84,33 +84,7 @@ namespace Localization
 		{
 			int quantity = 3;
 			StartInit();
-			/*
-			Console.WriteLine("localization");
-			SensorsInit(1, 0, 0, 0);
-			Hypothesis1(quantity);
-			Console.WriteLine("Hypotsesis 1");
-			PrintMap();
-			//go in random direction
-			SensorsInit(0, 1, 0, 0);
-			Console.WriteLine("step 1");
-			Hypothesis2();
-			PrintMap();
-			//SensorsInit(0, 1, 0, 1);
-			//Console.WriteLine("step 2");
-			//Hypothesis3(Right);
-			PrintMap();
-			*/
-			//Prognosis(10);
-			//Way.CurentWayInit();
-			//Way.curentWay.Add(3);
-			//Way.curent_way.Add(2);
-			//int k;
-			/*
-			k = Motion.GetNewDir(Left, Left);
-			k = Motion.GetNewDir(Left, Right);
-			k = Motion.GetNewDir(Right, Left);
-			k = Motion.GetNewDir(Right, Right);
-			*/
+			
 			var handingOfAllCases = new HandingOfAllCases();
 			var way = new Way();
 			//var Robot = new Robot();
@@ -135,12 +109,12 @@ namespace Localization
 			}
 			
 			
-			solution.GetWays(ref map, ref BestWays, ref finalWays);
-			var test = new Tests();
+			//solution.GetWays(ref map, ref BestWays, ref finalWays);
+			var solutionForRobot = new SolutionForRobot();
 			var robot = new Robot();
+			solutionForRobot.SimulationOfLocalization(ref map, ref BestWays, ref finalWays);
 			
-			test.TimeOfFinalWays(finalWays, ref map, robot);
-			
+			//test.TimeOfFinalWays(ref finalWays, ref map, robot);
 		}
 
 		private void MapInit()
@@ -636,8 +610,18 @@ namespace Localization
 			}
 		}
 
-		public void SensorsRead(int x, int y, int direction, Robot Robot)
+		public void SensorsRead(int x, int y, int direction, Robot robot)
 		{
+			/*
+			if (beginWay && robot.InitialDirection == 1)
+			{
+				if (direction > 2)
+				{
+					direction -= 2;
+				}
+				else direction += 2;
+			}
+			*/
 			switch (direction)
 			{
 				case Down:
@@ -645,8 +629,8 @@ namespace Localization
 					Sensors[3] = _map[x, y, 2];
 					Sensors[0] = _map[x, y, 3];
 					Sensors[1] = _map[x, y, 4];
-					Robot.SetSensors(Sensors);
-					Robot.GetSensors(ref Sensors);
+					robot.SetSensors(Sensors);
+					robot.GetSensors(ref Sensors);
 					/*
 					Robot.Sensors = _sensors;
 					_sensors = Robot.Sensors;
@@ -657,8 +641,8 @@ namespace Localization
 					Sensors[3] = _map[x, y, 3];
 					Sensors[0] = _map[x, y, 4];
 					Sensors[1] = _map[x, y, 1];
-					Robot.SetSensors(Sensors);
-					Robot.GetSensors(ref Sensors);
+					robot.SetSensors(Sensors);
+					robot.GetSensors(ref Sensors);
 					/*
 					Robot.Sensors = _sensors;
 					_sensors = Robot.Sensors;
@@ -669,8 +653,8 @@ namespace Localization
 					Sensors[1] = _map[x, y, 2];
 					Sensors[2] = _map[x, y, 3];
 					Sensors[3] = _map[x, y, 4];
-					Robot.SetSensors(Sensors);
-					Robot.GetSensors(ref Sensors);
+					robot.SetSensors(Sensors);
+					robot.GetSensors(ref Sensors);
 					/*
 					Robot.Sensors = _sensors;
 					_sensors = Robot.Sensors;
@@ -681,8 +665,8 @@ namespace Localization
 					Sensors[1] = _map[x, y, 3];
 					Sensors[2] = _map[x, y, 4];
 					Sensors[3] = _map[x, y, 1];
-					Robot.SetSensors(Sensors);
-					Robot.GetSensors(ref Sensors);
+					robot.SetSensors(Sensors);
+					robot.GetSensors(ref Sensors);
 					/*
 					Robot.Sensors = _sensors;
 					_sensors = Robot.Sensors;

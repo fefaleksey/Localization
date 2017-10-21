@@ -167,8 +167,8 @@ namespace Localization
 			}
 			
 			
-			PrintResult(finalWays);
-			finalWays.SetFinalList(finalWays.Directions);
+			//PrintResult(finalWays);
+			finalWays.SetFinalList();
 			//PrintReleaseResult(finalWays);
 			Console.WriteLine(QUANTITYBAGS);
 		}

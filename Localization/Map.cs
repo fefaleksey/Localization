@@ -113,9 +113,10 @@ namespace Localization
 			var solutionForRobot = new SolutionForRobot();
 			var robot = new Robot();
 			solutionForRobot.SimulationOfLocalization(ref map, ref BestWays, ref finalWays);
-			var rightHand = new RuleOfTheRightHand();
-			rightHand.SimulationOfLocalization(ref map, ref finalWays);
-
+			var ruleOfOneHand = new RuleOfTheRightAndLeftHand();
+			ruleOfOneHand.SimulationOfLocalization(ref map, ref finalWays, true);
+			ruleOfOneHand.SimulationOfLocalization(ref map, ref finalWays, false);
+			finalWays.PrintResult();
 			//test.TimeOfFinalWays(ref finalWays, ref map, robot);
 		}
 

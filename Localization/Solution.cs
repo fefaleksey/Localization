@@ -33,7 +33,7 @@ namespace Localization
 			{
 				step++;
 				indexDirections++;
-				finalWays.directions.Add(new List<int>());
+				finalWays.Directions.Add(new List<int>());
 				timeOfWay.GetTime(ref ways);
 				// TODO: После каждого шага необходимо сдвигать гипотезы, иначе получается бред!!!
 				for (var i = 0; i < quantityDifferentWays; i++)
@@ -42,7 +42,7 @@ namespace Localization
 					HypothesisFilter(ref map, step);
 					var direcrion = ChooseDirection(ways, map);
 
-					finalWays.directions[indexDirections].Add(direcrion);
+					finalWays.Directions[indexDirections].Add(direcrion);
 					
 					/*
 					Console.WriteLine("Way " + i);

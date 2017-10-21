@@ -50,7 +50,7 @@ namespace Localization
                 while (!localize)
                 {
                     var sensorValue = GetValueOfSensor(robot.Sensors);
-                    direction = ways.directions[step][sensorValue];
+                    direction = ways.Directions[step][sensorValue];
                     //if (step > 0) hg
                     //GoTo(ref map, i, direction); // TODO: СДЕЛАТЬ!!!
                     if (direction == 1 || direction == 3) time++;
@@ -168,17 +168,17 @@ namespace Localization
 
         private void PathAdjustment(ref FinalWays ways)
         {
-            for (var i = 0; i < ways.directions.Count; i++)
+            for (var i = 0; i < ways.Directions.Count; i++)
             {
-                for (var j = 0; j < ways.directions[i].Count; j++)
+                for (var j = 0; j < ways.Directions[i].Count; j++)
                 {
-                    if (ways.directions[i][j] == 2)
+                    if (ways.Directions[i][j] == 2)
                     {
-                        ways.directions[i][j] = 4;
+                        ways.Directions[i][j] = 4;
                     }
-                    else if (ways.directions[i][j] == 4)
+                    else if (ways.Directions[i][j] == 4)
                     {
-                        ways.directions[i][j] = 2;
+                        ways.Directions[i][j] = 2;
                     }
                 }
             }

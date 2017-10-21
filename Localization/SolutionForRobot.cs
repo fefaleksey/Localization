@@ -36,10 +36,10 @@ namespace Localization
 				var x = hypothesisCopy[0][i];
 				var y = hypothesisCopy[1][i];
 				var direction = hypothesisCopy[2][i];
-				finalWays.directions.Add(new List<int>());
-				finalWays.directions[i].Add(x);
-				finalWays.directions[i].Add(y);
-				finalWays.directions[i].Add(direction);
+				finalWays.Directions.Add(new List<int>());
+				finalWays.Directions[i].Add(x);
+				finalWays.Directions[i].Add(y);
+				finalWays.Directions[i].Add(direction);
 				robot.InitialDirection = 3;
 				map.SensorsRead(x, y, direction, robot);
 				HypothesisFilter(ref map);
@@ -64,7 +64,7 @@ namespace Localization
 					}
 					newDir = GetDirection(ref map, ref bestWays, robot.Sensors, directionForGetDirection, beginWay, robot);
 					directionOfTheNextStep = newDir;
-					finalWays.directions[i].Add(newDir);
+					finalWays.Directions[i].Add(newDir);
 					newDir = motion.GetNewDir(direction, newDir, beginWay);
 					direction = newDir;
 					//timeOfWay.GetTime(ref ways);
@@ -126,13 +126,13 @@ namespace Localization
 					
 					if (map.Hypothesis[0].Count == 1)
 					{
-						finalWays.directions[i].Add(8888888);
-						finalWays.directions[i].Add(map.Hypothesis[0][0]);
-						finalWays.directions[i].Add(map.Hypothesis[1][0]);
+						finalWays.Directions[i].Add(8888888);
+						finalWays.Directions[i].Add(map.Hypothesis[0][0]);
+						finalWays.Directions[i].Add(map.Hypothesis[1][0]);
 						if(robot.InitialDirection==1) 
-							finalWays.directions[i].Add(OppositeDirection(map.Hypothesis[2][0]));
+							finalWays.Directions[i].Add(OppositeDirection(map.Hypothesis[2][0]));
 						else
-							finalWays.directions[i].Add(map.Hypothesis[2][0]);
+							finalWays.Directions[i].Add(map.Hypothesis[2][0]);
 						localization = true;
 					}
 					if (map.Hypothesis[0].Count == 0)
@@ -161,25 +161,26 @@ namespace Localization
 					}
 				}
 				localization = false;
-				finalWays.directions[i].Add(8888888);
-				finalWays.directions[i].Add(time);
+				finalWays.Directions[i].Add(8888888);
+				finalWays.Directions[i].Add(time);
 				CopyLists(ref bestWays, bestWaysCopy);
 			}
 			
 			
 			PrintResult(finalWays);
+			finalWays.SetFinalList(finalWays.Directions);
 			//PrintReleaseResult(finalWays);
 			Console.WriteLine(QUANTITYBAGS);
 		}
 
 		private void PrintResult(FinalWays finalWays)
 		{
-			for (var i = 0; i < finalWays.directions.Count; i++)
+			for (var i = 0; i < finalWays.Directions.Count; i++)
 			{
 				Console.Write(i+". ");
-				for (var j = 0; j < finalWays.directions[i].Count; j++)
+				for (var j = 0; j < finalWays.Directions[i].Count; j++)
 				{
-					Console.Write(finalWays.directions[i][j]+" ");
+					Console.Write(finalWays.Directions[i][j]+" ");
 				}
 				Console.WriteLine();
 			}
@@ -187,12 +188,12 @@ namespace Localization
 
 		private void PrintReleaseResult(FinalWays finalWays)
 		{
-			for (var i = 0; i < finalWays.directions.Count; i++)
+			for (var i = 0; i < finalWays.Directions.Count; i++)
 			{
 				//Console.Write(i+". ");
-				var j = finalWays.directions[i].Count - 1;
-				Console.Write(finalWays.directions[i][0] + " " + finalWays.directions[i][1] + " " +
-				              finalWays.directions[i][2] + " " + finalWays.directions[i][j]);
+				var j = finalWays.Directions[i].Count - 1;
+				Console.Write(finalWays.Directions[i][0] + " " + finalWays.Directions[i][1] + " " +
+				              finalWays.Directions[i][2] + " " + finalWays.Directions[i][j]);
 				Console.WriteLine();
 			}
 		}

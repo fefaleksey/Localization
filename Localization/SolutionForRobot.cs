@@ -81,7 +81,7 @@ namespace Localization
 							{
 								++x;
 								map.SensorsRead(x, y, Map.Down, robot);
-								time ++;
+								//time ++;
 							}
 							break;
 						}
@@ -91,7 +91,7 @@ namespace Localization
 							{
 								--y;
 								map.SensorsRead(x, y, Map.Left, robot);
-								time += 2;
+								//time += 2;
 							}
 							break;
 						}
@@ -101,7 +101,7 @@ namespace Localization
 							{
 								--x;
 								map.SensorsRead(x, y, Map.Up, robot);
-								time++;
+								//time++;
 							}
 							break;
 						}
@@ -111,7 +111,7 @@ namespace Localization
 							{
 								++y;
 								map.SensorsRead(x, y, Map.Right, robot);
-								time += 2;
+								//time += 2;
 							}
 							break;
 						}
@@ -138,9 +138,13 @@ namespace Localization
 					if (map.Hypothesis[0].Count == 0)
 					{
 						QUANTITYBAGS++;
-						Console.WriteLine("SolutionForRobot.SimulationOfLocalization - BAG 2222222222222222222222222");
+						//Console.WriteLine("SolutionForRobot.SimulationOfLocalization - BAG 2222222222222222222222222");
 						break;
 					}
+					if (directionOfTheNextStep == 1 || directionOfTheNextStep == 3)
+						time++;
+					else
+						time += 2;
 					beginWay = false;
 					step++;
 					//TODO: проверить, не попали ли мы в тупик
@@ -161,6 +165,15 @@ namespace Localization
 				finalWays.directions[i].Add(time);
 				CopyLists(ref bestWays, bestWaysCopy);
 			}
+			
+			
+			PrintResult(finalWays);
+			//PrintReleaseResult(finalWays);
+			Console.WriteLine(QUANTITYBAGS);
+		}
+
+		private void PrintResult(FinalWays finalWays)
+		{
 			for (var i = 0; i < finalWays.directions.Count; i++)
 			{
 				Console.Write(i+". ");
@@ -170,7 +183,18 @@ namespace Localization
 				}
 				Console.WriteLine();
 			}
-			Console.WriteLine("!!!!" + QUANTITYBAGS + "!!!!");
+		}
+
+		private void PrintReleaseResult(FinalWays finalWays)
+		{
+			for (var i = 0; i < finalWays.directions.Count; i++)
+			{
+				//Console.Write(i+". ");
+				var j = finalWays.directions[i].Count - 1;
+				Console.Write(finalWays.directions[i][0] + " " + finalWays.directions[i][1] + " " +
+				              finalWays.directions[i][2] + " " + finalWays.directions[i][j]);
+				Console.WriteLine();
+			}
 		}
 
 		private bool Impasse(Robot robot)

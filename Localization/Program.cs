@@ -7,7 +7,6 @@ namespace Localization
         {
             var map=new Map();
             map.Localization();
-            //Map.Localization();
         }
     }
 }

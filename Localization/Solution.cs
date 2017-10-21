@@ -56,7 +56,7 @@ namespace Localization
 				WayFilter(ref ways);
 				//timeOfWay.GetTime(ref ways);
 			}
-			
+			/*
 			for (var i = 0; i < finalWays.directions.Count; i++)
 			{
 				Console.WriteLine("step " + i);
@@ -66,6 +66,7 @@ namespace Localization
 				}
 				Console.WriteLine();
 			}
+			*/
 		}
 		
 		

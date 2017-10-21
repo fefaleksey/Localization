@@ -18,7 +18,7 @@ namespace Localization
 		
 		public void Handing(Map Map, Way Way)
 		{
-			Console.WriteLine("Handing");
+			//Console.WriteLine("Handing");
 			var copyHypothesis = new List<List<int>>();
 			Map.HypothesisInit();
 			var way = new List<int>();
@@ -63,7 +63,7 @@ namespace Localization
 					_wayExist = true;
 					_localiz = false;
 				}
-				Console.Write(i);
+				//Console.Write(i);
 				fl = 1;
 			}
 		}
@@ -149,12 +149,13 @@ namespace Localization
 
 				//Console.WriteLine("FFFUUUUUCKKKKKKKKKK" + hypothesis[0].Count);
 				Map.Hypothesis3(way[k], Way.BeginWay,Motion, Robot);
-				
+				/*
 				for (int i = 0; i < way.Count; i++)
 				{
 					Console.Write(way[i]);
 				}
 				Console.WriteLine();
+				*/
 				if (Map.Hypothesis[0].Count == 1)
 				{
 					_localiz = true;

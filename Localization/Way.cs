@@ -23,7 +23,7 @@ namespace Localization
 		{
 			if (CurentWay.Count == 0)
 			{
-				Console.WriteLine("Complete");
+				//Console.WriteLine("Complete");
 				return 0;
 			}
 			

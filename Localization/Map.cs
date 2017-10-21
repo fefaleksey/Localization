@@ -91,11 +91,11 @@ namespace Localization
 			handingOfAllCases.Handing(this, way);
 			
 			ListFiltration(ref BestWays);
-			PrintMap();
+			//PrintMap();
 			var solution = new Solution();
 			var map = this;
 			var finalWays = new FinalWays();
-			
+			/*
 			for (var l = 0; l < BestWays.Count; l++)
 			{
 				Console.WriteLine("ways " + l);
@@ -107,7 +107,7 @@ namespace Localization
 				}
 				Console.WriteLine();
 			}
-			
+			*/
 			
 			//solution.GetWays(ref map, ref BestWays, ref finalWays);
 			var solutionForRobot = new SolutionForRobot();
@@ -212,7 +212,7 @@ namespace Localization
 
 		//сравнивает показания датчиков с полем на карте (сравнивает стены)
 		//(робот двигался (x0,y0)->(x1,y1)
-		private bool CheckWalls(int x, int y, int direction, Robot Robot)
+		public bool CheckWalls(int x, int y, int direction, Robot Robot)
 		{
 			//Robot.Sensors = _sensors;
 			if (Robot.InitialDirection == 1)

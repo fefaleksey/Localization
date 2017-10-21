@@ -465,6 +465,13 @@ namespace Localization
 						break;
 					}
 				}
+				/*
+				if (!fl && Robot.InitialDirection==1)
+				{
+					if (Hypothesis[2][i] > 2) Hypothesis[2][i] -= 2;
+					else Hypothesis[2][i] += 2;
+				}
+				*/
 				if (fl)
 				{
 					Hypothesis[0].RemoveAt(i);

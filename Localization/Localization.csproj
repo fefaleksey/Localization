@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Hypothesis.cs" />
     <Compile Include="FinalWays.cs" />
     <Compile Include="HandingOfAllCases.cs" />
     <Compile Include="Map.cs" />

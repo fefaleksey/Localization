@@ -4,6 +4,7 @@
 	{
 		public int[] Sensors = new int[4];
 		public const int Down = 0, Left = 1, Up = 2, Right = 3;
+		public bool BeginWay = true;
 		
 		public int InitialDirection { get; set; } = 1;
 		

@@ -68,6 +68,7 @@ namespace Localization
 			}
 		}
 		
+		
 		private void HypothesisFilter(ref Map map, int step)
 		{
 			map.HypothesisInit();

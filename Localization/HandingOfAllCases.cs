@@ -80,8 +80,8 @@ namespace Localization
 				yStart = y;
 			var newDir = Map.Hypothesis[2][number];
 			Way.BeginWay = true;
-			//Map.Hypothesis1New();
 			Map.Hypothesis1New();
+			//Map.HypothesisFilter();
 			for (int k = 0; k < way.Count; k++)
 			{
 				bool fl = true;

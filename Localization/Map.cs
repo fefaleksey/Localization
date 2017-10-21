@@ -119,6 +119,27 @@ namespace Localization
 			finalWays.PrintResult();
 			//test.TimeOfFinalWays(ref finalWays, ref map, robot);
 		}
+		
+		public void HypothesisFilter() //, int step 
+		{
+			HypothesisInit();
+			Hypothesis1New();
+			var robot = new Robot {InitialDirection = 3};
+			for (var i = 0; i < Hypothesis[0].Count; i++)
+			{
+				int x = Hypothesis[0][i],
+					y = Hypothesis[1][i],
+					direction = Hypothesis[2][i];
+				if (!CheckWalls(x, y, direction, robot))
+				{
+					Hypothesis[0].RemoveAt(i);
+					Hypothesis[1].RemoveAt(i);
+					Hypothesis[2].RemoveAt(i);
+					i--;
+				}
+			}
+		}
+		
 
 		private void MapInit()
 		{

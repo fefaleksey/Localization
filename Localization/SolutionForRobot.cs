@@ -6,7 +6,7 @@ namespace Localization
 {
 	class SolutionForRobot
 	{
-		private int quantityDifferentWays = 16;
+		private int _quantityDifferentWays = 16;
 		private int way = 15;
 
 		public void SimulationOfLocalization(ref Map map, ref List<List<int>> bestWays, ref FinalWays finalWays)
@@ -24,7 +24,7 @@ namespace Localization
 			map.Copy_Lists(ref hypothesisCopy, map.Hypothesis);
 			List<List<int>> bestWaysCopy = new List<List<int>>();
 			CopyLists(ref bestWaysCopy, bestWays);
-			var QUANTITYBAGS = 0;
+			var quantitybags = 0;
 
 			for (var i = 0; i < hypothesisCopy[0].Count; i++)
 			{
@@ -43,8 +43,6 @@ namespace Localization
 				map.SensorsRead(x, y, direction, robot);
 				HypothesisFilter(ref map);
 				//map.Hypothesis1New();
-				var newDir = direction;
-				var directionOfTheNextStep = direction;
 				while (!localization)
 				{
 					//indexDirections++;
@@ -60,8 +58,8 @@ namespace Localization
 					{
 						directionForGetDirection = 1;
 					}
-					newDir = GetDirection(ref map, ref bestWays, robot.Sensors, directionForGetDirection, beginWay, robot);
-					directionOfTheNextStep = newDir;
+					var newDir = GetDirection(ref map, ref bestWays, robot.Sensors, directionForGetDirection, beginWay, robot);
+					var directionOfTheNextStep = newDir;
 					finalWays.Ways[i].Add(newDir);
 					newDir = motion.GetNewDir(direction, newDir, beginWay);
 					direction = newDir;
@@ -135,7 +133,7 @@ namespace Localization
 					}
 					if (map.Hypothesis[0].Count == 0)
 					{
-						QUANTITYBAGS++;
+						quantitybags++;
 						//Console.WriteLine("SolutionForRobot.SimulationOfLocalization - BAG 2222222222222222222222222");
 						break;
 					}
@@ -167,7 +165,7 @@ namespace Localization
 			//PrintResult(finalWays);
 			finalWays.SetFinalList();
 			//PrintReleaseResult(finalWays);
-			Console.WriteLine(QUANTITYBAGS);
+			Console.WriteLine(quantitybags);
 		}
 
 		private void PrintResult(FinalWays finalWays)

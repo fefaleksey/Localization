@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace Localization
+﻿namespace Localization
 {
     class RobotSensors
     {
-        public int[,] Sensors = new int[3, 4];
+        //public int[,] Sensors = new int[QualitySensors, 4];
         public const int QualitySensors = 3; // количество клеток, на которых сенсоры работают адекватно
         private const int Down = 1;
         private const int Left = 2;
@@ -13,14 +11,13 @@ namespace Localization
 
         public void SensorsRead(int x, int y, int direction, Robot robot, Map map)
         {
-            int xStart = x, yStart = y, directionStart = direction;
             var i = 0;
             //Down
             while (i < QualitySensors && x + 1 < map.Height)
             {
                 var j = GetIndex(direction, Down);
-                Sensors[i, j] = map.map[x, y, Down];
-                if (Sensors[i, j] == 1) break;
+                robot.Sensors[i, j] = map.map[x, y, Down];
+                if (robot.Sensors[i, j] == 1) break;
                 i++;
                 x++;
             }
@@ -29,8 +26,8 @@ namespace Localization
             while (i < QualitySensors && y > 0)
             {
                 var j = GetIndex(direction, Left);
-                Sensors[i, j] = map.map[x, y, Left];
-                if (Sensors[i, j] == 1) break;
+                robot.Sensors[i, j] = map.map[x, y, Left];
+                if (robot.Sensors[i, j] == 1) break;
                 i++;
                 y--;
             }
@@ -39,26 +36,21 @@ namespace Localization
             while (i < QualitySensors && x > 0)
             {
                 var j = GetIndex(direction, Up);
-                Sensors[i, j] = map.map[x, y, Up];
-                if (Sensors[i, j] == 1) break;
+                robot.Sensors[i, j] = map.map[x, y, Up];
+                if (robot.Sensors[i, j] == 1) break;
                 i++;
                 x--;
             }
             i = 0;
             //Right
-            while (i < QualitySensors && y + 1 < map.Wight)
+            while (i < QualitySensors && y + 1 < map.Widht)
             {
                 var j = GetIndex(direction, Right);
-                Sensors[i, j] = map.map[x, y, Right];
-                if (Sensors[i, j] == 1) break;
+                robot.Sensors[i, j] = map.map[x, y, Right];
+                if (robot.Sensors[i, j] == 1) break;
                 i++;
                 y++;
             }
-            
-            Sensors[0, 2] = map.map[x, y, 1];
-            Sensors[0, 3] = map.map[x, y, 2];
-            Sensors[0, 0] = map.map[x, y, 3];
-            Sensors[0, 1] = map.map[x, y, 4];
         }
 
         /// <summary>

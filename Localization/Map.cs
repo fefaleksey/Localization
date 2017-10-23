@@ -57,7 +57,7 @@ namespace Localization
 
 		public int Height = 8;
 
-		public int Wight = 8;
+		public int Widht = 8;
 
 		public List<List<int>> Hypothesis = new List<List<int>>(); // x,y,direction
 
@@ -137,7 +137,7 @@ namespace Localization
 			Console.WriteLine();
 			for (i = 0; i < Height; ++i)
 			{
-				for (j = 0; j < Wight; ++j)
+				for (j = 0; j < Widht; ++j)
 				{
 
 					if (n < k && i == Hypothesis[0][n] && j == Hypothesis[1][n])
@@ -166,7 +166,7 @@ namespace Localization
 		{
 			Hypothesis.Clear();
 			StartInit();
-			for (var i = 0; i < Wight; i++)
+			for (var i = 0; i < Widht; i++)
 			{
 				for (var j = 0; j < Height; j++)
 				{
@@ -247,7 +247,7 @@ namespace Localization
 		{
 			for (var i = 0; i < Height; ++i)
 			{
-				for (var j = 0; j < Wight; ++j)
+				for (var j = 0; j < Widht; ++j)
 				{
 					if (map[i, j, 0] == quantity)
 					{
@@ -431,7 +431,7 @@ namespace Localization
 						//var fl = true;
 						int x = Hypothesis[0][i], y = Hypothesis[1][i];
 
-						if (y + 1 < Wight && map[x, y + 1, 0] == quantity)
+						if (y + 1 < Widht && map[x, y + 1, 0] == quantity)
 						{
 							if (map[x, y, Right] == 0 && CheckWalls(x, y + 1, Right, robot))
 							{

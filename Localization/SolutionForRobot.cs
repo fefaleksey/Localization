@@ -103,7 +103,7 @@ namespace Localization
 						}
 						case Map.Right:
 						{
-							if (y + 1 < map.Wight && map.map[x, y, Map.Right] == 0)
+							if (y + 1 < map.Widht && map.map[x, y, Map.Right] == 0)
 							{
 								++y;
 								map.SensorsRead(x, y, Map.Right, robot);

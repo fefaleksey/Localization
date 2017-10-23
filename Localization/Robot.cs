@@ -2,19 +2,21 @@
 {
 	class Robot
 	{
-		public int[] Sensors = new int[4];
+		public int[,] Sensors;
+		//public RobotSensors RobotSensors;
 		public const int Down = 0, Left = 1, Up = 2, Right = 3;
 		public bool BeginWay = true;
-		
-		public int InitialDirection { get; set; } = 1;
-		
+
+		public int InitialDirection { get; set; }
+
 		public Robot()
 		{
-			Sensors = new int[4];
+			//RobotSensors = new RobotSensors();
+			Sensors = new int[RobotSensors.QualitySensors, 4];
 			InitialDirection = 1;
 		}
-		
-		
+
+		/*
 		public void GetSensors(ref int[] value)
 		{
 			value[Down] = Sensors[Down];
@@ -22,14 +24,9 @@
 			value[Up] = Sensors[Up];
 			value[Right] = Sensors[Right];
 		}
-		
-		public unsafe void SetSensors(int[] value)
+
+		public void SetSensors(int[] value)
 		{
-			long d;
-			fixed (int* p1 = value, p2 = Sensors)
-			{
-				d = p1 - p2;
-			}
 			if (InitialDirection == 1)
 			{
 				Sensors[Down] = value[Up];
@@ -45,51 +42,95 @@
 				Sensors[Right] = value[Right];
 			}
 		}
-		/*
-		public int[] Sensors
+		*/
+		class RobotSensors
 		{
-			get => _sensors;
-			set
+			//public int[,] Sensors = new int[QualitySensors, 4];
+			public const int QualitySensors = 3; // количество клеток, на которых сенсоры работают адекватно
+
+			private const int IDown = 1;
+			private const int ILeft = 2;
+			private const int IUp = 3;
+			private const int IRight = 4;
+
+			public void SensorsRead(int x, int y, int direction, Robot robot, Map map)
 			{
-				if (InitialDirection == 1)
+				var i = 0;
+				//Down
+				while (i < QualitySensors && x + 1 < map.Height)
 				{
-					_sensors[Down] = value[Up];
-					_sensors[Left] = value[Right];
-					_sensors[Up] = value[Down];
-					_sensors[Right] = value[Left];
+					var j = GetIndex(direction, IDown);
+					robot.Sensors[i, j] = map.map[x, y, IDown];
+					if (robot.Sensors[i, j] == 1) break;
+					i++;
+					x++;
 				}
-				else
+				i = 0;
+				//Left
+				while (i < QualitySensors && y > 0)
 				{
-					_sensors[Down] = value[Down];
-					_sensors[Left] = value[Left];
-					_sensors[Up] = value[Up];
-					_sensors[Right] = value[Right];
+					var j = GetIndex(direction, ILeft);
+					robot.Sensors[i, j] = map.map[x, y, ILeft];
+					if (robot.Sensors[i, j] == 1) break;
+					i++;
+					y--;
 				}
-				/*
-				if (Way.beginWay)
+				i = 0;
+				//Up
+				while (i < QualitySensors && x > 0)
 				{
-					sensors[Down] = value[Down];
-					sensors[Left] = value[Left];
-					sensors[Up] = value[Up];
-					sensors[Right] = value[Right];
+					var j = GetIndex(direction, IUp);
+					robot.Sensors[i, j] = map.map[x, y, IUp];
+					if (robot.Sensors[i, j] == 1) break;
+					i++;
+					x--;
 				}
-				else
-				if (InitialDirection != 1)
+				i = 0;
+				//Right
+				while (i < QualitySensors && y + 1 < map.Widht)
 				{
-					sensors[Down] = value[Down];
-					sensors[Left] = value[Left];
-					sensors[Up] = value[Up];
-					sensors[Right] = value[Right];
+					var j = GetIndex(direction, IRight);
+					robot.Sensors[i, j] = map.map[x, y, IRight];
+					if (robot.Sensors[i, j] == 1) break;
+					i++;
+					y++;
 				}
-				else
+				if (robot.InitialDirection == 1)
 				{
-					sensors[Down] = value[Up];
-					sensors[Left] = value[Right];
-					sensors[Up] = value[Down];
-					sensors[Right] = value[Left];
+					for (var j = 0; j < QualitySensors; j++)
+					{
+						var value1 = robot.Sensors[j, Down];
+						var value2 = robot.Sensors[j, Left];
+						robot.Sensors[j, Down] = robot.Sensors[j, Up];
+						robot.Sensors[j, Left] = robot.Sensors[j, Right];
+						robot.Sensors[j, Up] = value1;
+						robot.Sensors[j, Right] = value2;
+						/*
+						Sensors[Down] = value[Up];
+						Sensors[Left] = value[Right];
+						Sensors[Up] = value[Down];
+						Sensors[Right] = value[Left];
+						*/
+					}
 				}
-				*/
-	//		}
-	//	}
+			}
+
+			/// <summary>
+			/// Only for method SensorRead
+			/// </summary>
+			/// <param name="direction"> absolute current direction </param>
+			/// <param name="newDirection"></param>
+			/// <returns> new index </returns>
+			private int GetIndex(int direction, int newDirection)
+			{
+				if (newDirection == direction + 2 || newDirection == direction - 2)
+					return 0;
+				if (newDirection == direction)
+					return 2;
+				if (newDirection == direction + 1 || newDirection == direction - 3)
+					return 3;
+				return 1;
+			}
+		}
 	}
 }

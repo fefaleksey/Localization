@@ -20,14 +20,6 @@ namespace Localization
 		//Возвращает направление, если поворачиваем в соотв. сторону
 		private int ToLeftDir(int direction)
 		{
-			/*
-			if (Robot.InitialDirection == Down)
-			{
-				if (direction > 1) return direction - 1;
-				return 4;
-			}
-			else
-			*/
 			if (direction > 1) return direction - 1;
 			return 4;
 		}
@@ -41,12 +33,6 @@ namespace Localization
 				return direction + 2;
 			}
 			else return direction;
-			/*
-			if (direction > 2) return direction - 2;
-			return direction + 2;
-			*/
-			//Console.WriteLine("Map.ToDownDir - bag");
-			//return direction; //down == up
 		}
 
 		// текущее направление в абсолютных коорд/направление движения(куда едем?)

@@ -9,7 +9,6 @@ namespace Localization
 		private int quantityDifferentWays = 16;
 		private int way = 15;
 
-		// TODO: Баги при движении назад. Исправить! Возможно ещё будут баги при поворотах. Проверить.
 		public void SimulationOfLocalization(ref Map map, ref List<List<int>> bestWays, ref FinalWays finalWays)
 		{
 			//var currentWay = new int[4] {0, 0, 0, 0};
@@ -26,7 +25,7 @@ namespace Localization
 			List<List<int>> bestWaysCopy = new List<List<int>>();
 			CopyLists(ref bestWaysCopy, bestWays);
 			var QUANTITYBAGS = 0;
-			
+
 			for (var i = 0; i < hypothesisCopy[0].Count; i++)
 			{
 				var time = 0;
@@ -36,10 +35,10 @@ namespace Localization
 				var x = hypothesisCopy[0][i];
 				var y = hypothesisCopy[1][i];
 				var direction = hypothesisCopy[2][i];
-				finalWays.Directions.Add(new List<int>());
-				finalWays.Directions[i].Add(x);
-				finalWays.Directions[i].Add(y);
-				finalWays.Directions[i].Add(direction);
+				finalWays.Ways.Add(new List<int>());
+				finalWays.Ways[i].Add(x);
+				finalWays.Ways[i].Add(y);
+				finalWays.Ways[i].Add(direction);
 				robot.InitialDirection = 3;
 				map.SensorsRead(x, y, direction, robot);
 				HypothesisFilter(ref map);
@@ -50,10 +49,9 @@ namespace Localization
 				{
 					//indexDirections++;
 					var valueOfSensor = GetValueOfSensor(robot.Sensors);
-					//TODO: newDir должно быть равно вычисленному пути!!!
 					//var newDir = direction;
 					int directionForGetDirection;
-					
+
 					if (beginWay || robot.InitialDirection != 1)
 					{
 						directionForGetDirection = 3;
@@ -64,7 +62,7 @@ namespace Localization
 					}
 					newDir = GetDirection(ref map, ref bestWays, robot.Sensors, directionForGetDirection, beginWay, robot);
 					directionOfTheNextStep = newDir;
-					finalWays.Directions[i].Add(newDir);
+					finalWays.Ways[i].Add(newDir);
 					newDir = motion.GetNewDir(direction, newDir, beginWay);
 					direction = newDir;
 					//timeOfWay.GetTime(ref ways);
@@ -77,7 +75,7 @@ namespace Localization
 					{
 						case Map.Down:
 						{
-							if (x + 1 < map.Height && map._map[x, y, Map.Down] == 0)
+							if (x + 1 < map.Height && map.map[x, y, Map.Down] == 0)
 							{
 								++x;
 								map.SensorsRead(x, y, Map.Down, robot);
@@ -87,7 +85,7 @@ namespace Localization
 						}
 						case Map.Left:
 						{
-							if (y > 0 && map._map[x, y, Map.Left] == 0)
+							if (y > 0 && map.map[x, y, Map.Left] == 0)
 							{
 								--y;
 								map.SensorsRead(x, y, Map.Left, robot);
@@ -97,7 +95,7 @@ namespace Localization
 						}
 						case Map.Up:
 						{
-							if (x > 0 && map._map[x, y, Map.Up] == 0)
+							if (x > 0 && map.map[x, y, Map.Up] == 0)
 							{
 								--x;
 								map.SensorsRead(x, y, Map.Up, robot);
@@ -107,7 +105,7 @@ namespace Localization
 						}
 						case Map.Right:
 						{
-							if (y + 1 < map.Wight && map._map[x, y, Map.Right] == 0)
+							if (y + 1 < map.Wight && map.map[x, y, Map.Right] == 0)
 							{
 								++y;
 								map.SensorsRead(x, y, Map.Right, robot);
@@ -123,16 +121,16 @@ namespace Localization
 					}
 					//Не newDir, а направление, куда должны ехать. Вроде исправил
 					map.Hypothesis3(directionOfTheNextStep, beginWay, motion, robot);
-					
+
 					if (map.Hypothesis[0].Count == 1)
 					{
-						finalWays.Directions[i].Add(8888888);
-						finalWays.Directions[i].Add(map.Hypothesis[0][0]);
-						finalWays.Directions[i].Add(map.Hypothesis[1][0]);
-						if(robot.InitialDirection==1) 
-							finalWays.Directions[i].Add(OppositeDirection(map.Hypothesis[2][0]));
+						finalWays.Ways[i].Add(8888888);
+						finalWays.Ways[i].Add(map.Hypothesis[0][0]);
+						finalWays.Ways[i].Add(map.Hypothesis[1][0]);
+						if (robot.InitialDirection == 1)
+							finalWays.Ways[i].Add(OppositeDirection(map.Hypothesis[2][0]));
 						else
-							finalWays.Directions[i].Add(map.Hypothesis[2][0]);
+							finalWays.Ways[i].Add(map.Hypothesis[2][0]);
 						localization = true;
 					}
 					if (map.Hypothesis[0].Count == 0)
@@ -147,7 +145,6 @@ namespace Localization
 						time += 2;
 					beginWay = false;
 					step++;
-					//TODO: проверить, не попали ли мы в тупик
 					if (Impasse(robot))
 					{
 						step = 0;
@@ -161,12 +158,12 @@ namespace Localization
 					}
 				}
 				localization = false;
-				finalWays.Directions[i].Add(8888888);
-				finalWays.Directions[i].Add(time);
+				finalWays.Ways[i].Add(8888888);
+				finalWays.Ways[i].Add(time);
 				CopyLists(ref bestWays, bestWaysCopy);
 			}
-			
-			
+
+
 			//PrintResult(finalWays);
 			finalWays.SetFinalList();
 			//PrintReleaseResult(finalWays);
@@ -175,12 +172,12 @@ namespace Localization
 
 		private void PrintResult(FinalWays finalWays)
 		{
-			for (var i = 0; i < finalWays.Directions.Count; i++)
+			for (var i = 0; i < finalWays.Ways.Count; i++)
 			{
-				Console.Write(i+". ");
-				for (var j = 0; j < finalWays.Directions[i].Count; j++)
+				Console.Write(i + ". ");
+				for (var j = 0; j < finalWays.Ways[i].Count; j++)
 				{
-					Console.Write(finalWays.Directions[i][j]+" ");
+					Console.Write(finalWays.Ways[i][j] + " ");
 				}
 				Console.WriteLine();
 			}
@@ -188,12 +185,12 @@ namespace Localization
 
 		private void PrintReleaseResult(FinalWays finalWays)
 		{
-			for (var i = 0; i < finalWays.Directions.Count; i++)
+			for (var i = 0; i < finalWays.Ways.Count; i++)
 			{
 				//Console.Write(i+". ");
-				var j = finalWays.Directions[i].Count - 1;
-				Console.Write(finalWays.Directions[i][0] + " " + finalWays.Directions[i][1] + " " +
-				              finalWays.Directions[i][2] + " " + finalWays.Directions[i][j]);
+				var j = finalWays.Ways[i].Count - 1;
+				Console.Write(finalWays.Ways[i][0] + " " + finalWays.Ways[i][1] + " " +
+				              finalWays.Ways[i][2] + " " + finalWays.Ways[i][j]);
 				Console.WriteLine();
 			}
 		}
@@ -210,13 +207,13 @@ namespace Localization
 				return true;
 			return false;
 		}
-		
-		
+
+
 		public void CopyLists(ref List<List<int>> to, List<List<int>> from)
 		{
 			//int m = from.Count, n = from[0].Count;
 			to.Clear();
-			
+
 			for (var i = 0; i < from.Count; i++)
 			{
 				to.Add(new List<int>());
@@ -226,7 +223,7 @@ namespace Localization
 				}
 			}
 		}
-		
+
 		private int GetValueOfSensor(int[] sensor)
 		{
 			var value = 0;
@@ -236,18 +233,19 @@ namespace Localization
 			}
 			return value;
 		}
-		
+
 		private void GoTo()
 		{
-			
+
 		}
-		
+
 		//TODO хватаю лишние пути(из-за наличия лишних гипотез). Добавить метод фильтра гипотез.
 		//во, что я понял. Мне не важно, откуда я приехал. Важны только показания датчиков
 		//на настоящий момент. Необходимо сверить их с картой и выкинуть лишние гипотезы
 		//Доделать это 18.10 !!!
 
-		private int GetDirection(ref Map map, ref List<List<int>> ways, int[] sensors, int currentDirection, bool beginWay, Robot robot)
+		private int GetDirection(ref Map map, ref List<List<int>> ways, int[] sensors, int currentDirection, bool beginWay,
+			Robot robot)
 		{
 			/*
 			var currentWay = new int[4] {0, 0, 0, 0};
@@ -302,34 +300,34 @@ namespace Localization
 					}
 					Console.WriteLine();
 					*/
-				/*}
-				WayFilter(ref ways);
-				//timeOfWay.GetTime(ref ways);
-			}
+		/*}
+		WayFilter(ref ways);
+		//timeOfWay.GetTime(ref ways);
+	}
 
-			for (var i = 0; i < finalWays.directions.Count; i++)
-			{
-				Console.WriteLine("step " + i);
-				for (var j = 0; j < finalWays.directions[i].Count; j++)
-				{
-					Console.Write(finalWays.directions[i][j] + " ");
-				}
-				Console.WriteLine();
-			}
+	for (var i = 0; i < finalWays.directions.Count; i++)
+	{
+		Console.WriteLine("step " + i);
+		for (var j = 0; j < finalWays.directions[i].Count; j++)
+		{
+			Console.Write(finalWays.directions[i][j] + " ");
 		}
-		*/
+		Console.WriteLine();
+	}
+}
+*/
 
 		private void CorrectDirectionsInHypothesis(Robot robot, ref Map map)
 		{
 			for (var i = 0; i < map.Hypothesis[0].Count; i++)
 			{
-				if (robot.InitialDirection==1)
+				if (robot.InitialDirection == 1)
 				{
 					map.Hypothesis[2][i] = OppositeDirection(map.Hypothesis[2][i]);
 				}
 			}
 		}
-		
+
 		private void HypothesisFilter(ref Map map) //, int step 
 		{
 			map.HypothesisInit();
@@ -339,7 +337,7 @@ namespace Localization
 				int x = map.Hypothesis[0][i],
 					y = map.Hypothesis[1][i],
 					direction = map.Hypothesis[2][i];
-				if (!CheckWalls(x, y, direction, map))	
+				if (!CheckWalls(x, y, direction, map))
 				{
 					map.Hypothesis[0].RemoveAt(i);
 					map.Hypothesis[1].RemoveAt(i);
@@ -349,7 +347,7 @@ namespace Localization
 				}
 			}
 		}
-		
+
 
 		//TODO: Добавить ещё один фильтр гипотез (который будет учитывать расположение стен)
 		private int ChooseDirection(List<List<int>> ways, Map map, int currentDirection, bool beginWay, Robot robot)
@@ -389,20 +387,20 @@ namespace Localization
 			}
 			return ChooseMin(sumTimeForDirecrion, currentDirection, beginWay);
 		}
-		
+
 		private int ChooseMin(double[] sumTimeForDirecrion, int currentDirection, bool beginWay)
 		{
 			var oppositeDirection = OppositeDirection(currentDirection);
-			
+
 			var min = sumTimeForDirecrion[0];
 			var indexMin = 0;
 			var indices = new int[4] {1, 2, 3, 4};
-			
+
 			for (var i = 0; i < 4; i++)
 			{
-				for (var j = i+1; j < 4; j++)
+				for (var j = i + 1; j < 4; j++)
 				{
-					if (sumTimeForDirecrion[i]>sumTimeForDirecrion[j])
+					if (sumTimeForDirecrion[i] > sumTimeForDirecrion[j])
 					{
 						var value1 = sumTimeForDirecrion[i];
 						sumTimeForDirecrion[i] = sumTimeForDirecrion[j];
@@ -418,7 +416,7 @@ namespace Localization
 			if (beginWay) return indices[0];
 			if (oppositeDirection == indices[0]) return indices[1];
 			return indices[0];
-			
+
 			/*
 			for (var i = 1; i < 4; i++)
 			{
@@ -442,7 +440,7 @@ namespace Localization
 			if (direction > 2) return direction - 2;
 			return direction + 2;
 		}
-		
+
 		private void WayFilter(ref List<List<int>> ways)
 		{
 			for (var i = 0; i < ways.Count; i++)
@@ -455,7 +453,7 @@ namespace Localization
 				}
 			}
 		}
-		
+
 		/*
 		private void NextWay(ref int[] currentWay, ref Map map)
 		{
@@ -479,7 +477,7 @@ namespace Localization
 			}
 		}
 		*/
-		private bool CheckWalls(int x, int y, int direction,Map map)
+		private bool CheckWalls(int x, int y, int direction, Map map)
 		{
 			//Robot.Sensors = _sensors;
 			//TODO: проверить. Возможно условие ниже нужно раскомментировать
@@ -493,34 +491,34 @@ namespace Localization
 			//_sensors = Robot.Sensors;
 			if (direction == 1)
 			{
-				if (map._map[x, y, 1] != map.Sensors[2]) return false;
-				if (map._map[x, y, 2] != map.Sensors[3]) return false;
-				if (map._map[x, y, 3] != map.Sensors[0]) return false;
-				if (map._map[x, y, 4] != map.Sensors[1]) return false;
+				if (map.map[x, y, 1] != map.Sensors[2]) return false;
+				if (map.map[x, y, 2] != map.Sensors[3]) return false;
+				if (map.map[x, y, 3] != map.Sensors[0]) return false;
+				if (map.map[x, y, 4] != map.Sensors[1]) return false;
 				return true;
 			}
 			else if (direction == 2)
 			{
-				if (map._map[x, y, 1] != map.Sensors[1]) return false;
-				if (map._map[x, y, 2] != map.Sensors[2]) return false;
-				if (map._map[x, y, 3] != map.Sensors[3]) return false;
-				if (map._map[x, y, 4] != map.Sensors[0]) return false;
+				if (map.map[x, y, 1] != map.Sensors[1]) return false;
+				if (map.map[x, y, 2] != map.Sensors[2]) return false;
+				if (map.map[x, y, 3] != map.Sensors[3]) return false;
+				if (map.map[x, y, 4] != map.Sensors[0]) return false;
 				return true;
 			}
 			else if (direction == 3)
 			{
-				if (map._map[x, y, 1] != map.Sensors[0]) return false;
-				if (map._map[x, y, 2] != map.Sensors[1]) return false;
-				if (map._map[x, y, 3] != map.Sensors[2]) return false;
-				if (map._map[x, y, 4] != map.Sensors[3]) return false;
+				if (map.map[x, y, 1] != map.Sensors[0]) return false;
+				if (map.map[x, y, 2] != map.Sensors[1]) return false;
+				if (map.map[x, y, 3] != map.Sensors[2]) return false;
+				if (map.map[x, y, 4] != map.Sensors[3]) return false;
 				return true;
 			}
 			else
 			{
-				if (map._map[x, y, 1] != map.Sensors[3]) return false;
-				if (map._map[x, y, 2] != map.Sensors[0]) return false;
-				if (map._map[x, y, 3] != map.Sensors[1]) return false;
-				if (map._map[x, y, 4] != map.Sensors[2]) return false;
+				if (map.map[x, y, 1] != map.Sensors[3]) return false;
+				if (map.map[x, y, 2] != map.Sensors[0]) return false;
+				if (map.map[x, y, 3] != map.Sensors[1]) return false;
+				if (map.map[x, y, 4] != map.Sensors[2]) return false;
 				return true;
 			}
 		}

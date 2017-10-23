@@ -1,16 +1,17 @@
 ﻿using System.Collections.Generic;
 using System;
+
 namespace Localization
 {
     class FinalWays
     {
-        public List<List<int>> Directions;   
+        public List<List<int>> Ways;
         public List<List<int>> FinalList;
 
         public FinalWays()
         {
-            Directions = new List<List<int>>();
-            FinalList=new List<List<int>>();
+            Ways = new List<List<int>>();
+            FinalList = new List<List<int>>();
             var map = new Map();
             map.HypothesisInit();
             for (var i = 0; i < map.Hypothesis[0].Count; i++)
@@ -21,14 +22,16 @@ namespace Localization
                 FinalList[i].Add(map.Hypothesis[2][i]);
             }
         }
+
         public void SetFinalList()
         {
             for (var i = 0; i < FinalList.Count; i++)
             {
-                var j = Directions[i].Count - 1;
-                FinalList[i].Add(Directions[i][j]);
+                var j = Ways[i].Count - 1;
+                FinalList[i].Add(Ways[i][j]);
             }
         }
+
         public void PrintResult()
         {
             for (var i = 0; i < FinalList.Count; i++)

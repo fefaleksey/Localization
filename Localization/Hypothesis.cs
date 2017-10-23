@@ -5,6 +5,19 @@ namespace Localization
 	//TODO: Сделать этот класс, убрать все гипотезы из map
     class Hypothesis
     {
+    	public List<List<int>> Hypothesis = new List<List<int>>();
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 	    public List<List<int>> Hypothesis = new List<List<int>>();
 		
 	    public void Hypothesis3(int direction, bool beginWay, Motion Motion, Robot Robot)

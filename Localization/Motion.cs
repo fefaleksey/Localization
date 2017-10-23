@@ -1,8 +1,9 @@
 ﻿using System;
+
 namespace Localization
 {
 	// TODO: Проекции футамуры, принцип belodi
-	
+
 	class Motion
 	{
 		public const int Down = 1;
@@ -10,14 +11,14 @@ namespace Localization
 		public const int Up = 3;
 		public const int Right = 4;
 
-		private  int ToRightDir(int direction)
+		private int ToRightDir(int direction)
 		{
 			if (direction < 4) return direction + 1;
 			return 1;
 		}
 
 		//Возвращает направление, если поворачиваем в соотв. сторону
-		private  int ToLeftDir(int direction)
+		private int ToLeftDir(int direction)
 		{
 			/*
 			if (Robot.InitialDirection == Down)
@@ -31,7 +32,7 @@ namespace Localization
 			return 4;
 		}
 
-		private  int ToDownDir(int direction, bool beginWay)
+		private int ToDownDir(int direction, bool beginWay)
 		{
 
 			if (beginWay)
@@ -49,7 +50,7 @@ namespace Localization
 		}
 
 		// текущее направление в абсолютных коорд/направление движения(куда едем?)
-		public  int GetNewDir(int currentDirection, int newDirection, bool beginWay)
+		public int GetNewDir(int currentDirection, int newDirection, bool beginWay)
 		{
 			switch (newDirection)
 			{

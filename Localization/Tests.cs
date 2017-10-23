@@ -50,7 +50,7 @@ namespace Localization
                 while (!localize)
                 {
                     var sensorValue = GetValueOfSensor(robot.Sensors);
-                    direction = ways.Directions[step][sensorValue];
+                    direction = ways.Ways[step][sensorValue];
                     //if (step > 0) hg
                     //GoTo(ref map, i, direction); // TODO: СДЕЛАТЬ!!!
                     if (direction == 1 || direction == 3) time++;
@@ -122,7 +122,7 @@ namespace Localization
             {
                 case Map.Down:
                 {
-                    if (x + 1 < map.Height && map._map[x, y, Map.Down] == 0)
+                    if (x + 1 < map.Height && map.map[x, y, Map.Down] == 0)
                         // && CheckWalls(x, y + 1, Down))
                     {
                         fl = false;
@@ -133,7 +133,7 @@ namespace Localization
                 }
                 case Map.Left:
                 {
-                    if (y > 0 && map._map[x, y, Map.Left] == 0)
+                    if (y > 0 && map.map[x, y, Map.Left] == 0)
                         //&& CheckWalls(x, y - 1, Map.Left))
                     {
                         fl = false;
@@ -144,7 +144,7 @@ namespace Localization
                 }
                 case Map.Up:
                 {
-                    if (x > 0 && map._map[x, y, Map.Up] == 0) //&& CheckWalls(x - 1, y , Up))
+                    if (x > 0 && map.map[x, y, Map.Up] == 0) //&& CheckWalls(x - 1, y , Up))
                     {
                         fl = false;
                         --x;
@@ -154,7 +154,7 @@ namespace Localization
                 }
                 case Map.Right:
                 {
-                    if (y + 1 < map.Wight && map._map[x, y, Map.Right] == 0) // && 
+                    if (y + 1 < map.Wight && map.map[x, y, Map.Right] == 0) // && 
                         // CheckWalls(x, y + 1, Right))
                     {
                         fl = false;
@@ -168,17 +168,17 @@ namespace Localization
 
         private void PathAdjustment(ref FinalWays ways)
         {
-            for (var i = 0; i < ways.Directions.Count; i++)
+            for (var i = 0; i < ways.Ways.Count; i++)
             {
-                for (var j = 0; j < ways.Directions[i].Count; j++)
+                for (var j = 0; j < ways.Ways[i].Count; j++)
                 {
-                    if (ways.Directions[i][j] == 2)
+                    if (ways.Ways[i][j] == 2)
                     {
-                        ways.Directions[i][j] = 4;
+                        ways.Ways[i][j] = 4;
                     }
-                    else if (ways.Directions[i][j] == 4)
+                    else if (ways.Ways[i][j] == 4)
                     {
-                        ways.Directions[i][j] = 2;
+                        ways.Ways[i][j] = 2;
                     }
                 }
             }

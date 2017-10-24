@@ -39,6 +39,14 @@ namespace Localization
                 finalWays.Ways[i].Add(direction);
                 robot.RSensors.Read(x, y, direction, robot, map);
                 map.HypothesisFilter(robot);
+                if (map.Hypothesis[0].Count == 1)
+                {
+                    finalWays.Ways[i].Add(8888888);
+                    finalWays.Ways[i].Add(map.Hypothesis[0][0]);
+                    finalWays.Ways[i].Add(map.Hypothesis[1][0]);
+                    finalWays.Ways[i].Add(map.Hypothesis[2][0]);
+                    localization = true;
+                }
                 while (!localization)
                 {
                     var newDir = NextDirection(robot, ruleRightHand);

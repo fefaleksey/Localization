@@ -42,6 +42,18 @@ namespace Localization
 				robot.InitialDirection = 3;
 				robot.RSensors.Read(x, y, direction, robot, map);
 				map.HypothesisFilter(robot);
+				//TODO: Проверить правильность этого условия
+				if (map.Hypothesis[0].Count == 1)
+				{
+					finalWays.Ways[i].Add(8888888);
+					finalWays.Ways[i].Add(map.Hypothesis[0][0]);
+					finalWays.Ways[i].Add(map.Hypothesis[1][0]);
+					if (robot.InitialDirection == 1)
+						finalWays.Ways[i].Add(OppositeDirection(map.Hypothesis[2][0]));
+					else
+						finalWays.Ways[i].Add(map.Hypothesis[2][0]);
+					localization = true;
+				}
 				//map.Hypothesis1New();
 				while (!localization)
 				{

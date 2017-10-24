@@ -19,7 +19,7 @@ namespace Localization
 			_i = 0;
 		}
 		//localiz==true <=> мы локализовались
-		public int NextDirection(bool wayExist, bool localiz, Robot Robot)
+		public int NextDirection(bool wayExist, bool localiz, Robot robot)
 		{
 			if (CurentWay.Count == 0)
 			{
@@ -35,7 +35,7 @@ namespace Localization
 				{
 					CurentWay.RemoveAt(_i);
 					--_i;
-					return NextDirection(false, false, Robot); // return?????
+					return NextDirection(false, false, robot); // return?????
 					//return 5;//???????
 				}
 				else
@@ -46,7 +46,7 @@ namespace Localization
 					{
 						//запрещенное направление мы поменяем только 1 раз!
 						_forbiddenDirection = 1;
-						Robot.InitialDirection = 3;
+						robot.InitialDirection = 3;
 					}
 					
 					if (CurentWay[_i] == _forbiddenDirection)
@@ -62,7 +62,7 @@ namespace Localization
 			{
 				if (CurentWay.Count==_length)
 				{
-					return NextDirection(false, false, Robot);
+					return NextDirection(false, false, robot);
 					//return curent_way[i];
 				}
 				if (_forbiddenDirection == 1)
@@ -84,7 +84,7 @@ namespace Localization
 				{
 					CurentWay.RemoveAt(_i);
 					--_i;
-					return NextDirection(false, false, Robot);//return ???
+					return NextDirection(false, false, robot);//return ???
 					//return 1;//curent_way[i];
 				}
 				else
@@ -94,7 +94,7 @@ namespace Localization
 					if (CurentWay.Count==1 && CurentWay[0]==2)
 					{
 						_forbiddenDirection = 1;
-						Robot.InitialDirection = 3;
+						robot.InitialDirection = 3;
 					}
 					if (CurentWay[_i] == _forbiddenDirection)
 					{

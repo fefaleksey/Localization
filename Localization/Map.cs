@@ -76,7 +76,19 @@ namespace Localization
 			var way = new Way();
 			//var Robot = new Robot();
 			handingOfAllCases.Handing(this, way);
-
+			/*
+			for (var l = 0; l < BestWays.Count; l++)
+			{
+				Console.WriteLine("ways " + l);
+				for (int i = 0; i < BestWays[l].Count; i++)
+				{
+					//Console.WriteLine("ways " + l);
+					Console.Write(BestWays[l][i] + ",");
+					//Console.WriteLine();
+				}
+				Console.WriteLine();
+			}
+			*/
 			ListFiltration(ref BestWays);
 			//PrintMap();
 			var solution = new Solution();
@@ -99,17 +111,18 @@ namespace Localization
 			var solutionForRobot = new SolutionForRobot();
 			solutionForRobot.SimulationOfLocalization(ref map, ref BestWays, ref finalWays);
 			var ruleOfOneHand = new RuleOfTheRightAndLeftHand();
+			
 			ruleOfOneHand.SimulationOfLocalization(ref map, ref finalWays, true);
 			ruleOfOneHand.SimulationOfLocalization(ref map, ref finalWays, false);
+			
 			finalWays.PrintResult();
 			//test.TimeOfFinalWays(ref finalWays, ref map, robot);
 		}
 
-		public void HypothesisFilter() //, int step 
+		public void HypothesisFilter(Robot robot) //, int step 
 		{
 			HypothesisInit();
-			Hypothesis1New();
-			var robot = new Robot {InitialDirection = 3};
+			//Hypothesis1New();
 			for (var i = 0; i < Hypothesis[0].Count; i++)
 			{
 				int x = Hypothesis[0][i],
@@ -180,24 +193,9 @@ namespace Localization
 			}
 		}
 
-		private void SensorsInit(int down, int left, int up, int right, Robot robot)
-		{
-			Sensors[0] = down;
-			Sensors[1] = left;
-			Sensors[2] = up;
-			Sensors[3] = right;
-			robot.SetSensors(Sensors);
-			robot.GetSensors(ref Sensors);
-			/*
-			Robot.Sensors = _sensors;
-			_sensors = Robot.Sensors;
-			*/
-		}
-
-		//сравнивает показания датчиков с полем на карте (сравнивает стены)
-		//(робот двигался (x0,y0)->(x1,y1)
 		public bool CheckWalls(int x, int y, int direction, Robot robot)
 		{
+			int startX = x, startY = y;
 			//Robot.Sensors = _sensors;
 			if (robot.InitialDirection == 1)
 			{
@@ -205,7 +203,52 @@ namespace Localization
 				else direction += 2;
 			}
 
-
+			var i = 0;
+			//Down
+			while (i < Robot.RobotSensors.QualitySensors && x + 1 <= Height)
+			{
+				var j = robot.RSensors.GetIndex(direction, Down);
+				if (robot.Sensors[i, j] != map[x, y, Down]) return false;
+				if (robot.Sensors[i, j] == 1) break;
+				i++;
+				x++;
+			}
+			x = startX;
+			i = 0;
+			//Left
+			while (i < Robot.RobotSensors.QualitySensors && y >= 0)
+			{
+				var j = robot.RSensors.GetIndex(direction, Left);
+				if (robot.Sensors[i, j] != map[x, y, Left]) return false;
+				if (robot.Sensors[i, j] == 1) break;
+				i++;
+				y--;
+			}
+			y = startY;
+			i = 0;
+			//Up
+			while (i < Robot.RobotSensors.QualitySensors && x >= 0)
+			{
+				var j = robot.RSensors.GetIndex(direction, Up);
+				if(robot.Sensors[i, j] != map[x, y, Up]) return false;
+				if (robot.Sensors[i, j] == 1) break;
+				i++;
+				x--;
+			}
+			x = startX;
+			i = 0;
+			//Right
+			while (i < Robot.RobotSensors.QualitySensors && y + 1 <= Widht)
+			{
+				var j = robot.RSensors.GetIndex(direction, Right);
+				if (robot.Sensors[i, j] != map[x, y, Right]) return false;
+				if (robot.Sensors[i, j] == 1) break;
+				i++;
+				y++;
+			}
+			return true;
+			
+			/*
 			//_sensors = Robot.Sensors;
 			if (direction == Down)
 			{
@@ -239,6 +282,7 @@ namespace Localization
 				if (map[x, y, 4] != Sensors[2]) return false;
 				return true;
 			}
+			*/
 		}
 
 		// 0 <= quantity <= 4
@@ -257,7 +301,6 @@ namespace Localization
 					}
 				}
 			}
-			//передвигаемся прямо (если занято, то направо/налево/назад)
 		}
 
 		public void Hypothesis1New()
@@ -275,91 +318,13 @@ namespace Localization
 					i--;
 				}
 			}
-			//передвигаемся прямо (если занято, то направо/налево/назад)
 		}
 
-		/*
-		private void Hypothesis2()
-		{
-			int i, quantity = Sensors[0] + Sensors[1] + Sensors[2] + Sensors[3];
-			for (i = 0; i < Hypothesis[0].Count; ++i)
-			{
-				var fl = true;
-				int x = Hypothesis[0][i], y = Hypothesis[1][i];
-				//to test code below
-				//down
-				Console.Write(x + " " + y + " " + Hypothesis[0].Count + ";   ");
-				if (x + 1 < Height && _map[x + 1, y, 0] == quantity)
-				{
-					if (_map[x, y, Down] == 0 &&
-					    CheckWalls(x + 1, y, Down))
-					{
-						++_quantityOfWays;
-						//var x = ++start[2][i];
-						Hypothesis[0][i]++;
-						Hypothesis[2][i] = Down; //ToDownDir(hypothesis[2][i]);
-						fl = false;
-					}
-				}
-
-				//left
-				if (y > 0 && _map[x, y - 1, 0] == quantity)
-				{
-					if (_map[x, y, Left] == 0 &&
-					    CheckWalls(x, y - 1, Left))
-					{
-						++_quantityOfWays;
-						//var x = ++start[2][i];
-						Hypothesis[1][i]--;
-						Hypothesis[2][i] = Left; //ToLeftDir(hypothesis[2][i]);
-						fl = false;
-					}
-				}
-
-				//up
-				if (x > 0 && _map[x - 1, y, 0] == quantity)
-				{
-					if (_map[x, y, Up] == 0 &&
-					    CheckWalls(x - 1, y, Up))
-					{
-						++_quantityOfWays;
-						//var x = ++start[2][i];
-						Hypothesis[0][i]--;
-						Hypothesis[2][i] = Up;
-						fl = false;
-					}
-				}
-
-				//right
-				if (y + 1 < Wight && _map[x, y + 1, 0] == quantity)
-				{
-					if (_map[x, y, Right] == 0 &&
-					    CheckWalls(x, y + 1, Right))
-					{
-						++_quantityOfWays;
-						//var x = ++start[2][i];
-						Hypothesis[1][i]++;
-						Hypothesis[2][i] = Right; //ToRightDir(hypothesis[2][i]);
-						fl = false;
-					}
-				}
-				if (fl)
-				{
-					Hypothesis[0].RemoveAt(i);
-					Hypothesis[1].RemoveAt(i);
-					Hypothesis[2].RemoveAt(i);
-					i--;
-					_quantityOfHypothises--;
-				}
-			}
-			Console.WriteLine("eeee " + Hypothesis[0].Count + " " + Hypothesis[1].Count
-			                  + " " + Hypothesis[2].Count);
-		}
-		*/
 		//потестить ещё
 		public void Hypothesis3(int direction, bool beginWay, Motion motion, Robot robot)
 		{
-			int i, quantity = Sensors[0] + Sensors[1] + Sensors[2] + Sensors[3];
+			int i, quantity = robot.Sensors[0,0] + robot.Sensors[0,1] + 
+			                  robot.Sensors[0,2] + robot.Sensors[0,3];
 
 			for (i = 0; i < Hypothesis[0].Count; ++i)
 			{
@@ -378,10 +343,8 @@ namespace Localization
 							if (map[x, y, Down] == 0 &&
 							    CheckWalls(x + 1, y, Down, robot))
 							{
-								//++_quantityOfWays;
-								//var x = ++start[2][i];
 								Hypothesis[0][i]++;
-								Hypothesis[2][i] = Down; //ToDownDir(hypothesis[2][i]);
+								Hypothesis[2][i] = Down;
 								fl = false;
 							}
 						}
@@ -389,18 +352,14 @@ namespace Localization
 					}
 					case Left:
 					{
-						//int i, quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
-						//var fl = true;
 						int x = Hypothesis[0][i], y = Hypothesis[1][i];
 
 						if (y > 0 && map[x, y - 1, 0] == quantity)
 						{
 							if (map[x, y, Left] == 0 && CheckWalls(x, y - 1, Left, robot))
 							{
-								//++_quantityOfWays;
-								//var x = ++start[2][i];
 								Hypothesis[1][i]--;
-								Hypothesis[2][i] = Left; //ToDownDir(hypothesis[2][i]);
+								Hypothesis[2][i] = Left;
 								fl = false;
 							}
 						}
@@ -408,18 +367,14 @@ namespace Localization
 					}
 					case Up:
 					{
-						//int i, quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
-						//var fl = true;
 						int x = Hypothesis[0][i], y = Hypothesis[1][i];
 
 						if (x > 0 && map[x - 1, y, 0] == quantity)
 						{
 							if (map[x, y, Up] == 0 && CheckWalls(x - 1, y, Up, robot))
 							{
-								//++_quantityOfWays;
-								//var x = ++start[2][i];
 								Hypothesis[0][i]--;
-								Hypothesis[2][i] = Up; //ToDownDir(hypothesis[2][i]);
+								Hypothesis[2][i] = Up;
 								fl = false;
 							}
 						}
@@ -427,18 +382,14 @@ namespace Localization
 					}
 					case Right:
 					{
-						//int i, quantity = _sensors[0] + _sensors[1] + _sensors[2] + _sensors[3];
-						//var fl = true;
 						int x = Hypothesis[0][i], y = Hypothesis[1][i];
 
 						if (y + 1 < Widht && map[x, y + 1, 0] == quantity)
 						{
 							if (map[x, y, Right] == 0 && CheckWalls(x, y + 1, Right, robot))
 							{
-								//++_quantityOfWays;
-								//var x = ++start[2][i];
 								Hypothesis[1][i]++;
-								Hypothesis[2][i] = Right; //ToDownDir(hypothesis[2][i]);
+								Hypothesis[2][i] = Right;
 								fl = false;
 							}
 						}
@@ -500,46 +451,8 @@ namespace Localization
 			if (newDirection == Left) return ToLeftDir(currentDirection);
 			return ToDownDir(currentDirection, way);
 		}
-
-		/*У робота:
-		в-1000
-		п-100
-		н-10
-		л-1
-		*/
-		private void CheckIndications(int x, int y, int direction,
-			ref List<List<int>> differentInd, int newDirection, Way way)
-		{
-			int value, //k=direction-1;
-				k = ChooseDir(direction, newDirection, way) - 1;
-			switch (newDirection)
-			{
-				case Down:
-					value = 1000 * map[x, y, 1] + 100 * map[x, y, 2] +
-					        10 * map[x, y, 3] + map[x, y, 4];
-					if (!differentInd[k].Contains(value)) differentInd[k].Add(value); //0
-					break;
-				case Left:
-					value = 1000 * map[x, y, 2] + 100 * map[x, y, 3] +
-					        10 * map[x, y, 4] + map[x, y, 1];
-					if (!differentInd[k].Contains(value)) differentInd[k].Add(value); //1
-					break;
-				case Up:
-					value = 1000 * map[x, y, 3] + 100 * map[x, y, 4] +
-					        10 * map[x, y, 1] + map[x, y, 2];
-					if (!differentInd[k].Contains(value)) differentInd[k].Add(value); //2
-					break;
-				case Right:
-					value = 1000 * map[x, y, 4] + 100 * map[x, y, 1] +
-					        10 * map[x, y, 2] + map[x, y, 3];
-					if (!differentInd[k].Contains(value)) differentInd[k].Add(value); //3
-					break;
-				default:
-					Console.WriteLine("CheckIndications has fallen!!!");
-					break;
-			}
-		}
-
+		
+		//правильно работает только для копирования гипотез, но для другого не используется)
 		public void Copy_Lists(ref List<List<int>> to, List<List<int>> from)
 		{
 			int m = from.Count, n = from[0].Count;
@@ -555,21 +468,10 @@ namespace Localization
 				to[1].Add(from[1][i]);
 				to[2].Add(from[2][i]);
 			}
-			//int[,,] copy_hypothesis = new int[n, n, n];
 		}
-
+		/*
 		public void SensorsRead(int x, int y, int direction, Robot robot)
 		{
-			/*
-			if (beginWay && robot.InitialDirection == 1)
-			{
-				if (direction > 2)
-				{
-					direction -= 2;
-				}
-				else direction += 2;
-			}
-			*/
 			switch (direction)
 			{
 				case Down:
@@ -579,10 +481,6 @@ namespace Localization
 					Sensors[1] = map[x, y, 4];
 					robot.SetSensors(Sensors);
 					robot.GetSensors(ref Sensors);
-					/*
-					Robot.Sensors = _sensors;
-					_sensors = Robot.Sensors;
-					*/
 					break;
 				case Left:
 					Sensors[2] = map[x, y, 2];
@@ -591,10 +489,6 @@ namespace Localization
 					Sensors[1] = map[x, y, 1];
 					robot.SetSensors(Sensors);
 					robot.GetSensors(ref Sensors);
-					/*
-					Robot.Sensors = _sensors;
-					_sensors = Robot.Sensors;
-					*/
 					break;
 				case Up:
 					Sensors[0] = map[x, y, 1];
@@ -603,10 +497,6 @@ namespace Localization
 					Sensors[3] = map[x, y, 4];
 					robot.SetSensors(Sensors);
 					robot.GetSensors(ref Sensors);
-					/*
-					Robot.Sensors = _sensors;
-					_sensors = Robot.Sensors;
-					*/
 					break;
 				case Right:
 					Sensors[0] = map[x, y, 2];
@@ -615,22 +505,13 @@ namespace Localization
 					Sensors[3] = map[x, y, 1];
 					robot.SetSensors(Sensors);
 					robot.GetSensors(ref Sensors);
-					/*
-					Robot.Sensors = _sensors;
-					_sensors = Robot.Sensors;
-					*/
 					break;
 				default:
 					Console.WriteLine("SensorsRead ERROR");
 					break;
 			}
-			/*
-		Console.WriteLine("coord:" + x + " " + y);
-		Console.WriteLine("sensors:" + _sensors[0] + " " + _sensors[1] + " " +
-		                  _sensors[2] + " " + _sensors[3]);
-		*/
 		}
-
+		*/
 		private void ListFiltration(ref List<List<int>> list)
 		{
 			for (int i = 0; i < list.Count; i++)

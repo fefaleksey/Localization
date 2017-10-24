@@ -3,7 +3,7 @@
 	class Robot
 	{
 		public int[,] Sensors;
-		//public RobotSensors RobotSensors;
+		public RobotSensors RSensors;
 		public const int Down = 0, Left = 1, Up = 2, Right = 3;
 		public bool BeginWay = true;
 
@@ -11,7 +11,7 @@
 
 		public Robot()
 		{
-			//RobotSensors = new RobotSensors();
+			RSensors = new RobotSensors();
 			Sensors = new int[RobotSensors.QualitySensors, 4];
 			InitialDirection = 1;
 		}
@@ -43,21 +43,22 @@
 			}
 		}
 		*/
-		class RobotSensors
+		public class RobotSensors
 		{
 			//public int[,] Sensors = new int[QualitySensors, 4];
-			public const int QualitySensors = 3; // количество клеток, на которых сенсоры работают адекватно
+			public const int QualitySensors = 2; // количество клеток, на которых сенсоры работают адекватно
 
 			private const int IDown = 1;
 			private const int ILeft = 2;
 			private const int IUp = 3;
 			private const int IRight = 4;
 
-			public void SensorsRead(int x, int y, int direction, Robot robot, Map map)
+			public void Read(int x, int y, int direction, Robot robot, Map map)
 			{
 				var i = 0;
+				int startX = x, startY = y;
 				//Down
-				while (i < QualitySensors && x + 1 < map.Height)
+				while (i < QualitySensors && x + 1 <= map.Height)
 				{
 					var j = GetIndex(direction, IDown);
 					robot.Sensors[i, j] = map.map[x, y, IDown];
@@ -65,9 +66,11 @@
 					i++;
 					x++;
 				}
+				x = startX;
+				y = startY;
 				i = 0;
 				//Left
-				while (i < QualitySensors && y > 0)
+				while (i < QualitySensors && y >= 0)
 				{
 					var j = GetIndex(direction, ILeft);
 					robot.Sensors[i, j] = map.map[x, y, ILeft];
@@ -75,9 +78,11 @@
 					i++;
 					y--;
 				}
+				x = startX;
+				y = startY;
 				i = 0;
 				//Up
-				while (i < QualitySensors && x > 0)
+				while (i < QualitySensors && x >= 0)
 				{
 					var j = GetIndex(direction, IUp);
 					robot.Sensors[i, j] = map.map[x, y, IUp];
@@ -85,9 +90,11 @@
 					i++;
 					x--;
 				}
+				x = startX;
+				y = startY;
 				i = 0;
 				//Right
-				while (i < QualitySensors && y + 1 < map.Widht)
+				while (i < QualitySensors && y + 1 <= map.Widht)
 				{
 					var j = GetIndex(direction, IRight);
 					robot.Sensors[i, j] = map.map[x, y, IRight];
@@ -121,7 +128,7 @@
 			/// <param name="direction"> absolute current direction </param>
 			/// <param name="newDirection"></param>
 			/// <returns> new index </returns>
-			private int GetIndex(int direction, int newDirection)
+			public int GetIndex(int direction, int newDirection)
 			{
 				if (newDirection == direction + 2 || newDirection == direction - 2)
 					return 0;

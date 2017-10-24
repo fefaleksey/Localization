@@ -54,7 +54,6 @@
     <Compile Include="RuleOfTheRightAndLeftHand.cs" />
     <Compile Include="Solution.cs" />
     <Compile Include="SolutionForRobot.cs" />
-    <Compile Include="Tests.cs" />
     <Compile Include="TimeOfWay.cs" />
     <Compile Include="Way.cs" />
   </ItemGroup>

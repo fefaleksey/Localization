@@ -13,7 +13,7 @@ namespace Localization
         
         
         //private List<int> CurrentWay = new List<int>();
-
+        
         public void SimulationOfLocalization(ref Map map, ref FinalWays finalWays, bool ruleRightHand)
         {
             finalWays.Ways.Clear();
@@ -37,11 +37,11 @@ namespace Localization
                 finalWays.Ways[i].Add(x);
                 finalWays.Ways[i].Add(y);
                 finalWays.Ways[i].Add(direction);
-                map.SensorsRead(x, y, direction, robot);
-                HypothesisFilter(ref map);
+                robot.RSensors.Read(x, y, direction, robot, map);
+                map.HypothesisFilter(robot);
                 while (!localization)
                 {
-                    var newDir = NextDirection(robot.Sensors, ruleRightHand);
+                    var newDir = NextDirection(robot, ruleRightHand);
                     var directionOfTheNextStep = newDir;
                     finalWays.Ways[i].Add(newDir);
                     if (newDir == 3)
@@ -60,7 +60,7 @@ namespace Localization
                             if (x + 1 < map.Height && map.map[x, y, Map.Down] == 0)
                             {
                                 ++x;
-                                map.SensorsRead(x, y, Map.Down, robot);
+                                robot.RSensors.Read(x, y, Map.Down, robot, map);
                                 //time ++;
                             }
                             break;
@@ -70,7 +70,7 @@ namespace Localization
                             if (y > 0 && map.map[x, y, Map.Left] == 0)
                             {
                                 --y;
-                                map.SensorsRead(x, y, Map.Left, robot);
+                                robot.RSensors.Read(x, y, Map.Left, robot, map);
                                 //time += 2;
                             }
                             break;
@@ -80,7 +80,7 @@ namespace Localization
                             if (x > 0 && map.map[x, y, Map.Up] == 0)
                             {
                                 --x;
-                                map.SensorsRead(x, y, Map.Up, robot);
+                                robot.RSensors.Read(x, y, Map.Up, robot, map);
                                 //time++;
                             }
                             break;
@@ -90,7 +90,7 @@ namespace Localization
                             if (y + 1 < map.Widht && map.map[x, y, Map.Right] == 0)
                             {
                                 ++y;
-                                map.SensorsRead(x, y, Map.Right, robot);
+                                robot.RSensors.Read(x, y, Map.Right, robot, map);
                                 //time += 2;
                             }
                             break;
@@ -140,25 +140,6 @@ namespace Localization
                 Console.WriteLine();
             }
         }
-
-        private void HypothesisFilter(ref Map map) //, int step 
-        {
-            map.HypothesisInit();
-            map.Hypothesis1New();
-            for (var i = 0; i < map.Hypothesis[0].Count; i++)
-            {
-                int x = map.Hypothesis[0][i],
-                    y = map.Hypothesis[1][i],
-                    direction = map.Hypothesis[2][i];
-                if (!CheckWalls(x, y, direction, map))
-                {
-                    map.Hypothesis[0].RemoveAt(i);
-                    map.Hypothesis[1].RemoveAt(i);
-                    map.Hypothesis[2].RemoveAt(i);
-                    i--;
-                }
-            }
-        }
     
         private bool CheckWalls(int x, int y, int direction, Map map)
         {
@@ -197,27 +178,27 @@ namespace Localization
         }
 
 
-        public int NextDirection(int[] sensors, bool ruleOfTheRightHand)
+        public int NextDirection(Robot robot, bool ruleOfTheRightHand)
         {
             if (ruleOfTheRightHand)
-                return NextDirectionR(sensors);
+                return NextDirectionR(robot);
             else
-                return NextDirectionL(sensors);
+                return NextDirectionL(robot);
         }
         
-        public int NextDirectionR(int[] sensors)
+        public int NextDirectionR(Robot robot)
         {
             for (var direction = 3; direction >= 0; direction--)
             {
-                if (sensors[direction] == 0) return direction + 1;
+                if (robot.Sensors[0,direction] == 0) return direction + 1;
             }
             return 1; //Hypothesis3 все равно убьет все гипотезы
         }
-        public int NextDirectionL(int[] sensors)
+        public int NextDirectionL(Robot robot)
         {
-            if (sensors[1] == 0) return Left;
-            if (sensors[2] == 0) return Up;
-            if (sensors[3] == 0) return Right;
+            if (robot.Sensors[0,1] == 0) return Left;
+            if (robot.Sensors[0,2] == 0) return Up;
+            if (robot.Sensors[0,3] == 0) return Right;
             return Down;
             //Hypothesis3 все равно убьет все гипотезы
         }

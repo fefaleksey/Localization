@@ -4,10 +4,10 @@
     {
         //public int[,] Sensors = new int[QualitySensors, 4];
         public const int QualitySensors = 3; // количество клеток, на которых сенсоры работают адекватно
-        private const int Down = 1;
-        private const int Left = 2;
-        private const int Up = 3;
-        private const int Right = 4;
+        private const int IDown = 1;
+        private const int ILeft = 2;
+        private const int IUp = 3;
+        private const int IRight = 4;
 
         public void SensorsRead(int x, int y, int direction, Robot robot, Map map)
         {
@@ -15,8 +15,8 @@
             //Down
             while (i < QualitySensors && x + 1 < map.Height)
             {
-                var j = GetIndex(direction, Down);
-                robot.Sensors[i, j] = map.map[x, y, Down];
+                var j = GetIndex(direction, IDown);
+                robot.Sensors[i, j] = map.map[x, y, IDown];
                 if (robot.Sensors[i, j] == 1) break;
                 i++;
                 x++;
@@ -25,8 +25,8 @@
             //Left
             while (i < QualitySensors && y > 0)
             {
-                var j = GetIndex(direction, Left);
-                robot.Sensors[i, j] = map.map[x, y, Left];
+                var j = GetIndex(direction, ILeft);
+                robot.Sensors[i, j] = map.map[x, y, ILeft];
                 if (robot.Sensors[i, j] == 1) break;
                 i++;
                 y--;
@@ -35,8 +35,8 @@
             //Up
             while (i < QualitySensors && x > 0)
             {
-                var j = GetIndex(direction, Up);
-                robot.Sensors[i, j] = map.map[x, y, Up];
+                var j = GetIndex(direction, IUp);
+                robot.Sensors[i, j] = map.map[x, y, IUp];
                 if (robot.Sensors[i, j] == 1) break;
                 i++;
                 x--;
@@ -45,8 +45,8 @@
             //Right
             while (i < QualitySensors && y + 1 < map.Widht)
             {
-                var j = GetIndex(direction, Right);
-                robot.Sensors[i, j] = map.map[x, y, Right];
+                var j = GetIndex(direction, IRight);
+                robot.Sensors[i, j] = map.map[x, y, IRight];
                 if (robot.Sensors[i, j] == 1) break;
                 i++;
                 y++;

@@ -40,13 +40,13 @@ namespace Localization
 				finalWays.Ways[i].Add(y);
 				finalWays.Ways[i].Add(direction);
 				robot.InitialDirection = 3;
-				map.SensorsRead(x, y, direction, robot);
-				HypothesisFilter(ref map);
+				robot.RSensors.Read(x, y, direction, robot, map);
+				map.HypothesisFilter(robot);
 				//map.Hypothesis1New();
 				while (!localization)
 				{
 					//indexDirections++;
-					var valueOfSensor = GetValueOfSensor(robot.Sensors);
+					//var valueOfSensor = GetValueOfSensor(robot.Sensors);
 					//var newDir = direction;
 					int directionForGetDirection;
 
@@ -58,13 +58,13 @@ namespace Localization
 					{
 						directionForGetDirection = 1;
 					}
-					var newDir = GetDirection(ref map, ref bestWays, robot.Sensors, directionForGetDirection, beginWay, robot);
+					var newDir = GetDirection(ref map, ref bestWays, directionForGetDirection, beginWay, robot);
 					var directionOfTheNextStep = newDir;
 					finalWays.Ways[i].Add(newDir);
 					newDir = motion.GetNewDir(direction, newDir, beginWay);
 					direction = newDir;
 					//timeOfWay.GetTime(ref ways);
-					//map.SensorsRead(x, y, direction, robot);
+					//robot.RSensors.Read(x, y, direction, robot);
 					if (step == 0)
 					{
 						robot.InitialDirection = directionOfTheNextStep;
@@ -76,7 +76,7 @@ namespace Localization
 							if (x + 1 < map.Height && map.map[x, y, Map.Down] == 0)
 							{
 								++x;
-								map.SensorsRead(x, y, Map.Down, robot);
+								robot.RSensors.Read(x, y, Map.Down, robot, map);
 								//time ++;
 							}
 							break;
@@ -86,7 +86,7 @@ namespace Localization
 							if (y > 0 && map.map[x, y, Map.Left] == 0)
 							{
 								--y;
-								map.SensorsRead(x, y, Map.Left, robot);
+								robot.RSensors.Read(x, y, Map.Left, robot, map);
 								//time += 2;
 							}
 							break;
@@ -96,7 +96,7 @@ namespace Localization
 							if (x > 0 && map.map[x, y, Map.Up] == 0)
 							{
 								--x;
-								map.SensorsRead(x, y, Map.Up, robot);
+								robot.RSensors.Read(x, y, Map.Up, robot, map);
 								//time++;
 							}
 							break;
@@ -106,7 +106,7 @@ namespace Localization
 							if (y + 1 < map.Widht && map.map[x, y, Map.Right] == 0)
 							{
 								++y;
-								map.SensorsRead(x, y, Map.Right, robot);
+								robot.RSensors.Read(x, y, Map.Right, robot, map);
 								//time += 2;
 							}
 							break;
@@ -196,16 +196,15 @@ namespace Localization
 		private bool Impasse(Robot robot)
 		{
 			var numbersOfWalls = 0;
-			for (var i = 0; i < robot.Sensors.Length; i++)
+			for (var i = 0; i < 4; i++)
 			{
-				if (robot.Sensors[i] == 1)
+				if (robot.Sensors[0, i] == 1)
 					numbersOfWalls++;
 			}
 			if (numbersOfWalls == 3)
 				return true;
 			return false;
 		}
-
 
 		public void CopyLists(ref List<List<int>> to, List<List<int>> from)
 		{
@@ -242,7 +241,7 @@ namespace Localization
 		//на настоящий момент. Необходимо сверить их с картой и выкинуть лишние гипотезы
 		//Доделать это 18.10 !!!
 
-		private int GetDirection(ref Map map, ref List<List<int>> ways, int[] sensors, int currentDirection, bool beginWay,
+		private int GetDirection(ref Map map, ref List<List<int>> ways, int currentDirection, bool beginWay,
 			Robot robot)
 		{
 			/*

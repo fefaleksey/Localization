@@ -15,7 +15,8 @@ namespace Localization
 				to.Add(from[i]);
 			}
 		}
-
+		
+		//TODO: доработать HypothesisFilter
 		public void Handing(Map map, Way Way)
 		{
 			//Console.WriteLine("Handing");
@@ -45,8 +46,8 @@ namespace Localization
 				{
 					++test;
 					CopyWay(Way.CurentWay, ref way);
-					map.SensorsRead(map.Hypothesis[0][i], map.Hypothesis[1][i],
-						map.Hypothesis[2][i], robot); //!!
+					robot.InitialDirection = 3;//TODO: проверить!
+					robot.RSensors.Read(map.Hypothesis[0][i], map.Hypothesis[1][i], map.Hypothesis[2][i], robot, map);
 					HandingHypothesis(i, way, map, motion, Way, robot);
 					fl = Way.NextDirection(_wayExist, _localiz, robot);
 					map.Hypothesis[0].Clear();
@@ -81,13 +82,14 @@ namespace Localization
 			var newDir = map.Hypothesis[2][number];
 			Way.BeginWay = true;
 			//Map.Hypothesis1New();
-			map.HypothesisFilter();
+			map.HypothesisFilter(robot);//TODO: Косячит. Исправить HypothesisFilter!!!
 			for (int k = 0; k < way.Count; k++)
 			{
 				bool fl = true;
 				if (k == 1)
 				{
 					Way.BeginWay = false;
+					//robot.InitialDirection = newDir;
 				}
 				//int a = hypothesis[2][i], b = ways[j][k];
 				newDir = motion.GetNewDir(newDir, way[k], Way.BeginWay); //Map.ChooseDir(newDir, way[k]);
@@ -100,7 +102,7 @@ namespace Localization
 						{
 							fl = false;
 							++x;
-							map.SensorsRead(x, y, Map.Down, robot);
+							robot.RSensors.Read(x, y, Map.Down, robot, map);
 						}
 						break;
 					}
@@ -111,7 +113,7 @@ namespace Localization
 						{
 							fl = false;
 							--y;
-							map.SensorsRead(x, y, Map.Left, robot);
+							robot.RSensors.Read(x, y, Map.Left, robot, map);
 						}
 						break;
 					}
@@ -121,18 +123,17 @@ namespace Localization
 						{
 							fl = false;
 							--x;
-							map.SensorsRead(x, y, Map.Up, robot);
+							robot.RSensors.Read(x, y, Map.Up, robot, map);
 						}
 						break;
 					}
 					case Map.Right:
 					{
-						if (y + 1 < map.Widht && map.map[x, y, Map.Right] == 0) // && 
-							// CheckWalls(x, y + 1, Right))
+						if (y + 1 < map.Widht && map.map[x, y, Map.Right] == 0) // && CheckWalls(x, y + 1, Right))
 						{
 							fl = false;
 							++y;
-							map.SensorsRead(x, y, Map.Right, robot);
+							robot.RSensors.Read(x, y, Map.Right, robot, map);
 						}
 						break;
 					}
@@ -147,7 +148,6 @@ namespace Localization
 					return; //-1
 				}
 
-				//Console.WriteLine("FFFUUUUUCKKKKKKKKKK" + hypothesis[0].Count);
 				map.Hypothesis3(way[k], Way.BeginWay, motion, robot);
 				/*
 				for (int i = 0; i < way.Count; i++)

@@ -1,6 +1,8 @@
-﻿namespace Localization
+﻿using System;
+
+namespace Localization
 {
-	class Robot
+	public class Robot
 	{
 		public int[,] Sensors;
 		public RobotSensors RSensors;
@@ -16,33 +18,6 @@
 			InitialDirection = 1;
 		}
 
-		/*
-		public void GetSensors(ref int[] value)
-		{
-			value[Down] = Sensors[Down];
-			value[Left] = Sensors[Left];
-			value[Up] = Sensors[Up];
-			value[Right] = Sensors[Right];
-		}
-
-		public void SetSensors(int[] value)
-		{
-			if (InitialDirection == 1)
-			{
-				Sensors[Down] = value[Up];
-				Sensors[Left] = value[Right];
-				Sensors[Up] = value[Down];
-				Sensors[Right] = value[Left];
-			}
-			else
-			{
-				Sensors[Down] = value[Down];
-				Sensors[Left] = value[Left];
-				Sensors[Up] = value[Up];
-				Sensors[Right] = value[Right];
-			}
-		}
-		*/
 		public class RobotSensors
 		{
 			//public int[,] Sensors = new int[QualitySensors, 4];
@@ -57,8 +32,16 @@
 			{
 				var i = 0;
 				int startX = x, startY = y;
+				// Протестить
+				for (var a = 0; a < QualitySensors; a++)
+				{
+					for (var b = 0; b < 4; b++)
+					{
+						robot.Sensors[a, b] = 0;
+					}
+				}
 				//Down
-				while (i < QualitySensors && x + 1 <= map.Height)
+				while (i < QualitySensors && x + 1 <= Map.Height)
 				{
 					var j = GetIndex(direction, IDown);
 					robot.Sensors[i, j] = map.map[x, y, IDown];
@@ -94,7 +77,7 @@
 				y = startY;
 				i = 0;
 				//Right
-				while (i < QualitySensors && y + 1 <= map.Widht)
+				while (i < QualitySensors && y + 1 <= Map.Width)
 				{
 					var j = GetIndex(direction, IRight);
 					robot.Sensors[i, j] = map.map[x, y, IRight];
@@ -137,6 +120,25 @@
 				if (newDirection == direction + 1 || newDirection == direction - 3)
 					return 3;
 				return 1;
+			}
+
+			/// <summary>
+			/// </summary>
+			/// <param name="robot"> robot</param>
+			/// <returns> hash key </returns>
+			public int GetSensorsValue(Robot robot)
+			{
+				var value = 0;
+				var n = QualitySensors * 4;
+				for (var i = 0; i < QualitySensors; i++)
+				{
+					for (var j = 0; j < 4; j++)
+					{
+						n--;
+						value += (int) Math.Pow(2, n) * robot.Sensors[i, j];
+					}
+				}
+				return value;
 			}
 		}
 	}

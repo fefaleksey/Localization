@@ -15,7 +15,7 @@ namespace Localization
 				to.Add(from[i]);
 			}
 		}
-		
+
 		//TODO: доработать HypothesisFilter
 		public void Handing(Map map, Way Way)
 		{
@@ -46,7 +46,7 @@ namespace Localization
 				{
 					++test;
 					CopyWay(Way.CurentWay, ref way);
-					robot.InitialDirection = 3;//TODO: проверить!
+					robot.InitialDirection = 3; //TODO: проверить!
 					robot.RSensors.Read(map.Hypothesis[0][i], map.Hypothesis[1][i], map.Hypothesis[2][i], robot, map);
 					HandingHypothesis(i, way, map, motion, Way, robot);
 					fl = Way.NextDirection(_wayExist, _localiz, robot);
@@ -82,7 +82,7 @@ namespace Localization
 			var newDir = map.Hypothesis[2][number];
 			Way.BeginWay = true;
 			//Map.Hypothesis1New();
-			map.HypothesisFilter(robot);//TODO: Косячит. Исправить HypothesisFilter!!!
+			map.HypothesisFilter(robot); //TODO: Косячит. Исправить HypothesisFilter!!!
 			for (int k = 0; k < way.Count; k++)
 			{
 				bool fl = true;

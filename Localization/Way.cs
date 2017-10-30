@@ -6,7 +6,7 @@ namespace Localization
 	class Way
 	{
 		public List<int> CurentWay = new List<int>();
-		private int _i=0, _forbiddenDirection=3;
+		private int _i = 0, _forbiddenDirection = 3;
 
 		private readonly int _length = 64;
 		public bool BeginWay = true;
@@ -18,6 +18,7 @@ namespace Localization
 			_forbiddenDirection = 3;
 			_i = 0;
 		}
+
 		//localiz==true <=> мы локализовались
 		public int NextDirection(bool wayExist, bool localiz, Robot robot)
 		{
@@ -26,7 +27,7 @@ namespace Localization
 				//Console.WriteLine("Complete");
 				return 0;
 			}
-			
+
 			if (localiz)
 			{
 				//curent_way.RemoveAt(i);
@@ -41,26 +42,26 @@ namespace Localization
 				else
 				{
 					CurentWay[_i]++;
-					
-					if (CurentWay.Count == 1 && CurentWay[0]==2)
+
+					if (CurentWay.Count == 1 && CurentWay[0] == 2)
 					{
 						//запрещенное направление мы поменяем только 1 раз!
 						_forbiddenDirection = 1;
 						robot.InitialDirection = 3;
 					}
-					
+
 					if (CurentWay[_i] == _forbiddenDirection)
 					{
 						CurentWay[_i]++;
 					}
-					
+
 				}
 				return CurentWay[_i];
 			}
-			
+
 			if (wayExist)
 			{
-				if (CurentWay.Count==_length)
+				if (CurentWay.Count == _length)
 				{
 					return NextDirection(false, false, robot);
 					//return curent_way[i];
@@ -84,14 +85,14 @@ namespace Localization
 				{
 					CurentWay.RemoveAt(_i);
 					--_i;
-					return NextDirection(false, false, robot);//return ???
+					return NextDirection(false, false, robot); //return ???
 					//return 1;//curent_way[i];
 				}
 				else
 				{
 					++CurentWay[_i];
-					
-					if (CurentWay.Count==1 && CurentWay[0]==2)
+
+					if (CurentWay.Count == 1 && CurentWay[0] == 2)
 					{
 						_forbiddenDirection = 1;
 						robot.InitialDirection = 3;
@@ -100,7 +101,7 @@ namespace Localization
 					{
 						++CurentWay[_i];
 					}
-					
+
 					return CurentWay[_i];
 				}
 			}

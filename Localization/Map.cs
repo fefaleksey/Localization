@@ -111,10 +111,10 @@ namespace Localization
 			var solutionForRobot = new SolutionForRobot();
 			solutionForRobot.SimulationOfLocalization(ref map, ref BestWays, ref finalWays);
 			var ruleOfOneHand = new RuleOfTheRightAndLeftHand();
-			
+
 			ruleOfOneHand.SimulationOfLocalization(ref map, ref finalWays, true);
 			ruleOfOneHand.SimulationOfLocalization(ref map, ref finalWays, false);
-			
+
 			finalWays.PrintResult();
 			//test.TimeOfFinalWays(ref finalWays, ref map, robot);
 		}
@@ -230,7 +230,7 @@ namespace Localization
 			while (i < Robot.RobotSensors.QualitySensors && x >= 0)
 			{
 				var j = robot.RSensors.GetIndex(direction, Up);
-				if(robot.Sensors[i, j] != map[x, y, Up]) return false;
+				if (robot.Sensors[i, j] != map[x, y, Up]) return false;
 				if (robot.Sensors[i, j] == 1) break;
 				i++;
 				x--;
@@ -247,7 +247,7 @@ namespace Localization
 				y++;
 			}
 			return true;
-			
+
 			/*
 			//_sensors = Robot.Sensors;
 			if (direction == Down)
@@ -323,8 +323,9 @@ namespace Localization
 		//потестить ещё
 		public void Hypothesis3(int direction, bool beginWay, Motion motion, Robot robot)
 		{
-			int i, quantity = robot.Sensors[0,0] + robot.Sensors[0,1] + 
-			                  robot.Sensors[0,2] + robot.Sensors[0,3];
+			int i,
+				quantity = robot.Sensors[0, 0] + robot.Sensors[0, 1] +
+				           robot.Sensors[0, 2] + robot.Sensors[0, 3];
 
 			for (i = 0; i < Hypothesis[0].Count; ++i)
 			{
@@ -451,7 +452,7 @@ namespace Localization
 			if (newDirection == Left) return ToLeftDir(currentDirection);
 			return ToDownDir(currentDirection, way);
 		}
-		
+
 		//правильно работает только для копирования гипотез, но для другого не используется)
 		public void Copy_Lists(ref List<List<int>> to, List<List<int>> from)
 		{
@@ -469,6 +470,7 @@ namespace Localization
 				to[2].Add(from[2][i]);
 			}
 		}
+
 		/*
 		public void SensorsRead(int x, int y, int direction, Robot robot)
 		{

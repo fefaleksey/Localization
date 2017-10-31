@@ -20,11 +20,10 @@ namespace Test
 			var solutionForRobot = new SolutionForRobot();
 			solutionForRobot.SimulationOfLocalization(ref mapp, ref mapp.BestWays, ref finalWays);
 			var generate = new Generate();
-			generate.GenerateHashtable(finalWays);
-			var directions = new int[(int) Math.Pow(2, Robot.RobotSensors.QualitySensors), generate.HashtableLength(finalWays)];
-
+			var directions = new int[(int) Math.Pow(2, Math.Pow(2, Robot.RobotSensors.QualitySensors)),
+				generate.HashtableLength(finalWays)];
+			directions=generate.GenerateHashtable(finalWays);
 			Assert.True(directions[36896, 0] == 3);
-			//Assert.True(directions[61440, 0] == 3);
 			finalWays.PrintResult();
 		}
 	}

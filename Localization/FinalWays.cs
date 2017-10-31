@@ -3,8 +3,9 @@ using System;
 
 namespace Localization
 {
-    class FinalWays
+    public class FinalWays
     {
+        //Ways: координаты, путь, 8888888, координаты после локализации, 8888888, время
         public List<List<int>> Ways;
         public List<List<int>> FinalList;
 

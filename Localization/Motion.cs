@@ -4,7 +4,7 @@ namespace Localization
 {
 	// TODO: Проекции футамуры, принцип belodi
 
-	class Motion
+	public class Motion
 	{
 		public const int Down = 1;
 		public const int Left = 2;

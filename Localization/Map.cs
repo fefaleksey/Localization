@@ -74,40 +74,10 @@ namespace Localization
 
 			var handingOfAllCases = new HandingOfAllCases();
 			var way = new Way();
-			//var Robot = new Robot();
 			handingOfAllCases.Handing(this, way);
-			/*
-			for (var l = 0; l < BestWays.Count; l++)
-			{
-				Console.WriteLine("ways " + l);
-				for (int i = 0; i < BestWays[l].Count; i++)
-				{
-					//Console.WriteLine("ways " + l);
-					Console.Write(BestWays[l][i] + ",");
-					//Console.WriteLine();
-				}
-				Console.WriteLine();
-			}
-			*/
 			ListFiltration(ref BestWays);
-			//PrintMap();
-			//var solution = new Solution();
 			var map = this;
 			var finalWays = new FinalWays();
-			/*
-			for (var l = 0; l < BestWays.Count; l++)
-			{
-				Console.WriteLine("ways " + l);
-				for (int i = 0; i < BestWays[l].Count; i++)
-				{
-					//Console.WriteLine("ways " + l);
-					Console.Write(BestWays[l][i] + ",");
-					//Console.WriteLine();
-				}
-				Console.WriteLine();
-			}
-			*/
-			//solution.GetWays(ref map, ref BestWays, ref finalWays);
 			var solutionForRobot = new SolutionForRobot();
 			solutionForRobot.SimulationOfLocalization(ref map, ref BestWays, ref finalWays);
 			var ruleOfOneHand = new RuleOfTheOneHand();

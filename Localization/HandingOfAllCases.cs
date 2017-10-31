@@ -96,7 +96,7 @@ namespace Localization
 				switch (newDir)
 				{
 					case Map.Down:
-						The width and height fields are replaced by constants		{
+					{
 						if (x + 1 < Map.Height && map.map[x, y, Map.Down] == 0)
 							// && CheckWalls(x, y + 1, Down))
 						{

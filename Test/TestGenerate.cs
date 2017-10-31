@@ -9,10 +9,10 @@ namespace Test
 		[Fact]
 		public void TestGenerateHashtable()
 		{
-			var mapp = new Map();
+			var mapp = new HandlingHypotheses();
 			mapp.StartInit();
 
-			var handingOfAllCases = new HandingOfAllCases();
+			var handingOfAllCases = new HandlingOfAllCases();
 			var way = new Way();
 			handingOfAllCases.Handing(mapp, way);
 			mapp.ListFiltration(ref mapp.BestWays);

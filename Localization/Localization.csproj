@@ -45,8 +45,8 @@
     <Compile Include="Generate.cs" />
     <Compile Include="Hypothesis.cs" />
     <Compile Include="FinalWays.cs" />
-    <Compile Include="HandingOfAllCases.cs" />
-    <Compile Include="Map.cs" />
+    <Compile Include="HandlingOfAllCases.cs" />
+    <Compile Include="HandlingHypotheses.cs" />
     <Compile Include="Motion.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -30,7 +30,7 @@ namespace Localization
 			private const int IUp = 3;
 			private const int IRight = 4;
 
-			public void Read(int x, int y, int direction, Robot robot, Map map)
+			public void Read(int x, int y, int direction, Robot robot, HandlingHypotheses handlingHypotheses)
 			{
 				var i = 0;
 				int startX = x, startY = y;
@@ -42,10 +42,10 @@ namespace Localization
 					}
 				}
 				//Down
-				while (i < QualitySensors && x + 1 <= Map.Height)
+				while (i < QualitySensors && x + 1 <= HandlingHypotheses.Height)
 				{
 					var j = GetIndex(direction, IDown);
-					robot.Sensors[i, j] = map.map[x, y, IDown];
+					robot.Sensors[i, j] = handlingHypotheses.Map[x, y, IDown];
 					if (robot.Sensors[i, j] == 1) break;
 					i++;
 					x++;
@@ -57,7 +57,7 @@ namespace Localization
 				while (i < QualitySensors && y >= 0)
 				{
 					var j = GetIndex(direction, ILeft);
-					robot.Sensors[i, j] = map.map[x, y, ILeft];
+					robot.Sensors[i, j] = handlingHypotheses.Map[x, y, ILeft];
 					if (robot.Sensors[i, j] == 1) break;
 					i++;
 					y--;
@@ -69,7 +69,7 @@ namespace Localization
 				while (i < QualitySensors && x >= 0)
 				{
 					var j = GetIndex(direction, IUp);
-					robot.Sensors[i, j] = map.map[x, y, IUp];
+					robot.Sensors[i, j] = handlingHypotheses.Map[x, y, IUp];
 					if (robot.Sensors[i, j] == 1) break;
 					i++;
 					x--;
@@ -78,10 +78,10 @@ namespace Localization
 				y = startY;
 				i = 0;
 				//Right
-				while (i < QualitySensors && y + 1 <= Map.Width)
+				while (i < QualitySensors && y + 1 <= HandlingHypotheses.Width)
 				{
 					var j = GetIndex(direction, IRight);
-					robot.Sensors[i, j] = map.map[x, y, IRight];
+					robot.Sensors[i, j] = handlingHypotheses.Map[x, y, IRight];
 					if (robot.Sensors[i, j] == 1) break;
 					i++;
 					y++;

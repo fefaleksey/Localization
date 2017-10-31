@@ -10,22 +10,22 @@ namespace Localization
 		private const int Up = 3;
 		private const int Right = 4;
 
-		public void SimulationOfLocalization(ref Map map, ref FinalWays finalWays, bool ruleRightHand)
+		public void SimulationOfLocalization(ref HandlingHypotheses handlingHypotheses, ref FinalWays finalWays, bool ruleRightHand)
 		{
 			finalWays.Ways.Clear();
 			finalWays.Ways = new List<List<int>>();
 			var robot = new Robot();
 			var localization = false;
 			var motion = new Motion();
-			map.HypothesisInit();
+			handlingHypotheses.HypothesisInit();
 			var hypothesisCopy = new List<List<int>>();
-			map.Copy_Lists(ref hypothesisCopy, map.Hypothesis);
+			handlingHypotheses.Copy_Lists(ref hypothesisCopy, handlingHypotheses.Hypothesis);
 			robot.InitialDirection = 3;
 			var quantitybags = 0;
 			for (var i = 0; i < hypothesisCopy[0].Count; i++)
 			{
 				var time = 0;
-				map.HypothesisInit();
+				handlingHypotheses.HypothesisInit();
 				var x = hypothesisCopy[0][i];
 				var y = hypothesisCopy[1][i];
 				var direction = hypothesisCopy[2][i];
@@ -33,14 +33,14 @@ namespace Localization
 				finalWays.Ways[i].Add(x);
 				finalWays.Ways[i].Add(y);
 				finalWays.Ways[i].Add(direction);
-				robot.RSensors.Read(x, y, direction, robot, map);
-				map.HypothesisFilter(robot);
-				if (map.Hypothesis[0].Count == 1)
+				robot.RSensors.Read(x, y, direction, robot, handlingHypotheses);
+				handlingHypotheses.HypothesisFilter(robot);
+				if (handlingHypotheses.Hypothesis[0].Count == 1)
 				{
 					finalWays.Ways[i].Add(8888888);
-					finalWays.Ways[i].Add(map.Hypothesis[0][0]);
-					finalWays.Ways[i].Add(map.Hypothesis[1][0]);
-					finalWays.Ways[i].Add(map.Hypothesis[2][0]);
+					finalWays.Ways[i].Add(handlingHypotheses.Hypothesis[0][0]);
+					finalWays.Ways[i].Add(handlingHypotheses.Hypothesis[1][0]);
+					finalWays.Ways[i].Add(handlingHypotheses.Hypothesis[2][0]);
 					localization = true;
 				}
 				while (!localization)
@@ -59,39 +59,39 @@ namespace Localization
 					direction = newDir;
 					switch (newDir)
 					{
-						case Map.Down:
+						case HandlingHypotheses.Down:
 						{
-							if (x + 1 < Map.Height && map.map[x, y, Map.Down] == 0)
+							if (x + 1 < HandlingHypotheses.Height && handlingHypotheses.Map[x, y, HandlingHypotheses.Down] == 0)
 							{
 								++x;
-								robot.RSensors.Read(x, y, Map.Down, robot, map);
+								robot.RSensors.Read(x, y, HandlingHypotheses.Down, robot, handlingHypotheses);
 							}
 							break;
 						}
-						case Map.Left:
+						case HandlingHypotheses.Left:
 						{
-							if (y > 0 && map.map[x, y, Map.Left] == 0)
+							if (y > 0 && handlingHypotheses.Map[x, y, HandlingHypotheses.Left] == 0)
 							{
 								--y;
-								robot.RSensors.Read(x, y, Map.Left, robot, map);
+								robot.RSensors.Read(x, y, HandlingHypotheses.Left, robot, handlingHypotheses);
 							}
 							break;
 						}
-						case Map.Up:
+						case HandlingHypotheses.Up:
 						{
-							if (x > 0 && map.map[x, y, Map.Up] == 0)
+							if (x > 0 && handlingHypotheses.Map[x, y, HandlingHypotheses.Up] == 0)
 							{
 								--x;
-								robot.RSensors.Read(x, y, Map.Up, robot, map);
+								robot.RSensors.Read(x, y, HandlingHypotheses.Up, robot, handlingHypotheses);
 							}
 							break;
 						}
-						case Map.Right:
+						case HandlingHypotheses.Right:
 						{
-							if (y + 1 < Map.Width && map.map[x, y, Map.Right] == 0)
+							if (y + 1 < HandlingHypotheses.Width && handlingHypotheses.Map[x, y, HandlingHypotheses.Right] == 0)
 							{
 								++y;
-								robot.RSensors.Read(x, y, Map.Right, robot, map);
+								robot.RSensors.Read(x, y, HandlingHypotheses.Right, robot, handlingHypotheses);
 							}
 							break;
 						}
@@ -101,17 +101,17 @@ namespace Localization
 							break;
 						}
 					}
-					map.Hypothesis3(directionOfTheNextStep, true, motion, robot);
+					handlingHypotheses.Hypothesis3(directionOfTheNextStep, true, motion, robot);
 
-					if (map.Hypothesis[0].Count == 1)
+					if (handlingHypotheses.Hypothesis[0].Count == 1)
 					{
 						finalWays.Ways[i].Add(8888888);
-						finalWays.Ways[i].Add(map.Hypothesis[0][0]);
-						finalWays.Ways[i].Add(map.Hypothesis[1][0]);
-						finalWays.Ways[i].Add(map.Hypothesis[2][0]);
+						finalWays.Ways[i].Add(handlingHypotheses.Hypothesis[0][0]);
+						finalWays.Ways[i].Add(handlingHypotheses.Hypothesis[1][0]);
+						finalWays.Ways[i].Add(handlingHypotheses.Hypothesis[2][0]);
 						localization = true;
 					}
-					if (map.Hypothesis[0].Count == 0)
+					if (handlingHypotheses.Hypothesis[0].Count == 0)
 					{
 						quantitybags++;
 						time = -1;

@@ -9,7 +9,7 @@ namespace Test
 		public void TestGetSensorsValue()
 		{
 			var robot = new Robot();
-			var map = new Map();
+			var map = new HandlingHypotheses();
 			robot.InitialDirection = 3;
 			robot.RSensors.Read(0, 0, 1, robot, map);
 			var value = robot.RSensors.GetSensorsValue(robot);

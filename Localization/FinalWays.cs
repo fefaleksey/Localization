@@ -13,7 +13,7 @@ namespace Localization
         {
             Ways = new List<List<int>>();
             FinalList = new List<List<int>>();
-            var map = new Map();
+            var map = new HandlingHypotheses();
             map.HypothesisInit();
             for (var i = 0; i < map.Hypothesis[0].Count; i++)
             {

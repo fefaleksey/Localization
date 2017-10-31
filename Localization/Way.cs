@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Localization
 {
 	public class Way
 	{
 		public List<int> CurentWay = new List<int>();
-		private int _i = 0, _forbiddenDirection = 3;
+		private int _i, _forbiddenDirection = 3;
 
 		public const int Length = 64;
 		public bool BeginWay = true;

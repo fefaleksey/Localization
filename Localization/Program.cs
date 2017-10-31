@@ -5,7 +5,7 @@ namespace Localization
     {
         public static void Main(string[] args)
         {
-            var map=new Map();
+            var map=new HandlingHypotheses();
             map.Localization();
         }
     }

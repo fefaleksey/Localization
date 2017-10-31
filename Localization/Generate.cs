@@ -26,7 +26,7 @@ namespace Localization
 				HashtableLength(finalWays)];
 			var robot = new Robot();
 			var motion = new Motion();
-			var map = new Map();
+			var map = new HandlingHypotheses();
 			var solutionForRobot = new SolutionForRobot();
 			for (var i = 0; i < finalWays.Ways.Count; i++)
 			{
@@ -47,22 +47,22 @@ namespace Localization
 					newDir = motion.GetNewDir(newDir, finalWays.Ways[i][j], beginWay);
 					switch (newDir)
 					{
-						case Map.Down:
+						case HandlingHypotheses.Down:
 						{
 							++x;
 							break;
 						}
-						case Map.Left:
+						case HandlingHypotheses.Left:
 						{
 							--y;
 							break;
 						}
-						case Map.Up:
+						case HandlingHypotheses.Up:
 						{
 							--x;
 							break;
 						}
-						case Map.Right:
+						case HandlingHypotheses.Right:
 						{
 							++y;
 							break;

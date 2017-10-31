@@ -4,19 +4,6 @@ namespace Localization
 {
 	public class Generate
 	{
-		//заменить Way.Length на как
-		//private int[,] _directions = new int[(int) Math.Pow(2, Robot.RobotSensors.QualitySensors), ];
-		/*
-		public void SetHashtable(int key, int step, int value)
-		{
-			_directions[key, step] = value;
-		}
-
-		public int GetDirection(int key, int step)
-		{
-			return _directions[key, step];
-		}
-		*/
 		public int HashtableLength(FinalWays finalWays)
 		{
 			var max = 0;
@@ -51,18 +38,13 @@ namespace Localization
 				robot.InitialDirection = 3;
 				robot.RSensors.Read(x, y, newDir /*direction*/, robot, map);
 				var step = 0;
-				var fl = true;
-				//var newDir = direction;
 				var beginWay = true;
 				robot.InitialDirection = initialdirection;
-				//initialdirection = newDir;
 				for (var j = 3; j < finalWays.Ways[i].Count && finalWays.Ways[i][j] != 8888888; j++)
 				{
 					var value = robot.RSensors.GetSensorsValue(robot);
 					directions[value, step] = finalWays.Ways[i][j];
 					newDir = motion.GetNewDir(newDir, finalWays.Ways[i][j], beginWay);
-					//initialdirection = newDir;
-					//if (fl) robot.InitialDirection = initialdirection;
 					switch (newDir)
 					{
 						case Map.Down:
@@ -86,17 +68,14 @@ namespace Localization
 							break;
 						}
 					}
-					fl = false;
 					step++;
 					robot.RSensors.Read(x, y, newDir, robot, map);
 					beginWay = false;
 					if (solutionForRobot.Impasse(robot))
 					{
-						fl = true;
 						beginWay = true;
 						if (robot.InitialDirection == 1)
 						{
-							//solutionForRobot.CorrectDirectionsInHypothesis(robot, ref map);
 							robot.InitialDirection = 3;
 							newDir = solutionForRobot.OppositeDirection(newDir);
 						}
@@ -104,7 +83,6 @@ namespace Localization
 						{
 							robot.InitialDirection = 1;
 						}
-						//newDir = solutionForRobot.OppositeDirection(newDir);
 					}
 				}
 			}

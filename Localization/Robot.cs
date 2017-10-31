@@ -6,7 +6,10 @@ namespace Localization
 	{
 		public int[,] Sensors;
 		public RobotSensors RSensors;
-		public const int Down = 0, Left = 1, Up = 2, Right = 3;
+		public const int Down = 0;
+		public const int Left = 1;
+		public const int Up = 2;
+		public const int Right = 3;
 		public bool BeginWay = true;
 
 		public int InitialDirection { get; set; }
@@ -20,7 +23,6 @@ namespace Localization
 
 		public class RobotSensors
 		{
-			//public int[,] Sensors = new int[QualitySensors, 4];
 			public const int QualitySensors = 4; // количество клеток, на которых сенсоры работают адекватно
 
 			private const int IDown = 1;
@@ -32,7 +34,6 @@ namespace Localization
 			{
 				var i = 0;
 				int startX = x, startY = y;
-				// Протестить
 				for (var a = 0; a < QualitySensors; a++)
 				{
 					for (var b = 0; b < 4; b++)
@@ -95,12 +96,6 @@ namespace Localization
 						robot.Sensors[j, Left] = robot.Sensors[j, Right];
 						robot.Sensors[j, Up] = value1;
 						robot.Sensors[j, Right] = value2;
-						/*
-						Sensors[Down] = value[Up];
-						Sensors[Left] = value[Right];
-						Sensors[Up] = value[Down];
-						Sensors[Right] = value[Left];
-						*/
 					}
 				}
 			}

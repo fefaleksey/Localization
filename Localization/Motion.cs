@@ -2,7 +2,7 @@
 
 namespace Localization
 {
-	// TODO: Проекции футамуры, принцип belodi
+	//Проекции футамуры, принцип belodi
 
 	public class Motion
 	{

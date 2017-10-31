@@ -6,19 +6,13 @@ namespace Localization
 {
 	public class SolutionForRobot
 	{
-		private int _quantityDifferentWays = 16;
-		private int way = 15;
-
 		public void SimulationOfLocalization(ref Map map, ref List<List<int>> bestWays, ref FinalWays finalWays)
 		{
-			//var currentWay = new int[4] {0, 0, 0, 0};
 			var timeOfWay = new TimeOfWay();
 			timeOfWay.GetTime(ref bestWays, true);
 			var robot = new Robot();
-			//int indexDirections = -1, step = -1;
 			var localization = false;
 			var motion = new Motion();
-			//var step = 0;
 			map.HypothesisInit();
 			var hypothesisCopy = new List<List<int>>();
 			map.Copy_Lists(ref hypothesisCopy, map.Hypothesis);
@@ -42,7 +36,6 @@ namespace Localization
 				robot.InitialDirection = 3;
 				robot.RSensors.Read(x, y, direction, robot, map);
 				map.HypothesisFilter(robot);
-				//TODO: Проверить правильность этого условия
 				if (map.Hypothesis[0].Count == 1)
 				{
 					finalWays.Ways[i].Add(8888888);
@@ -54,12 +47,8 @@ namespace Localization
 						finalWays.Ways[i].Add(map.Hypothesis[2][0]);
 					localization = true;
 				}
-				//map.Hypothesis1New();
 				while (!localization)
 				{
-					//indexDirections++;
-					//var valueOfSensor = GetValueOfSensor(robot.Sensors);
-					//var newDir = direction;
 					int directionForGetDirection;
 
 					if (beginWay || robot.InitialDirection != 1)
@@ -75,8 +64,6 @@ namespace Localization
 					finalWays.Ways[i].Add(newDir);
 					newDir = motion.GetNewDir(direction, newDir, beginWay);
 					direction = newDir;
-					//timeOfWay.GetTime(ref ways);
-					//robot.RSensors.Read(x, y, direction, robot);
 					if (step == 0)
 					{
 						robot.InitialDirection = directionOfTheNextStep;
@@ -89,7 +76,6 @@ namespace Localization
 							{
 								++x;
 								robot.RSensors.Read(x, y, Map.Down, robot, map);
-								//time ++;
 							}
 							break;
 						}
@@ -99,7 +85,6 @@ namespace Localization
 							{
 								--y;
 								robot.RSensors.Read(x, y, Map.Left, robot, map);
-								//time += 2;
 							}
 							break;
 						}
@@ -109,7 +94,6 @@ namespace Localization
 							{
 								--x;
 								robot.RSensors.Read(x, y, Map.Up, robot, map);
-								//time++;
 							}
 							break;
 						}
@@ -119,7 +103,6 @@ namespace Localization
 							{
 								++y;
 								robot.RSensors.Read(x, y, Map.Right, robot, map);
-								//time += 2;
 							}
 							break;
 						}
@@ -129,7 +112,6 @@ namespace Localization
 							break;
 						}
 					}
-					//Не newDir, а направление, куда должны ехать. Вроде исправил
 					map.Hypothesis3(directionOfTheNextStep, beginWay, motion, robot);
 
 					if (map.Hypothesis[0].Count == 1)
@@ -148,7 +130,6 @@ namespace Localization
 						quantitybags++;
 						time = -1;
 						finalWays.Ways[i].RemoveAt(finalWays.Ways[i].Count - 1);
-						//Console.WriteLine("SolutionForRobot.SimulationOfLocalization - BAG 2222222222222222222222222");
 						break;
 					}
 					if (directionOfTheNextStep == 1 || directionOfTheNextStep == 3)
@@ -222,9 +203,7 @@ namespace Localization
 
 		public void CopyLists(ref List<List<int>> to, List<List<int>> from)
 		{
-			//int m = from.Count, n = from[0].Count;
 			to.Clear();
-
 			for (var i = 0; i < from.Count; i++)
 			{
 				to.Add(new List<int>());
@@ -235,16 +214,6 @@ namespace Localization
 			}
 		}
 
-		private int GetValueOfSensor(int[] sensor)
-		{
-			var value = 0;
-			for (var i = 0; i < 4; i++)
-			{
-				value += (int) Math.Pow(2, i) * sensor[i];
-			}
-			return value;
-		}
-		
 		private int GetDirection(ref Map map, ref List<List<int>> ways, int currentDirection, bool beginWay,
 			Robot robot)
 		{
@@ -264,25 +233,6 @@ namespace Localization
 				if (robot.InitialDirection == 1)
 				{
 					map.Hypothesis[2][i] = OppositeDirection(map.Hypothesis[2][i]);
-				}
-			}
-		}
-
-		private void HypothesisFilter(ref Map map) //, int step 
-		{
-			map.HypothesisInit();
-			map.Hypothesis1New();
-			for (var i = 0; i < map.Hypothesis[0].Count; i++)
-			{
-				int x = map.Hypothesis[0][i],
-					y = map.Hypothesis[1][i],
-					direction = map.Hypothesis[2][i];
-				if (!CheckWalls(x, y, direction, map))
-				{
-					map.Hypothesis[0].RemoveAt(i);
-					map.Hypothesis[1].RemoveAt(i);
-					map.Hypothesis[2].RemoveAt(i);
-					i--;
 				}
 			}
 		}
@@ -327,9 +277,6 @@ namespace Localization
 		private int ChooseMin(double[] sumTimeForDirecrion, int currentDirection, bool beginWay)
 		{
 			var oppositeDirection = OppositeDirection(currentDirection);
-
-			var min = sumTimeForDirecrion[0];
-			var indexMin = 0;
 			var indices = new int[4] {1, 2, 3, 4};
 
 			for (var i = 0; i < 4; i++)
@@ -347,7 +294,7 @@ namespace Localization
 					}
 				}
 			}
-			
+
 			if (beginWay) return indices[0];
 			if (oppositeDirection == indices[0]) return indices[1];
 			return indices[0];
@@ -357,55 +304,6 @@ namespace Localization
 		{
 			if (direction > 2) return direction - 2;
 			return direction + 2;
-		}
-
-		private void WayFilter(ref List<List<int>> ways)
-		{
-			for (var i = 0; i < ways.Count; i++)
-			{
-				ways[i].RemoveAt(4);
-				if (ways[i].Count == 4)
-				{
-					ways.RemoveAt(i);
-					i--;
-				}
-			}
-		}
-
-		private bool CheckWalls(int x, int y, int direction, Map map)
-		{
-			if (direction == 1)
-			{
-				if (map.map[x, y, 1] != map.Sensors[2]) return false;
-				if (map.map[x, y, 2] != map.Sensors[3]) return false;
-				if (map.map[x, y, 3] != map.Sensors[0]) return false;
-				if (map.map[x, y, 4] != map.Sensors[1]) return false;
-				return true;
-			}
-			else if (direction == 2)
-			{
-				if (map.map[x, y, 1] != map.Sensors[1]) return false;
-				if (map.map[x, y, 2] != map.Sensors[2]) return false;
-				if (map.map[x, y, 3] != map.Sensors[3]) return false;
-				if (map.map[x, y, 4] != map.Sensors[0]) return false;
-				return true;
-			}
-			else if (direction == 3)
-			{
-				if (map.map[x, y, 1] != map.Sensors[0]) return false;
-				if (map.map[x, y, 2] != map.Sensors[1]) return false;
-				if (map.map[x, y, 3] != map.Sensors[2]) return false;
-				if (map.map[x, y, 4] != map.Sensors[3]) return false;
-				return true;
-			}
-			else
-			{
-				if (map.map[x, y, 1] != map.Sensors[3]) return false;
-				if (map.map[x, y, 2] != map.Sensors[0]) return false;
-				if (map.map[x, y, 3] != map.Sensors[1]) return false;
-				if (map.map[x, y, 4] != map.Sensors[2]) return false;
-				return true;
-			}
 		}
 	}
 }

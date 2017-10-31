@@ -91,7 +91,7 @@ namespace Localization
 			*/
 			ListFiltration(ref BestWays);
 			//PrintMap();
-			var solution = new Solution();
+			//var solution = new Solution();
 			var map = this;
 			var finalWays = new FinalWays();
 			/*
@@ -110,7 +110,7 @@ namespace Localization
 			//solution.GetWays(ref map, ref BestWays, ref finalWays);
 			var solutionForRobot = new SolutionForRobot();
 			solutionForRobot.SimulationOfLocalization(ref map, ref BestWays, ref finalWays);
-			var ruleOfOneHand = new RuleOfTheRightAndLeftHand();
+			var ruleOfOneHand = new RuleOfTheOneHand();
 
 			var generate = new Generate();
 			generate.GenerateHashtable(finalWays);
@@ -251,42 +251,6 @@ namespace Localization
 				y++;
 			}
 			return true;
-
-			/*
-			//_sensors = Robot.Sensors;
-			if (direction == Down)
-			{
-				if (map[x, y, 1] != Sensors[2]) return false;
-				if (map[x, y, 2] != Sensors[3]) return false;
-				if (map[x, y, 3] != Sensors[0]) return false;
-				if (map[x, y, 4] != Sensors[1]) return false;
-				return true;
-			}
-			else if (direction == Left)
-			{
-				if (map[x, y, 1] != Sensors[1]) return false;
-				if (map[x, y, 2] != Sensors[2]) return false;
-				if (map[x, y, 3] != Sensors[3]) return false;
-				if (map[x, y, 4] != Sensors[0]) return false;
-				return true;
-			}
-			else if (direction == Up)
-			{
-				if (map[x, y, 1] != Sensors[0]) return false;
-				if (map[x, y, 2] != Sensors[1]) return false;
-				if (map[x, y, 3] != Sensors[2]) return false;
-				if (map[x, y, 4] != Sensors[3]) return false;
-				return true;
-			}
-			else
-			{
-				if (map[x, y, 1] != Sensors[3]) return false;
-				if (map[x, y, 2] != Sensors[0]) return false;
-				if (map[x, y, 3] != Sensors[1]) return false;
-				if (map[x, y, 4] != Sensors[2]) return false;
-				return true;
-			}
-			*/
 		}
 
 		// 0 <= quantity <= 4
@@ -401,13 +365,7 @@ namespace Localization
 						break;
 					}
 				}
-				/*
-				if (!fl && Robot.InitialDirection==1)
-				{
-					if (Hypothesis[2][i] > 2) Hypothesis[2][i] -= 2;
-					else Hypothesis[2][i] += 2;
-				}
-				*/
+
 				if (fl)
 				{
 					Hypothesis[0].RemoveAt(i);
@@ -440,13 +398,6 @@ namespace Localization
 				return direction + 2;
 			}
 			else return direction;
-			
-			/*
-			if (direction > 2) return direction - 2;
-			return direction + 2;
-			*/
-			Console.WriteLine("Map.ToDownDir - bag");
-			return direction; //down == up
 		}
 
 		// текущее направление в абсолютных коорд/направление движения(куда едем?)
@@ -476,49 +427,6 @@ namespace Localization
 			}
 		}
 
-		/*
-		public void SensorsRead(int x, int y, int direction, Robot robot)
-		{
-			switch (direction)
-			{
-				case Down:
-					Sensors[2] = map[x, y, 1];
-					Sensors[3] = map[x, y, 2];
-					Sensors[0] = map[x, y, 3];
-					Sensors[1] = map[x, y, 4];
-					robot.SetSensors(Sensors);
-					robot.GetSensors(ref Sensors);
-					break;
-				case Left:
-					Sensors[2] = map[x, y, 2];
-					Sensors[3] = map[x, y, 3];
-					Sensors[0] = map[x, y, 4];
-					Sensors[1] = map[x, y, 1];
-					robot.SetSensors(Sensors);
-					robot.GetSensors(ref Sensors);
-					break;
-				case Up:
-					Sensors[0] = map[x, y, 1];
-					Sensors[1] = map[x, y, 2];
-					Sensors[2] = map[x, y, 3];
-					Sensors[3] = map[x, y, 4];
-					robot.SetSensors(Sensors);
-					robot.GetSensors(ref Sensors);
-					break;
-				case Right:
-					Sensors[0] = map[x, y, 2];
-					Sensors[1] = map[x, y, 3];
-					Sensors[2] = map[x, y, 4];
-					Sensors[3] = map[x, y, 1];
-					robot.SetSensors(Sensors);
-					robot.GetSensors(ref Sensors);
-					break;
-				default:
-					Console.WriteLine("SensorsRead ERROR");
-					break;
-			}
-		}
-		*/
 		public void ListFiltration(ref List<List<int>> list)
 		{
 			for (int i = 0; i < list.Count; i++)

@@ -24,20 +24,16 @@ namespace Localization
 		{
 			if (CurentWay.Count == 0)
 			{
-				//Console.WriteLine("Complete");
 				return 0;
 			}
 
 			if (localiz)
 			{
-				//curent_way.RemoveAt(i);
-				//--i;
 				if (CurentWay[_i] == 4)
 				{
 					CurentWay.RemoveAt(_i);
 					--_i;
-					return NextDirection(false, false, robot); // return?????
-					//return 5;//???????
+					return NextDirection(false, false, robot);
 				}
 				else
 				{
@@ -64,7 +60,6 @@ namespace Localization
 				if (CurentWay.Count == Length)
 				{
 					return NextDirection(false, false, robot);
-					//return curent_way[i];
 				}
 				if (_forbiddenDirection == 1)
 				{
@@ -85,8 +80,7 @@ namespace Localization
 				{
 					CurentWay.RemoveAt(_i);
 					--_i;
-					return NextDirection(false, false, robot); //return ???
-					//return 1;//curent_way[i];
+					return NextDirection(false, false, robot);
 				}
 				else
 				{
@@ -105,8 +99,6 @@ namespace Localization
 					return CurentWay[_i];
 				}
 			}
-			Console.WriteLine("Way.cs NextDirection - bag");
-			return -1;
 		}
 	}
 }

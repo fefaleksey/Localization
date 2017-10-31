@@ -3,16 +3,12 @@ using System;
 
 namespace Localization
 {
-	public class RuleOfTheRightAndLeftHand
+	public class RuleOfTheOneHand
 	{
-
 		private const int Down = 1;
 		private const int Left = 2;
 		private const int Up = 3;
 		private const int Right = 4;
-
-
-		//private List<int> CurrentWay = new List<int>();
 
 		public void SimulationOfLocalization(ref Map map, ref FinalWays finalWays, bool ruleRightHand)
 		{
@@ -69,7 +65,6 @@ namespace Localization
 							{
 								++x;
 								robot.RSensors.Read(x, y, Map.Down, robot, map);
-								//time ++;
 							}
 							break;
 						}
@@ -79,7 +74,6 @@ namespace Localization
 							{
 								--y;
 								robot.RSensors.Read(x, y, Map.Left, robot, map);
-								//time += 2;
 							}
 							break;
 						}
@@ -89,7 +83,6 @@ namespace Localization
 							{
 								--x;
 								robot.RSensors.Read(x, y, Map.Up, robot, map);
-								//time++;
 							}
 							break;
 						}
@@ -99,7 +92,6 @@ namespace Localization
 							{
 								++y;
 								robot.RSensors.Read(x, y, Map.Right, robot, map);
-								//time += 2;
 							}
 							break;
 						}
@@ -149,43 +141,6 @@ namespace Localization
 				Console.WriteLine();
 			}
 		}
-
-		private bool CheckWalls(int x, int y, int direction, Map map)
-		{
-			if (direction == 1)
-			{
-				if (map.map[x, y, 1] != map.Sensors[2]) return false;
-				if (map.map[x, y, 2] != map.Sensors[3]) return false;
-				if (map.map[x, y, 3] != map.Sensors[0]) return false;
-				if (map.map[x, y, 4] != map.Sensors[1]) return false;
-				return true;
-			}
-			else if (direction == 2)
-			{
-				if (map.map[x, y, 1] != map.Sensors[1]) return false;
-				if (map.map[x, y, 2] != map.Sensors[2]) return false;
-				if (map.map[x, y, 3] != map.Sensors[3]) return false;
-				if (map.map[x, y, 4] != map.Sensors[0]) return false;
-				return true;
-			}
-			else if (direction == 3)
-			{
-				if (map.map[x, y, 1] != map.Sensors[0]) return false;
-				if (map.map[x, y, 2] != map.Sensors[1]) return false;
-				if (map.map[x, y, 3] != map.Sensors[2]) return false;
-				if (map.map[x, y, 4] != map.Sensors[3]) return false;
-				return true;
-			}
-			else
-			{
-				if (map.map[x, y, 1] != map.Sensors[3]) return false;
-				if (map.map[x, y, 2] != map.Sensors[0]) return false;
-				if (map.map[x, y, 3] != map.Sensors[1]) return false;
-				if (map.map[x, y, 4] != map.Sensors[2]) return false;
-				return true;
-			}
-		}
-
 
 		public int NextDirection(Robot robot, bool ruleOfTheRightHand)
 		{

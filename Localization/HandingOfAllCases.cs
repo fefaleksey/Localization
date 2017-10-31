@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Localization
 {
-	class HandingOfAllCases
+	public class HandingOfAllCases
 	{
 		private bool _wayExist = true, _localiz = false;
 
@@ -96,8 +96,8 @@ namespace Localization
 				switch (newDir)
 				{
 					case Map.Down:
-					{
-						if (x + 1 < map.Height && map.map[x, y, Map.Down] == 0)
+						The width and height fields are replaced by constants		{
+						if (x + 1 < Map.Height && map.map[x, y, Map.Down] == 0)
 							// && CheckWalls(x, y + 1, Down))
 						{
 							fl = false;
@@ -129,7 +129,7 @@ namespace Localization
 					}
 					case Map.Right:
 					{
-						if (y + 1 < map.Widht && map.map[x, y, Map.Right] == 0) // && CheckWalls(x, y + 1, Right))
+						if (y + 1 < Map.Width && map.map[x, y, Map.Right] == 0) // && CheckWalls(x, y + 1, Right))
 						{
 							fl = false;
 							++y;

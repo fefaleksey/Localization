@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Localization
 {
-	class SolutionForRobot
+	public class SolutionForRobot
 	{
 		private int _quantityDifferentWays = 16;
 		private int way = 15;
@@ -85,7 +85,7 @@ namespace Localization
 					{
 						case Map.Down:
 						{
-							if (x + 1 < map.Height && map.map[x, y, Map.Down] == 0)
+							if (x + 1 < Map.Height && map.map[x, y, Map.Down] == 0)
 							{
 								++x;
 								robot.RSensors.Read(x, y, Map.Down, robot, map);
@@ -115,7 +115,7 @@ namespace Localization
 						}
 						case Map.Right:
 						{
-							if (y + 1 < map.Widht && map.map[x, y, Map.Right] == 0)
+							if (y + 1 < Map.Width && map.map[x, y, Map.Right] == 0)
 							{
 								++y;
 								robot.RSensors.Read(x, y, Map.Right, robot, map);
@@ -146,6 +146,8 @@ namespace Localization
 					if (map.Hypothesis[0].Count == 0)
 					{
 						quantitybags++;
+						time = -1;
+						finalWays.Ways[i].RemoveAt(finalWays.Ways[i].Count - 1);
 						//Console.WriteLine("SolutionForRobot.SimulationOfLocalization - BAG 2222222222222222222222222");
 						break;
 					}
@@ -174,7 +176,7 @@ namespace Localization
 			}
 
 
-			//PrintResult(finalWays);
+			PrintResult(finalWays);
 			finalWays.SetFinalList();
 			//PrintReleaseResult(finalWays);
 			Console.WriteLine(quantitybags);
@@ -205,7 +207,7 @@ namespace Localization
 			}
 		}
 
-		private bool Impasse(Robot robot)
+		public bool Impasse(Robot robot)
 		{
 			var numbersOfWalls = 0;
 			for (var i = 0; i < 4; i++)
@@ -242,91 +244,20 @@ namespace Localization
 			}
 			return value;
 		}
-
-		private void GoTo()
-		{
-
-		}
-
-		//TODO хватаю лишние пути(из-за наличия лишних гипотез). Добавить метод фильтра гипотез.
-		//во, что я понял. Мне не важно, откуда я приехал. Важны только показания датчиков
-		//на настоящий момент. Необходимо сверить их с картой и выкинуть лишние гипотезы
-		//Доделать это 18.10 !!!
-
+		
 		private int GetDirection(ref Map map, ref List<List<int>> ways, int currentDirection, bool beginWay,
 			Robot robot)
 		{
-			/*
-			var currentWay = new int[4] {0, 0, 0, 0};
-			NextWay(ref currentWay, ref map);
-			*/
-			//CorrectDirectionsInHypothesis(robot, ref map);
-			//HypothesisFilter(ref map); //TODO: Добавил. Проверить
 			var timeOfWay = new TimeOfWay();
 			timeOfWay.GetTime(ref ways);
 			var direcrion = ChooseDirection(ways, map, currentDirection, beginWay, robot);
-			//WayFilter(ref ways);
-			//CorrectDirectionsInHypothesis(robot, ref map);
 			if (robot.InitialDirection == 1)
 				if (direcrion == 2 || direcrion == 4)
 					return OppositeDirection(direcrion);
 			return direcrion;
 		}
-		/*
-		public void GetWay(ref Map map, ref List<List<int>> ways, ref FinalWays finalWays)
-		{
-			var currentWay = new int[4] {0, 0, 0, 0};
-			var timeOfWay = new TimeOfWay();
-			timeOfWay.GetTime(ref ways, true);
-			//var finalWays = new FinalWays();
-			//finalWays = new FinalWays(); TODO: ???
-			var selectedPaths = new List<List<int>>();
-			
-			//0 - Down, 1- Left, 2 - Up, 3 - Right
-			//var sumTimeForDirecrion = new int[4];
-			var indexDirections = -1;
-			var step = -1; //TODO: 0->-1 возможно надо вернуть обратно
-			while (ways.Count > 0)
-			{
-				step++;
-				indexDirections++;
-				finalWays.directions.Add(new List<int>());
-				timeOfWay.GetTime(ref ways);
-				// TODO: После каждого шага необходимо сдвигать гипотезы, иначе получается бред!!!
-				for (var i = 0; i < quantityDifferentWays; i++)
-				{
-					NextWay(ref currentWay, ref map);
-					//HypothesisFilter(ref map);
-					var direcrion = ChooseDirection(ways, map);
 
-					finalWays.directions[indexDirections].Add(direcrion);
-
-					/*
-					Console.WriteLine("Way " + i);
-					for (var j = 0; j < 4; j++)
-					{
-						Console.Write(currentWay[j]);
-					}
-					Console.WriteLine();
-					*/
-		/*}
-		WayFilter(ref ways);
-		//timeOfWay.GetTime(ref ways);
-	}
-
-	for (var i = 0; i < finalWays.directions.Count; i++)
-	{
-		Console.WriteLine("step " + i);
-		for (var j = 0; j < finalWays.directions[i].Count; j++)
-		{
-			Console.Write(finalWays.directions[i][j] + " ");
-		}
-		Console.WriteLine();
-	}
-}
-*/
-
-		private void CorrectDirectionsInHypothesis(Robot robot, ref Map map)
+		public void CorrectDirectionsInHypothesis(Robot robot, ref Map map)
 		{
 			for (var i = 0; i < map.Hypothesis[0].Count; i++)
 			{
@@ -352,13 +283,10 @@ namespace Localization
 					map.Hypothesis[1].RemoveAt(i);
 					map.Hypothesis[2].RemoveAt(i);
 					i--;
-					//TODO: удалить путь. Возможно убрать инверсию, хз. Надо посмотреть. done
 				}
 			}
 		}
 
-
-		//TODO: Добавить ещё один фильтр гипотез (который будет учитывать расположение стен)
 		private int ChooseDirection(List<List<int>> ways, Map map, int currentDirection, bool beginWay, Robot robot)
 		{
 			var sumTimeForDirecrion = new double[4];
@@ -376,7 +304,6 @@ namespace Localization
 				{
 					if (x == ways[j][0] && y == ways[j][1] && direction == ways[j][2])
 					{
-						//TODO: изменить направление (нужно текущее, а не начальное) done
 						var index = ways[j][4];
 						sumTimeForDirecrion[index - 1] += ways[j][3];
 						quantity[index - 1]++;
@@ -420,31 +347,13 @@ namespace Localization
 					}
 				}
 			}
-			//TODO: Нет проверки на то, что мы не попали в тупик
-			//TODO: (хотя вроде это должно гарантироваться построением гипотез, но хз, лучше потом проверить
+			
 			if (beginWay) return indices[0];
 			if (oppositeDirection == indices[0]) return indices[1];
 			return indices[0];
-
-			/*
-			for (var i = 1; i < 4; i++)
-			{
-				if (min > sumTimeForDirecrion[i])
-				{
-					min = sumTimeForDirecrion[i];
-					indexMin = i;
-				}
-			}
-			
-			if (sumTimeForDirecrion[indexMin] < 1000000000)
-			{
-				return indexMin + 1;
-			}
-			return 0;
-			*/
 		}
 
-		private int OppositeDirection(int direction)
+		public int OppositeDirection(int direction)
 		{
 			if (direction > 2) return direction - 2;
 			return direction + 2;
@@ -463,41 +372,8 @@ namespace Localization
 			}
 		}
 
-		/*
-		private void NextWay(ref int[] currentWay, ref Map map)
-		{
-			way++;
-			if (way == 16) way = 0;
-			var cway = way;
-			for (var i = 0; i < 4; i++)
-			{
-				currentWay[i] = cway % 2;
-				map.Sensors[i] = cway % 2;
-				cway >>= 1;
-			}
-		}
-
-		private void CopyWay(List<int> from, ref List<int> to)
-		{
-			to.Clear();
-			for (var i = 0; i < from.Count; ++i)
-			{
-				to.Add(from[i]);
-			}
-		}
-		*/
 		private bool CheckWalls(int x, int y, int direction, Map map)
 		{
-			//Robot.Sensors = _sensors;
-			//TODO: проверить. Возможно условие ниже нужно раскомментировать
-			/*
-			if (step == 1)
-			{
-				if (direction > 2) direction -= 2;
-				else direction += 2;
-			}
-			*/
-			//_sensors = Robot.Sensors;
 			if (direction == 1)
 			{
 				if (map.map[x, y, 1] != map.Sensors[2]) return false;

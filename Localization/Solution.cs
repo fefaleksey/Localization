@@ -7,7 +7,7 @@ namespace Localization
 	/// Более оптимальный путь будет в том случае, если робот сам будет на каждом шаге
 	/// запускать этот алгоритм, учитывая свой пройденный путь
 	/// </summary>
-	class Solution
+	public class Solution
 	{
 		private int quantityDifferentWays = 16;
 		private int _way = 15;

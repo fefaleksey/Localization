@@ -3,7 +3,7 @@ using System;
 
 namespace Localization
 {
-	class RuleOfTheRightAndLeftHand
+	public class RuleOfTheRightAndLeftHand
 	{
 
 		private const int Down = 1;
@@ -65,7 +65,7 @@ namespace Localization
 					{
 						case Map.Down:
 						{
-							if (x + 1 < map.Height && map.map[x, y, Map.Down] == 0)
+							if (x + 1 < Map.Height && map.map[x, y, Map.Down] == 0)
 							{
 								++x;
 								robot.RSensors.Read(x, y, Map.Down, robot, map);
@@ -95,7 +95,7 @@ namespace Localization
 						}
 						case Map.Right:
 						{
-							if (y + 1 < map.Widht && map.map[x, y, Map.Right] == 0)
+							if (y + 1 < Map.Width && map.map[x, y, Map.Right] == 0)
 							{
 								++y;
 								robot.RSensors.Read(x, y, Map.Right, robot, map);
@@ -122,7 +122,8 @@ namespace Localization
 					if (map.Hypothesis[0].Count == 0)
 					{
 						quantitybags++;
-						time = 0;
+						time = -1;
+						finalWays.Ways[i].RemoveAt(finalWays.Ways[i].Count - 1);
 						break;
 					}
 				}

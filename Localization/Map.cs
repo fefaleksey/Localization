@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Localization
 {
-	class Map
+	public class Map
 	{
 		public int[,,] map = new int[8, 8, 5]
 		{
@@ -55,9 +55,9 @@ namespace Localization
 		public const int Up = 3;
 		public const int Right = 4;
 
-		public int Height = 8;
+		public const int Height = 8;
 
-		public int Widht = 8;
+		public const int Width = 8;
 
 		public List<List<int>> Hypothesis = new List<List<int>>(); // x,y,direction
 
@@ -112,6 +112,10 @@ namespace Localization
 			solutionForRobot.SimulationOfLocalization(ref map, ref BestWays, ref finalWays);
 			var ruleOfOneHand = new RuleOfTheRightAndLeftHand();
 
+			var generate = new Generate();
+			generate.GenerateHashtable(finalWays);
+			
+			
 			ruleOfOneHand.SimulationOfLocalization(ref map, ref finalWays, true);
 			ruleOfOneHand.SimulationOfLocalization(ref map, ref finalWays, false);
 
@@ -150,7 +154,7 @@ namespace Localization
 			Console.WriteLine();
 			for (i = 0; i < Height; ++i)
 			{
-				for (j = 0; j < Widht; ++j)
+				for (j = 0; j < Width; ++j)
 				{
 
 					if (n < k && i == Hypothesis[0][n] && j == Hypothesis[1][n])
@@ -167,7 +171,7 @@ namespace Localization
 			}
 		}
 
-		private void StartInit()
+		public void StartInit()
 		{
 			for (int i = 0; i < 3; i++)
 			{
@@ -179,7 +183,7 @@ namespace Localization
 		{
 			Hypothesis.Clear();
 			StartInit();
-			for (var i = 0; i < Widht; i++)
+			for (var i = 0; i < Width; i++)
 			{
 				for (var j = 0; j < Height; j++)
 				{
@@ -238,7 +242,7 @@ namespace Localization
 			x = startX;
 			i = 0;
 			//Right
-			while (i < Robot.RobotSensors.QualitySensors && y + 1 <= Widht)
+			while (i < Robot.RobotSensors.QualitySensors && y + 1 <= Width)
 			{
 				var j = robot.RSensors.GetIndex(direction, Right);
 				if (robot.Sensors[i, j] != map[x, y, Right]) return false;
@@ -291,7 +295,7 @@ namespace Localization
 		{
 			for (var i = 0; i < Height; ++i)
 			{
-				for (var j = 0; j < Widht; ++j)
+				for (var j = 0; j < Width; ++j)
 				{
 					if (map[i, j, 0] == quantity)
 					{
@@ -385,7 +389,7 @@ namespace Localization
 					{
 						int x = Hypothesis[0][i], y = Hypothesis[1][i];
 
-						if (y + 1 < Widht && map[x, y + 1, 0] == quantity)
+						if (y + 1 < Width && map[x, y + 1, 0] == quantity)
 						{
 							if (map[x, y, Right] == 0 && CheckWalls(x, y + 1, Right, robot))
 							{
@@ -436,6 +440,7 @@ namespace Localization
 				return direction + 2;
 			}
 			else return direction;
+			
 			/*
 			if (direction > 2) return direction - 2;
 			return direction + 2;
@@ -514,7 +519,7 @@ namespace Localization
 			}
 		}
 		*/
-		private void ListFiltration(ref List<List<int>> list)
+		public void ListFiltration(ref List<List<int>> list)
 		{
 			for (int i = 0; i < list.Count; i++)
 			{

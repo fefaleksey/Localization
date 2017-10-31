@@ -13,7 +13,7 @@
         {
             var i = 0;
             //Down
-            while (i < QualitySensors && x + 1 < map.Height)
+            while (i < QualitySensors && x + 1 < Map.Height)
             {
                 var j = GetIndex(direction, IDown);
                 robot.Sensors[i, j] = map.map[x, y, IDown];
@@ -43,7 +43,7 @@
             }
             i = 0;
             //Right
-            while (i < QualitySensors && y + 1 < map.Widht)
+            while (i < QualitySensors && y + 1 < Map.Width)
             {
                 var j = GetIndex(direction, IRight);
                 robot.Sensors[i, j] = map.map[x, y, IRight];

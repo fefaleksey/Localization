@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace Localization
 {
-	class Way
+	public class Way
 	{
 		public List<int> CurentWay = new List<int>();
 		private int _i = 0, _forbiddenDirection = 3;
 
-		private readonly int _length = 64;
+		public const int Length = 64;
 		public bool BeginWay = true;
 
 		public void CurentWayInit()
@@ -61,7 +61,7 @@ namespace Localization
 
 			if (wayExist)
 			{
-				if (CurentWay.Count == _length)
+				if (CurentWay.Count == Length)
 				{
 					return NextDirection(false, false, robot);
 					//return curent_way[i];

@@ -37,8 +37,9 @@ namespace Localization
 				while (fl != 0)
 				{
 					CopyWay(way.CurentWay, ref ways);
-					robot.InitialDirection = 3; 
-					robot.RSensors.Read(handlingHypotheses.Hypothesis[0][i], handlingHypotheses.Hypothesis[1][i], handlingHypotheses.Hypothesis[2][i], robot, handlingHypotheses);
+					robot.InitialDirection = 3;
+					robot.RSensors.Read(handlingHypotheses.Hypothesis[0][i], handlingHypotheses.Hypothesis[1][i],
+						handlingHypotheses.Hypothesis[2][i], robot, handlingHypotheses);
 					HandingHypothesis(i, ways, handlingHypotheses, motion, way, robot);
 					fl = way.NextDirection(_wayExist, _localiz, robot);
 					handlingHypotheses.Hypothesis[0].Clear();
@@ -112,7 +113,8 @@ namespace Localization
 					}
 					case HandlingHypotheses.Right:
 					{
-						if (y + 1 < HandlingHypotheses.Width && handlingHypotheses.Map[x, y, HandlingHypotheses.Right] == 0) // && CheckWalls(x, y + 1, Right))
+						if (y + 1 < HandlingHypotheses.Width && handlingHypotheses.Map[x, y, HandlingHypotheses.Right] == 0
+						) // && CheckWalls(x, y + 1, Right))
 						{
 							fl = false;
 							++y;

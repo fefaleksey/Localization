@@ -1,0 +1,7 @@
+﻿namespace Localization
+{
+    class TestHashtable
+    {
+		
+    }
+}

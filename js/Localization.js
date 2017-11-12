@@ -11,7 +11,7 @@ var map=
 	[[2,0,1,1,0],[1,1,0,0,0],[1,0,0,0,1]],
 	[[3,1,1,0,1],[3,1,1,1,0],[2,1,0,0,1]]
 ]
-// Что лучше: удалять элемент массива с помощью splice или delete?
+//splice VS delete ?
 //sparse array javascript
 var hypothesis = []
 
@@ -31,6 +31,171 @@ var sensors = [[1,1,0,1]]
 var sensorsQuality = 1
 //var InitialDirection = 3
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+var main = function()
+{
+	__interpretation_started_timestamp__ = Date.now()
+	/*
+	brick.motor(M3).setPower(10);
+	brick.motor(M4).setPower(-10);
+	*/
+	
+	var g=brick.gyroscope()
+	g.calibrate(5)
+	function yaw (){return g.read()[6]}
+	
+	print(hypothesis.length)
+	StartInit()
+	
+	HypothesisFilterInStart()
+	printHypothesis()
+	
+	sensors[0][0] = 0
+	sensors[0][1] = 1
+	sensors[0][2] = 1
+	sensors[0][3] = 0
+	print("123")
+	HypothesisFilter(Up)
+	printHypothesis()
+	sensors[0][0] = 0
+	sensors[0][1] = 0
+	sensors[0][2] = 1
+	sensors[0][3] = 0
+	HypothesisFilter(Right)
+	printHypothesis()
+	
+	/*
+	while(true)
+	{
+		//var yaw = function(){return g.read()[6];}
+		//!!!!!!!!!!!!!!!!!!!
+		//https://en.wikipedia.org/wiki/Event-driven_programming
+		//https://en.wikipedia.org/wiki/Subsumption_architecture
+		//!!!!!!!!!!!!!!!!!!!
+		print(yaw());
+		print(brick.sensor(A1).read());
+		script.wait(100);
+	}
+	*/
+	return
+}
+
+function Localization(){
+	sensorsRead()
+	HypothesisFilterInStart()
+	//var value = GetSensorsValue()
+	var step = 0
+	//motion(/* table[value][0] */) // следующие показания сенсоров считываем во время движения
+	while(hypothesis.length>1){
+		var value = GetSensorsValue()
+		var direction = table[value][step]
+		motion(/* direction */)
+		HypothesisFilter(direction)
+		step++
+	}
+}
+
+function HypothesisFilterInStart()
+{
+	print("HypothesisFilterInStart " + hypothesis.length)
+	for (var i = 0; i < hypothesis.length; i++)
+	{
+		var x = hypothesis[i][0]
+		var y = hypothesis[i][1]
+		var direction = hypothesis[i][2]
+		print(CheckWalls(x,y,direction))
+		print(hypothesis[i])
+		if (!CheckWalls(x, y, direction))
+		{
+			hypothesis.splice(i,1)
+			i--
+			print("hypothesis.splice " + hypothesis.length)
+		}
+	}
+}
+
+//Сделать эти 2 функции и протестить алгоритм
+function HypothesisFilter(newDirection)
+{
+	for (var i = 0; i < hypothesis.length; ++i)
+	{
+		var newDir = GetNewAbsoluteDirection(hypothesis[i][2], newDirection)
+		print(i + " " + newDir + " ")
+		var fl = true
+		switch (newDir)
+		{
+			case Down:
+			{
+				var x = hypothesis[i][0]
+				var y = hypothesis[i][1]
+
+				if (x + 1 < Height /*&& map[x + 1, y, 0] == quantity*/)
+				{
+					if (map[x][y][Down] == 0 && CheckWalls(x + 1, y, Down))
+					{
+						hypothesis[i][0]++
+						fl = false
+					}
+				}
+				break
+			}
+			case Left:
+			{
+				var x = hypothesis[i][0]
+				var y = hypothesis[i][1]
+
+				if (y > 0 /*&& map[x, y - 1, 0] == quantity*/)
+				{
+					if (map[x][y][Left] == 0 && CheckWalls(x, y - 1, Left))
+					{
+						hypothesis[i][1]--
+						hypothesis[i][2] = Left
+						fl = false
+					}
+				}
+				break
+			}
+			case Up:
+			{
+				var x = hypothesis[i][0]
+				var y = hypothesis[i][1]
+
+				if (x > 0 /*&& Map[x - 1, y, 0] == quantity*/)
+				{
+					if (map[x][y][Up] == 0 && CheckWalls(x - 1, y, Up))
+					{
+						hypothesis[i][0]--
+						fl = false
+					}
+				}
+				break
+			}
+			case Right:
+			{
+				var x = hypothesis[i][0]
+				var y = hypothesis[i][1]
+				print(x + " " + y + " " + CheckWalls(x, y + 1, Right) + " " + map[x][y][Right])
+				if (y + 1 < Width /*&& map[x, y + 1, 0] == quantity*/)
+				{
+					if (map[x][y][Right] == 0 && CheckWalls(x, y + 1, Right))
+					{
+						hypothesis[i][1]++
+						hypothesis[i][2] = Right
+						fl = false
+					}
+				}
+				break
+			}
+		}
+
+		if (fl)
+		{
+			hypothesis.splice(i,1)
+			i--
+		}
+	}
+}
 
 function StartInit()
 {
@@ -63,106 +228,6 @@ function HypothesisInit()
 				hypothesis[index][2] = k
 				index++
 			}
-		}
-	}
-}
-
-function HypothesisFilterInStart()
-{
-	print("HypothesisFilterInStart " + hypothesis.length)
-	for (var i = 0; i < hypothesis.length; i++)
-	{
-		var x = hypothesis[i][0]
-		var y = hypothesis[i][1]
-		var direction = hypothesis[i][2]
-		print(CheckWalls(x,y,direction))
-		print(hypothesis[i])
-		if (!CheckWalls(x, y, direction))
-		{
-			hypothesis.splice(i,1)
-			i--
-			print("hypothesis.splice " + hypothesis.length)
-		}
-	}
-}
-
-//Сделать эти 2 функции и протестить алгоритм
-function HypothesisFilter(newDirection)
-{
-	for (var i = 0; i < hypothesis.length; ++i)
-	{
-		var newDir = GetNewAbsoluteDirection(hypothesis[i][2], newDirection)
-		var fl = true
-		switch (newDir)
-		{
-			case Down:
-			{
-				var x = hypothesis[i][0]
-				var y = hypothesis[i][1]
-
-				if (x + 1 < Height && map[x + 1, y, 0] == quantity)
-				{
-					if (map[x, y, Down] == 0 && CheckWalls(x + 1, y, Down))
-					{
-						hypothesis[i][0]++
-						fl = false
-					}
-				}
-				break
-			}
-			case Left:
-			{
-				var x = hypothesis[i][0]
-				var y = hypothesis[i][1]
-
-				if (y > 0 && map[x, y - 1, 0] == quantity)
-				{
-					if (map[x, y, Left] == 0 && CheckWalls(x, y - 1, Left))
-					{
-						hypothesis[i][1]--
-						hypothesis[i][2] = Left
-						fl = false
-					}
-				}
-				break
-			}
-			case Up:
-			{
-				var x = hypothesis[i][0]
-				var y = hypothesis[i][1]
-
-				if (x > 0 && Map[x - 1, y, 0] == quantity)
-				{
-					if (Map[x, y, Up] == 0 && CheckWalls(x - 1, y, Up))
-					{
-						hypothesis[i][0]--
-						fl = false
-					}
-				}
-				break
-			}
-			case Right:
-			{
-				var x = hypothesis[i][0]
-				var y = hypothesis[i][1]
-
-				if (y + 1 < Width && map[x, y + 1, 0] == quantity)
-				{
-					if (map[x, y, Right] == 0 && CheckWalls(x, y + 1, Right))
-					{
-						hypothesis[i][1]++
-						hypothesis[i][2] = Right
-						fl = false
-					}
-				}
-				break
-			}
-		}
-
-		if (fl)
-		{
-			hypothesis.splice(i,1)
-			i--
 		}
 	}
 }
@@ -201,55 +266,12 @@ function printHypothesis()
 	}
 }
 
-function Localization()
-{
+function sensorsRead(){
 	
 }
 
-var main = function()
-{
-	__interpretation_started_timestamp__ = Date.now()
-	/*
-	brick.motor(M3).setPower(10);
-	brick.motor(M4).setPower(-10);
-	*/
+function motion(direction){
 	
-	var g=brick.gyroscope()
-	g.calibrate(5)
-	function yaw (){return g.read()[6]}
-	
-	print(hypothesis.length)
-	StartInit()
-	
-	HypothesisFilter()
-	printHypothesis()
-	
-	/*
-	printMap();
-	script.wait(1);
-	hypothesis(3);
-	print("hypothesis");
-	printMap();
-	script.wait(1);
-	localization();
-	print("uhkjhkjhkjhjk");
-	print(x + y);
-	//print(y);
-	//printMap();
-	script.wait(100000);
-	while(true)
-	{
-		//var yaw = function(){return g.read()[6];}
-		//!!!!!!!!!!!!!!!!!!!
-		//https://en.wikipedia.org/wiki/Event-driven_programming
-		//https://en.wikipedia.org/wiki/Subsumption_architecture
-		//!!!!!!!!!!!!!!!!!!!
-		print(yaw());
-		print(brick.sensor(A1).read());
-		script.wait(100);
-	}
-	*/
-	return
 }
 
 /*

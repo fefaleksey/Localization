@@ -6,10 +6,10 @@ namespace Localization
 	{
 		public int[,] Sensors;
 		public RobotSensors RSensors;
-		public const int Down = 0;
-		public const int Left = 1;
-		public const int Up = 2;
-		public const int Right = 3;
+		private const int Down = 0;
+		private const int Left = 1;
+		private const int Up = 2;
+		private const int Right = 3;
 		public bool BeginWay = true;
 
 		public int InitialDirection { get; set; }
@@ -23,7 +23,7 @@ namespace Localization
 
 		public class RobotSensors
 		{
-			public const int QualitySensors = 4; // количество клеток, на которых сенсоры работают адекватно
+			public const int QualitySensors = 2; // количество клеток, на которых сенсоры работают адекватно
 
 			private const int IDown = 1;
 			private const int ILeft = 2;

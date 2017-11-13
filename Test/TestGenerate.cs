@@ -4,7 +4,7 @@ using Localization;
 
 namespace Test
 {
-	public class TestGenerate
+	public class TestGenerateForQualitySensors4
 	{
 		[Fact]
 		public void TestGenerateHashtable()
@@ -12,7 +12,7 @@ namespace Test
 			var mapp = new HandlingHypotheses();
 			mapp.StartInit();
 
-			var handingOfAllCases = new HandlingOfAllCases();
+			var handingOfAllCases = new HandlingAllCases();
 			var way = new Way();
 			handingOfAllCases.Handing(mapp, way);
 			mapp.ListFiltration(ref mapp.BestWays);

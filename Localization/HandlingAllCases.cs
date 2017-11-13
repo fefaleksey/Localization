@@ -2,7 +2,7 @@
 
 namespace Localization
 {
-	public class HandlingOfAllCases
+	public class HandlingAllCases
 	{
 		private bool _wayExist = true, _localiz;
 

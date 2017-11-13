@@ -124,7 +124,7 @@ namespace Localization
 				finalWays.Ways[i].Add(time);
 			}
 			//PrintResult(finalWays);
-			Console.WriteLine(quantitybags);
+			//Console.WriteLine(quantitybags);
 			finalWays.SetFinalList();
 			//if(!ruleRightHand) finalWays.PrintResult();
 		}

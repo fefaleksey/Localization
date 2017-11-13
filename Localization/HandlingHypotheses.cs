@@ -66,7 +66,7 @@ namespace Localization
 		{
 			StartInit();
 
-			var handingOfAllCases = new HandlingOfAllCases();
+			var handingOfAllCases = new HandlingAllCases();
 			var way = new Way();
 			handingOfAllCases.Handing(this, way);
 			ListFiltration(ref BestWays);
@@ -83,7 +83,7 @@ namespace Localization
 			ruleOfOneHand.SimulationOfLocalization(ref map, ref finalWays, true);
 			ruleOfOneHand.SimulationOfLocalization(ref map, ref finalWays, false);
 
-			finalWays.PrintResult();
+			//finalWays.PrintResult();
 			//test.TimeOfFinalWays(ref finalWays, ref map, robot);
 		}
 

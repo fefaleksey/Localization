@@ -7,6 +7,8 @@ namespace Localization
         {
             var map=new HandlingHypotheses();
             map.Localization();
+            //var test = new TestHashtable();
+            //test.Test();
         }
     }
 }

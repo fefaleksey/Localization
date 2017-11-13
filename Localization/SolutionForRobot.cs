@@ -157,10 +157,10 @@ namespace Localization
 			}
 
 
-			PrintResult(finalWays);
+			//PrintResult(finalWays);
 			finalWays.SetFinalList();
 			//PrintReleaseResult(finalWays);
-			Console.WriteLine(quantitybags);
+			//Console.WriteLine(quantitybags);
 		}
 
 		private void PrintResult(FinalWays finalWays)

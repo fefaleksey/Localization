@@ -45,7 +45,7 @@
     <Compile Include="Generate.cs" />
     <Compile Include="Hypothesis.cs" />
     <Compile Include="FinalWays.cs" />
-    <Compile Include="HandlingOfAllCases.cs" />
+    <Compile Include="HandlingAllCases.cs" />
     <Compile Include="HandlingHypotheses.cs" />
     <Compile Include="Motion.cs" />
     <Compile Include="Program.cs" />
@@ -53,6 +53,7 @@
     <Compile Include="Robot.cs" />
     <Compile Include="RuleOfTheOneHand.cs" />
     <Compile Include="SolutionForRobot.cs" />
+    <Compile Include="TestHashtable.cs" />
     <Compile Include="TimeOfWay.cs" />
     <Compile Include="Way.cs" />
   </ItemGroup>

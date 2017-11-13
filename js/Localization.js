@@ -1,4 +1,4 @@
-var __interpretation_started_timestamp__;
+var __interpretation_started_timestamp__
 var pi = 3.141592653589793
 var g=brick.gyroscope()
 g.calibrate(5)
@@ -274,28 +274,10 @@ function motion(direction){
 	
 }
 
-/*
-function printMap()
-{
-	var i,j;
-	for(i = 0; i <= n; i++) { 
-			print(map[i][0] + "  "+ map[i][1] + "  "+map[i][2])
-		}
-}
-*/
-
 function CheckWalls(x, y, direction)
 {
 	var startX = x
 	var startY = y
-	//Robot.Sensors = _sensors;
-	/*
-	if (robot.InitialDirection == 1)
-	{
-		if (direction > 2) direction -= 2;
-		else direction += 2;
-	}
-	*/
 	var i = 0
 	//Down
 	while (i < sensorsQuality && x + 1 <= Height)
